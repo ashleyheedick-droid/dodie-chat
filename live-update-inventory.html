@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Live Seafood Update - Dodie's</title>
+<title>Live Seafood - Dodie's</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;700;800;900&display=swap');
 
 * {
   box-sizing: border-box;
@@ -13,10 +13,20 @@
   padding: 0;
 }
 
+:root {
+  --cajun-red: #8B1A1A;
+  --deep-maroon: #5A0E0E;
+  --bright-red: #C41E3A;
+  --gold: #D4AF37;
+  --cream: #FFF8DC;
+  --dark: #1a0a0a;
+  --dark-card: #2a1515;
+}
+
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #0a0a0f;
-  color: #fff;
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--dark);
+  color: var(--cream);
   min-height: 100vh;
   padding: 32px 20px 80px;
   position: relative;
@@ -28,17 +38,17 @@ body::before {
   position: fixed;
   inset: 0;
   background: 
-    radial-gradient(1000px 1000px at 30% 20%, rgba(255,59,92,.15), transparent 60%),
-    radial-gradient(800px 800px at 70% 80%, rgba(76,154,255,.12), transparent 60%),
-    radial-gradient(600px 600px at 50% 50%, rgba(167,139,250,.08), transparent 70%);
+    radial-gradient(circle at 30% 20%, var(--cajun-red), transparent 45%),
+    radial-gradient(circle at 70% 80%, var(--deep-maroon), transparent 45%);
+  opacity: .5;
   animation: bgFloat 25s ease-in-out infinite;
   pointer-events: none;
   z-index: 0;
 }
 
 @keyframes bgFloat {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: .8; transform: scale(1.1); }
+  0%, 100% { opacity: .5; }
+  50% { opacity: .35; }
 }
 
 .container {
@@ -48,7 +58,7 @@ body::before {
   z-index: 1;
 }
 
-/* Header */
+/* Header with Louisiana flair */
 .header {
   text-align: center;
   margin-bottom: 48px;
@@ -64,54 +74,62 @@ body::before {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 90px;
-  height: 90px;
-  background: linear-gradient(135deg, #ff3b5c, #c026d3);
-  border-radius: 28px;
+  width: 100px;
+  height: 100px;
+  background: linear-gradient(135deg, var(--bright-red), var(--cajun-red));
+  border-radius: 24px;
   margin-bottom: 24px;
-  box-shadow: 0 20px 60px rgba(255,59,92,.35), 0 0 0 1px rgba(255,255,255,.1);
-  font-size: 48px;
-  animation: float 3s ease-in-out infinite, glow 2s ease-in-out infinite;
+  box-shadow: 
+    0 20px 60px rgba(196,30,58,.5),
+    0 0 0 4px var(--gold),
+    0 0 30px rgba(212,175,55,.3);
+  font-size: 52px;
+  animation: float 3s ease-in-out infinite;
+  position: relative;
+}
+
+.logo-wrap::after {
+  content: '🌶️';
+  position: absolute;
+  bottom: -5px;
+  right: -5px;
+  font-size: 28px;
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-12px) rotate(5deg); }
-}
-
-@keyframes glow {
-  0%, 100% { box-shadow: 0 20px 60px rgba(255,59,92,.35), 0 0 0 1px rgba(255,255,255,.1); }
-  50% { box-shadow: 0 25px 80px rgba(255,59,92,.5), 0 0 0 1px rgba(255,255,255,.15); }
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  50% { transform: translateY(-12px) rotate(3deg); }
 }
 
 h1 {
-  font-size: clamp(32px, 6vw, 48px);
-  font-weight: 900;
-  letter-spacing: -.02em;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(36px, 7vw, 56px);
+  font-weight: 400;
+  letter-spacing: 3px;
   margin-bottom: 12px;
-  background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,.8) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--cream);
+  text-shadow: 0 3px 12px rgba(212,175,55,.4);
 }
 
 .subtitle {
   font-size: 18px;
-  color: rgba(255,255,255,.65);
+  color: rgba(255,248,220,.7);
   margin-bottom: 16px;
+  font-weight: 600;
 }
 
 .last-update {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 18px;
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.1);
+  padding: 10px 20px;
+  background: linear-gradient(135deg, var(--dark-card), rgba(42,21,21,.9));
+  border: 2px solid var(--gold);
   border-radius: 999px;
   font-size: 13px;
-  color: rgba(255,255,255,.7);
+  color: rgba(255,248,220,.8);
   animation: fadeIn .6s ease-out .3s both;
+  box-shadow: 0 8px 24px rgba(212,175,55,.2);
 }
 
 @keyframes fadeIn {
@@ -120,11 +138,12 @@ h1 {
 }
 
 .update-dot {
-  width: 6px;
-  height: 6px;
-  background: #36d399;
+  width: 8px;
+  height: 8px;
+  background: var(--gold);
   border-radius: 50%;
   animation: pulse 2s ease-in-out infinite;
+  box-shadow: 0 0 8px var(--gold);
 }
 
 @keyframes pulse {
@@ -140,17 +159,28 @@ h1 {
   margin-bottom: 40px;
 }
 
-/* Item cards */
+/* Seafood cards with Cajun character */
 .item-card {
-  background: rgba(20,20,31,.8);
+  background: linear-gradient(135deg, var(--dark-card), rgba(42,21,21,.8));
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(255,255,255,.08);
+  border: 3px solid rgba(212,175,55,.3);
   border-radius: 24px;
   padding: 28px;
   transition: all .4s cubic-bezier(.4,0,.2,1);
   position: relative;
   overflow: hidden;
   animation: slideUp .6s ease-out both;
+  box-shadow: 0 12px 36px rgba(0,0,0,.5);
+}
+
+.item-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--gold), var(--bright-red), var(--gold));
 }
 
 @keyframes slideUp {
@@ -164,23 +194,10 @@ h1 {
 .item-card:nth-child(4) { animation-delay: .4s; }
 .item-card:nth-child(5) { animation-delay: .5s; }
 
-.item-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,.03), transparent);
-  opacity: 0;
-  transition: opacity .4s ease;
-}
-
-.item-card:hover::before {
-  opacity: 1;
-}
-
 .item-card:hover {
   transform: translateY(-8px);
-  border-color: rgba(255,255,255,.15);
-  box-shadow: 0 24px 80px rgba(0,0,0,.5);
+  border-color: var(--gold);
+  box-shadow: 0 24px 80px rgba(0,0,0,.7), 0 0 30px rgba(212,175,55,.3);
 }
 
 .item-header {
@@ -191,66 +208,82 @@ h1 {
 }
 
 .item-icon {
-  font-size: 48px;
-  filter: drop-shadow(0 8px 16px rgba(0,0,0,.3));
-  animation: iconBounce 2s ease-in-out infinite;
+  font-size: 56px;
+  filter: drop-shadow(0 8px 16px rgba(196,30,58,.4));
+  animation: iconBounce 2.5s ease-in-out infinite;
 }
 
 @keyframes iconBounce {
-  0%, 100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-4px) scale(1.05); }
+  0%, 100% { transform: translateY(0) rotate(-5deg); }
+  50% { transform: translateY(-6px) rotate(5deg); }
 }
 
 .item-name {
-  font-size: 24px;
-  font-weight: 900;
-  letter-spacing: -.01em;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  font-weight: 400;
+  letter-spacing: 1px;
   margin-bottom: 16px;
+  color: var(--cream);
 }
 
-/* Status badge */
+/* Status badges with Louisiana style */
 .status-badge {
-  padding: 14px 20px;
-  border-radius: 16px;
+  padding: 16px 24px;
+  border-radius: 14px;
   text-align: center;
-  font-weight: 900;
-  font-size: 15px;
-  letter-spacing: .8px;
-  text-transform: uppercase;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px;
+  letter-spacing: 1.5px;
   transition: all .3s ease;
   position: relative;
   overflow: hidden;
+  border: 3px solid;
+  font-weight: 400;
 }
 
-.status-badge::before {
+.status-badge::after {
   content: '';
   position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,.15), transparent);
-  opacity: 0;
-  transition: opacity .3s ease;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255,255,255,.2);
+  transform: translate(-50%, -50%);
+  transition: width .6s, height .6s;
 }
 
-.item-card:hover .status-badge::before {
-  opacity: 1;
+.item-card:hover .status-badge::after {
+  width: 300px;
+  height: 300px;
+}
+
+.status-badge > * {
+  position: relative;
+  z-index: 1;
 }
 
 .status-AVAILABLE {
-  background: linear-gradient(135deg, #36d399, #10b981);
-  color: #000;
-  box-shadow: 0 8px 24px rgba(54,211,153,.3);
+  background: linear-gradient(135deg, var(--gold), #B8860B);
+  border-color: #FFD700;
+  color: var(--dark);
+  box-shadow: 0 8px 24px rgba(212,175,55,.4);
 }
 
 .status-LIMITED {
-  background: linear-gradient(135deg, #fbbf24, #f59e0b);
-  color: #000;
-  box-shadow: 0 8px 24px rgba(251,191,36,.3);
+  background: linear-gradient(135deg, #FFA500, #FF8C00);
+  border-color: #FFD700;
+  color: var(--dark);
+  box-shadow: 0 8px 24px rgba(255,165,0,.4);
 }
 
 .status-OUT {
-  background: linear-gradient(135deg, #ff3b5c, #ef4444);
-  color: #fff;
-  box-shadow: 0 8px 24px rgba(255,59,92,.3);
+  background: linear-gradient(135deg, var(--bright-red), var(--cajun-red));
+  border-color: #FF6B6B;
+  color: var(--cream);
+  box-shadow: 0 8px 24px rgba(196,30,58,.4);
 }
 
 /* Meta info */
@@ -264,39 +297,42 @@ h1 {
 .meta-pill {
   flex: 1;
   min-width: 120px;
-  padding: 12px 16px;
-  background: rgba(0,0,0,.3);
-  border: 1px solid rgba(255,255,255,.08);
+  padding: 14px 18px;
+  background: rgba(0,0,0,.5);
+  border: 2px solid rgba(212,175,55,.25);
   border-radius: 14px;
   font-size: 13px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
 .meta-label {
-  color: rgba(255,255,255,.5);
+  color: rgba(255,248,220,.6);
   font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: .5px;
-  font-weight: 600;
+  letter-spacing: .8px;
+  font-weight: 700;
 }
 
 .meta-value {
-  color: rgba(255,255,255,.95);
-  font-size: 18px;
-  font-weight: 800;
+  color: var(--cream);
+  font-size: 20px;
+  font-weight: 900;
 }
 
 .meta-value.price {
-  color: #36d399;
+  color: var(--gold);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 24px;
+  letter-spacing: 1px;
 }
 
 /* Footer */
 .footer {
   text-align: center;
   padding: 32px 20px;
-  color: rgba(255,255,255,.4);
+  color: rgba(255,248,220,.5);
   font-size: 13px;
   animation: fadeIn .6s ease-out 1s both;
 }
@@ -306,8 +342,8 @@ h1 {
   align-items: center;
   gap: 8px;
   padding: 10px 16px;
-  background: rgba(255,255,255,.04);
-  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(0,0,0,.4);
+  border: 2px solid rgba(212,175,55,.25);
   border-radius: 999px;
   margin-top: 12px;
 }
@@ -315,8 +351,8 @@ h1 {
 .spinner {
   width: 14px;
   height: 14px;
-  border: 2px solid rgba(76,154,255,.3);
-  border-top-color: #4c9aff;
+  border: 2px solid rgba(212,175,55,.3);
+  border-top-color: var(--gold);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -328,7 +364,7 @@ h1 {
 @media (max-width: 768px) {
   body { padding: 24px 16px 60px; }
   .grid { grid-template-columns: 1fr; gap: 20px; }
-  h1 { font-size: 32px; }
+  h1 { font-size: 36px; }
 }
 </style>
 </head>
@@ -338,7 +374,7 @@ h1 {
   <div class="header">
     <div class="logo-wrap">🦞</div>
     <h1>Live Seafood Update</h1>
-    <div class="subtitle">Dodie's Cajun Diner</div>
+    <div class="subtitle">Fresh from Louisiana</div>
     <div class="last-update">
       <span class="update-dot"></span>
       <span id="lastUpdate">Loading...</span>
@@ -348,7 +384,7 @@ h1 {
   <div class="grid" id="grid"></div>
 
   <div class="footer">
-    <div>Real-time availability and pricing</div>
+    <div>🔥 Real-time Cajun seafood availability</div>
     <div class="refresh-indicator">
       <div class="spinner"></div>
       <span>Auto-refreshing every 30 seconds</span>
@@ -443,9 +479,8 @@ function render(data) {
   }).join('');
 }
 
-// Initialize
 loadInventory();
-setInterval(loadInventory, 30000); // Refresh every 30s
+setInterval(loadInventory, 30000);
 </script>
 </body>
 </html>
