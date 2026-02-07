@@ -1,70 +1,451 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Dodies Host View</title>
-<style>
-body{font-family:sans-serif;background:#111;color:#fff}
-.party{border:1px solid #444;padding:12px;margin:8px;border-radius:8px}
-button{margin-right:6px}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dodie’s Host View</title>
+  <style>
+    :root{
+      --bg1:#130606;
+      --bg2:#0b0505;
+      --card:#160a0a;
+      --card2:#0f0606;
+      --gold:#d7a83a;
+      --gold2:#b88925;
+      --red:#b21f2d;
+      --text:#f6f2e8;
+      --muted:#c9bca3;
+      --line:rgba(215,168,58,.22);
+      --shadow:0 10px 30px rgba(0,0,0,.45);
+      --radius:16px;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 20% 0%, rgba(178,31,45,.28), transparent 60%),
+        radial-gradient(900px 500px at 90% 20%, rgba(215,168,58,.12), transparent 60%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+      min-height:100vh;
+      padding:28px 18px 40px;
+    }
+
+    .wrap{max-width:980px;margin:0 auto}
+    .top{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:14px;
+      margin-bottom:18px;
+    }
+    h1{
+      margin:0;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      font-size:18px;
+      color:var(--gold);
+    }
+    .sub{
+      margin-top:6px;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .panel{
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      background:linear-gradient(180deg, rgba(22,10,10,.75), rgba(10,4,4,.75));
+      box-shadow:var(--shadow);
+      padding:16px;
+    }
+
+    .row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+    }
+
+    .pillbar{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .pill{
+      border:1px solid var(--line);
+      background:rgba(215,168,58,.08);
+      color:var(--text);
+      padding:8px 10px;
+      border-radius:999px;
+      font-size:12px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .pill.active{
+      background:rgba(215,168,58,.18);
+      border-color:rgba(215,168,58,.45);
+    }
+
+    .btn{
+      border:1px solid var(--line);
+      background:rgba(215,168,58,.10);
+      color:var(--text);
+      padding:9px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:700;
+      letter-spacing:.02em;
+    }
+    .btn:hover{background:rgba(215,168,58,.16)}
+    .btn.red{
+      background:rgba(178,31,45,.18);
+      border-color:rgba(178,31,45,.35);
+    }
+    .btn.red:hover{background:rgba(178,31,45,.26)}
+    .btn:disabled{opacity:.55;cursor:not-allowed}
+
+    .grid{
+      margin-top:14px;
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:12px;
+    }
+    @media (max-width:860px){ .grid{grid-template-columns:1fr;} }
+
+    .card{
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      background:linear-gradient(180deg, rgba(22,10,10,.86), rgba(12,6,6,.86));
+      box-shadow:var(--shadow);
+      padding:14px;
+      display:flex;
+      gap:12px;
+      justify-content:space-between;
+      align-items:flex-start;
+    }
+    .left{min-width:0}
+    .name{
+      font-size:16px;
+      font-weight:900;
+      margin:0 0 4px;
+    }
+    .meta{
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.35;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      margin-top:8px;
+      padding:6px 9px;
+      border-radius:999px;
+      font-size:12px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      width:fit-content;
+    }
+    .tag.waiting{border-color:rgba(215,168,58,.40); background:rgba(215,168,58,.10)}
+    .tag.notified{border-color:rgba(215,168,58,.40); background:rgba(215,168,58,.06)}
+    .tag.seated{border-color:rgba(178,31,45,.40); background:rgba(178,31,45,.10)}
+
+    .actions{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      align-items:stretch;
+      min-width:150px;
+    }
+    .small{
+      font-size:12px;
+      color:var(--muted);
+      margin-top:4px;
+      text-align:right;
+    }
+
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:18px;
+      transform:translateX(-50%);
+      background:rgba(0,0,0,.75);
+      border:1px solid var(--line);
+      padding:10px 14px;
+      border-radius:999px;
+      box-shadow:var(--shadow);
+      color:var(--text);
+      font-size:13px;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .2s ease, transform .2s ease;
+    }
+    .toast.show{
+      opacity:1;
+      transform:translateX(-50%) translateY(-4px);
+    }
+
+    .hint{
+      margin-top:10px;
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    code{
+      color:#ffd88a;
+      font-size:12px;
+    }
+  </style>
 </head>
 <body>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <h1>Host View</h1>
+        <div class="sub">Seat parties, notify, and keep the line moving.</div>
+      </div>
+      <div class="pillbar">
+        <button class="btn" id="refreshBtn">Refresh</button>
+        <button class="btn red" id="setUrlBtn">Set Apps Script URL</button>
+      </div>
+    </div>
 
-<h2>Waitlist</h2>
-<div id="list"></div>
+    <div class="panel">
+      <div class="row">
+        <div class="pillbar" id="filters">
+          <div class="pill active" data-filter="active">Active (Waiting + Notified)</div>
+          <div class="pill" data-filter="waiting">Waiting</div>
+          <div class="pill" data-filter="notified">Notified</div>
+          <div class="pill" data-filter="seated">Seated</div>
+          <div class="pill" data-filter="all">All</div>
+        </div>
+        <div class="sub" id="statusLine">Loading…</div>
+      </div>
+      <div class="hint">
+        Using Apps Script URL from localStorage key <code>appsScriptUrl</code>.
+      </div>
+    </div>
+
+    <div class="grid" id="list"></div>
+  </div>
+
+  <div class="toast" id="toast"></div>
 
 <script>
-const APPS = localStorage.getItem("appsScriptUrl") || "PASTE_YOUR_EXEC_URL";
+  // Uses localStorage set by your Control Center page.
+  const APPS = localStorage.getItem("appsScriptUrl") || "";
 
-async function load(){
-  const r = await fetch(APPS+"?action=getWaitlist");
-  const j = await r.json();
-  render(j.data||[]);
-}
+  const listEl = document.getElementById("list");
+  const statusLine = document.getElementById("statusLine");
+  const toastEl = document.getElementById("toast");
+  const refreshBtn = document.getElementById("refreshBtn");
+  const setUrlBtn = document.getElementById("setUrlBtn");
+  const filtersEl = document.getElementById("filters");
 
-function render(arr){
-  const d=document.getElementById('list');
-  d.innerHTML='';
-  arr.forEach(p=>{
-    if(!p.name) return;
-    const card=document.createElement('div');
-    card.className='party';
-    card.innerHTML=
-      "<b>"+p.name+"</b> ("+p.partySize+") — "+p.status+
-      "<br><button onclick='seat("+p.row+")'>Seat</button>"+
-      "<button onclick='notify("+p.row+")'>Notify</button>";
-    d.appendChild(card);
+  let currentFilter = "active";
+  let cache = [];
+
+  function toast(msg){
+    toastEl.textContent = msg;
+    toastEl.classList.add("show");
+    clearTimeout(window.__t);
+    window.__t = setTimeout(()=>toastEl.classList.remove("show"), 1600);
+  }
+
+  function normalizeStatus(s){
+    return String(s || "").trim().toLowerCase();
+  }
+
+  function applyFilter(items){
+    if(currentFilter === "all") return items;
+    if(currentFilter === "active") return items.filter(p => {
+      const st = normalizeStatus(p.status);
+      return st === "waiting" || st === "notified" || st === "incomplete";
+    });
+    return items.filter(p => normalizeStatus(p.status) === currentFilter);
+  }
+
+  function setLoading(isLoading){
+    refreshBtn.disabled = isLoading;
+    statusLine.textContent = isLoading ? "Loading…" : statusLine.textContent;
+  }
+
+  async function apiGetWaitlist(){
+    if(!APPS){
+      throw new Error("No Apps Script URL set. Click 'Set Apps Script URL' and paste your /exec link.");
+    }
+    const r = await fetch(APPS + "?action=getWaitlist");
+    const j = await r.json();
+    if(!j.success) throw new Error(j.error || "API error");
+    return j.data || [];
+  }
+
+  async function apiPost(payload){
+    if(!APPS){
+      throw new Error("No Apps Script URL set.");
+    }
+    const r = await fetch(APPS, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload)
+    });
+    const j = await r.json();
+    if(!j.success) throw new Error(j.error || "Update failed");
+    return j;
+  }
+
+  function render(){
+    const items = applyFilter(cache);
+    const counts = {
+      total: cache.length,
+      waiting: cache.filter(p=>normalizeStatus(p.status)==="waiting").length,
+      notified: cache.filter(p=>normalizeStatus(p.status)==="notified").length,
+      seated: cache.filter(p=>normalizeStatus(p.status)==="seated").length
+    };
+
+    statusLine.textContent =
+      `Total ${counts.total} • Waiting ${counts.waiting} • Notified ${counts.notified} • Seated ${counts.seated}`;
+
+    listEl.innerHTML = "";
+
+    if(items.length === 0){
+      listEl.innerHTML = `<div class="panel" style="grid-column:1/-1;">
+        <div class="sub">No parties match this filter.</div>
+      </div>`;
+      return;
+    }
+
+    items.forEach(p => {
+      const st = normalizeStatus(p.status);
+      const tagClass = st==="seated" ? "seated" : (st==="notified" ? "notified" : "waiting");
+
+      const card = document.createElement("div");
+      card.className = "card";
+
+      const left = document.createElement("div");
+      left.className = "left";
+
+      const name = document.createElement("div");
+      name.className = "name";
+      name.textContent = `${p.name || "—"} (${p.partySize || "?"})`;
+
+      const meta = document.createElement("div");
+      meta.className = "meta";
+      meta.textContent = `${p.phone || ""}${p.specialNotes ? " • " + p.specialNotes : ""}`;
+
+      const tag = document.createElement("div");
+      tag.className = `tag ${tagClass}`;
+      tag.textContent = `Status: ${p.status || "—"} • Row ${p.row || "?"}`;
+
+      left.appendChild(name);
+      left.appendChild(meta);
+      left.appendChild(tag);
+
+      const actions = document.createElement("div");
+      actions.className = "actions";
+
+      const seatBtn = document.createElement("button");
+      seatBtn.className = "btn";
+      seatBtn.textContent = "Seat";
+      seatBtn.onclick = async () => {
+        try{
+          seatBtn.disabled = true;
+          await apiPost({ action:"updateWaitlistStatus", row: Number(p.row), status:"Seated" });
+          toast(`Seated: ${p.name}`);
+          await refresh();
+        }catch(err){
+          toast(`Seat failed: ${err.message}`);
+        }finally{
+          seatBtn.disabled = false;
+        }
+      };
+
+      const notifyBtn = document.createElement("button");
+      notifyBtn.className = "btn";
+      notifyBtn.textContent = "Notify";
+      notifyBtn.onclick = async () => {
+        try{
+          notifyBtn.disabled = true;
+          await apiPost({ action:"updateWaitlistStatus", row: Number(p.row), status:"Notified" });
+          toast(`Notified: ${p.name}`);
+          await refresh();
+        }catch(err){
+          toast(`Notify failed: ${err.message}`);
+        }finally{
+          notifyBtn.disabled = false;
+        }
+      };
+
+      const backBtn = document.createElement("button");
+      backBtn.className = "btn red";
+      backBtn.textContent = "Back to Waiting";
+      backBtn.onclick = async () => {
+        try{
+          backBtn.disabled = true;
+          await apiPost({ action:"updateWaitlistStatus", row: Number(p.row), status:"Waiting" });
+          toast(`Waiting: ${p.name}`);
+          await refresh();
+        }catch(err){
+          toast(`Update failed: ${err.message}`);
+        }finally{
+          backBtn.disabled = false;
+        }
+      };
+
+      actions.appendChild(seatBtn);
+      actions.appendChild(notifyBtn);
+      actions.appendChild(backBtn);
+
+      card.appendChild(left);
+      card.appendChild(actions);
+      listEl.appendChild(card);
+    });
+  }
+
+  async function refresh(){
+    setLoading(true);
+    try{
+      cache = await apiGetWaitlist();
+      render();
+    } catch(err){
+      statusLine.textContent = "Error: " + err.message;
+      toast("Error: " + err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // UI handlers
+  refreshBtn.onclick = refresh;
+
+  setUrlBtn.onclick = () => {
+    const u = prompt("Paste your Apps Script Web App /exec URL:", localStorage.getItem("appsScriptUrl") || "");
+    if(u && u.includes("/exec")){
+      localStorage.setItem("appsScriptUrl", u.trim());
+      toast("Saved Apps Script URL");
+      location.reload();
+    } else if (u) {
+      toast("That doesn’t look like a /exec URL");
+    }
+  };
+
+  filtersEl.addEventListener("click", (ev) => {
+    const pill = ev.target.closest(".pill");
+    if(!pill) return;
+    [...filtersEl.querySelectorAll(".pill")].forEach(p=>p.classList.remove("active"));
+    pill.classList.add("active");
+    currentFilter = pill.getAttribute("data-filter");
+    render();
   });
-}
 
-async function seat(row){
-  await fetch(APPS,{
-    method:"POST",
-    headers:{'Content-Type':'text/plain'},
-    body:JSON.stringify({
-      action:"updateWaitlistStatus",
-      row:row,
-      status:"Seated"
-    })
-  });
-  load();
-}
-
-async function notify(row){
-  await fetch(APPS,{
-    method:"POST",
-    headers:{'Content-Type':'text/plain'},
-    body:JSON.stringify({
-      action:"updateWaitlistStatus",
-      row:row,
-      status:"Notified"
-    })
-  });
-  load();
-}
-
-load();
+  refresh();
 </script>
 </body>
 </html>
