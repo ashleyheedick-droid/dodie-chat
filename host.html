@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Host Dashboard - Dodie's</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #000;
+  color: #fff;
+  padding: 20px;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.logo {
+  font-size: 48px;
+}
+
+h1 {
+  font-size: 36px;
+  color: #DC143C;
+}
+
+.count {
+  font-size: 24px;
+  padding: 12px 24px;
+  background: #1a1a1a;
+  border: 2px solid #DC143C;
+  border-radius: 8px;
+}
+
+.count span {
+  color: #DC143C;
+  font-weight: 800;
+}
+
+.nav {
+  margin-bottom: 24px;
+}
+
+.nav a {
+  display: inline-block;
+  margin-right: 10px;
+  padding: 10px 20px;
+  background: #1a1a1a;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 8px;
+  border: 2px solid #DC143C;
+  font-weight: 600;
+}
+
+.nav a:hover {
+  background: #DC143C;
+}
+
+.list {
+  display: grid;
+  gap: 16px;
+}
+
+.card {
+  background: #1a1a1a;
+  border: 2px solid #333;
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.card:hover {
+  border-color: #DC143C;
+}
+
+.info {
+  flex: 1;
+}
+
+.name {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.meta {
+  color: #999;
+  margin-bottom: 8px;
+}
+
+.notes {
+  margin-top: 12px;
+  padding: 12px;
+  background: #000;
+  border-radius: 8px;
+  color: #ccc;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+button {
+  padding: 14px 24px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.seat-btn {
+  background: #DC143C;
+  color: #fff;
+}
+
+.seat-btn:hover {
+  background: #B01030;
+}
+
+.text-btn {
+  background: #1a1a1a;
+  color: #FFD700;
+  border: 2px solid #FFD700;
+}
+
+.text-btn:hover {
+  background: #FFD700;
+  color: #000;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.empty {
+  text-align: center;
+  padding: 60px;
+  color: #666;
+}
+
+.empty-icon {
+  font-size: 72px;
+  margin-bottom: 16px;
+}
+
+.loading {
+  text-align: center;
+  padding: 60px;
+  color: #666;
+}
+
+@media (max-width: 768px) {
+  .card {
+    flex-direction: column;
+  }
+  .actions {
+    flex-direction: row;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <div class="logo">🦞</div>
+      <h1>HOST DASHBOARD</h1>
+    </div>
+    <div class="count">
+      <span id="count">0</span> Waiting
+    </div>
+  </div>
+
+  <div class="nav">
+    <a href="index.html">Home</a>
+    <a href="inventory.html">Inventory</a>
+    <a href="guest.html">Add Guest</a>
+    <button onclick="load()" style="margin-left: 10px;">🔄 Refresh</button>
+  </div>
+
+  <div id="content" class="loading">Loading waitlist...</div>
+</div>
+
+<script>
+const API = 'https://script.google.com/macros/s/AKfycbzJoD0PyD3Y0tMSUl4g5UWHenFSlVDuMx_vDMAc9LjHKgObGhZ-D3HBPJeDkOZR34YLEA/exec';
+
+async function load() {
+  try {
+    const res = await fetch(`${API}?action=getWaitlist`);
+    const json = await res.json();
+    
+    if (!json.success) throw new Error(json.message);
+    
+    const guests = (json.data || []).filter(g => g.status === 'Waiting');
+    
+    document.getElementById('count').textContent = guests.length;
+    
+    if (guests.length === 0) {
+      document.getElementById('content').innerHTML = `
+        <div class="empty">
+          <div class="empty-icon">✓</div>
+          <div>No guests waiting</div>
+        </div>
+      `;
+      return;
+    }
+    
+    const html = guests.map(g => `
+      <div class="card">
+        <div class="info">
+          <div class="name">${g.name}</div>
+          <div class="meta">📞 ${g.phone} • 👥 Party of ${g.size}</div>
+          <div class="meta">🕐 ${g.time || 'Just now'}</div>
+          ${g.notes ? `<div class="notes">💬 ${g.notes}</div>` : ''}
+        </div>
+        <div class="actions">
+          <button class="seat-btn" onclick="seat('${g.name}', '${g.phone}', this)">
+            ✓ Seat Party
+          </button>
+          <button class="text-btn" onclick="text('${g.name}', '${g.phone}', this)">
+            💬 Text Guest
+          </button>
+        </div>
+      </div>
+    `).join('');
+    
+    document.getElementById('content').innerHTML = `<div class="list">${html}</div>`;
+  } catch (err) {
+    document.getElementById('content').innerHTML = `<div class="loading">Error: ${err.message}</div>`;
+  }
+}
+
+async function seat(name, phone, btn) {
+  if (!confirm(`Seat ${name}?`)) return;
+  
+  btn.disabled = true;
+  btn.textContent = 'Seating...';
+  
+  try {
+    const res = await fetch(API, {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'seatGuest',
+        name: name,
+        phone: phone
+      })
+    });
+    
+    const json = await res.json();
+    if (!json.success) throw new Error(json.message);
+    
+    alert('✓ Guest seated!');
+    load();
+  } catch (err) {
+    alert('Error: ' + err.message);
+    btn.disabled = false;
+    btn.textContent = '✓ Seat Party';
+  }
+}
+
+async function text(name, phone, btn) {
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+  
+  try {
+    const res = await fetch(API, {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'textGuest',
+        name: name,
+        phone: phone
+      })
+    });
+    
+    const json = await res.json();
+    
+    if (json.success) {
+      alert('✓ Text sent!');
+    } else {
+      alert('⚠ ' + json.message);
+    }
+  } catch (err) {
+    alert('Error: ' + err.message);
+  }
+  
+  btn.disabled = false;
+  btn.textContent = '💬 Text Guest';
+}
+
+load();
+setInterval(load, 10000);
+</script>
+
+</body>
+</html>
