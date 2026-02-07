@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Host Dashboard - Dodie's</title>
+<title>Dodie's Host Dashboard</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;700;800;900&display=swap');
 
@@ -51,7 +51,6 @@ body::before {
   z-index: 1;
 }
 
-/* Header with Cajun flair */
 .header {
   display: flex;
   align-items: center;
@@ -161,11 +160,6 @@ body::before {
   box-shadow: 0 12px 32px rgba(212,175,55,.5);
 }
 
-.btn-primary:active {
-  transform: translateY(0);
-}
-
-/* Status messages */
 .status-box {
   padding: 16px 20px;
   background: rgba(0,0,0,.4);
@@ -186,7 +180,6 @@ body::before {
 .status-box.ok { border-color: var(--gold); background: rgba(212,175,55,.15); color: var(--gold); }
 .status-box.err { border-color: var(--bright-red); background: rgba(196,30,58,.15); color: var(--bright-red); }
 
-/* Empty state */
 .empty-state {
   text-align: center;
   padding: 80px 20px;
@@ -218,7 +211,6 @@ body::before {
   font-size: 15px;
 }
 
-/* Waitlist cards with Cajun styling */
 .waitlist {
   display: grid;
   gap: 16px;
@@ -241,13 +233,7 @@ body::before {
   justify-content: space-between;
   gap: 20px;
   transition: all .3s ease;
-  animation: slideIn .4s ease-out;
   box-shadow: 0 8px 24px rgba(0,0,0,.4);
-}
-
-@keyframes slideIn {
-  from { opacity: 0; transform: translateX(-20px); }
-  to { opacity: 1; transform: translateX(0); }
 }
 
 .party-card:hover {
@@ -326,42 +312,27 @@ body::before {
 
 .party-actions {
   display: flex;
-  flex-direction: column;
   gap: 10px;
 }
 
 .action-btn {
-  padding: 14px 28px;
+  padding: 14px 24px;
   border-radius: 14px;
   border: 0;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 900;
   font-family: inherit;
   cursor: pointer;
   transition: all .2s ease;
   box-shadow: 0 8px 24px rgba(0,0,0,.3);
   white-space: nowrap;
-  position: relative;
-  overflow: hidden;
   text-transform: uppercase;
   letter-spacing: .5px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-}
-
-.action-btn::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,.3), transparent);
-  opacity: 0;
-  transition: opacity .2s ease;
-}
-
-.action-btn:hover:not(:disabled)::before {
-  opacity: 1;
+  gap: 6px;
+  min-width: 120px;
 }
 
 .action-btn:hover:not(:disabled) {
@@ -390,12 +361,7 @@ body::before {
 .btn-seat.seating {
   background: linear-gradient(135deg, var(--bright-red), var(--cajun-red));
   color: white;
-  animation: seatingPulse 1s ease-in-out infinite;
-}
-
-@keyframes seatingPulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: .7; }
+  animation: pulse 1s ease-in-out infinite;
 }
 
 .btn-text {
@@ -409,10 +375,25 @@ body::before {
 }
 
 .btn-text.sending {
-  animation: seatingPulse 1s ease-in-out infinite;
+  animation: pulse 1s ease-in-out infinite;
 }
 
-/* Auto-refresh */
+.btn-remove {
+  background: linear-gradient(135deg, #666, #444);
+  color: white;
+  box-shadow: 0 8px 24px rgba(0,0,0,.3);
+  min-width: 100px;
+}
+
+.btn-remove:hover:not(:disabled) {
+  box-shadow: 0 12px 36px rgba(0,0,0,.5);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .7; }
+}
+
 .auto-refresh {
   margin-top: 24px;
   text-align: center;
@@ -433,17 +414,12 @@ body::before {
   box-shadow: 0 0 8px var(--gold);
 }
 
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: .5; }
-}
-
 @media (max-width: 768px) {
   body { padding: 16px; }
   .header { flex-direction: column; align-items: flex-start; }
   .party-card { flex-direction: column; align-items: stretch; }
-  .party-actions { flex-direction: row; }
-  .action-btn { flex: 1; }
+  .party-actions { flex-wrap: wrap; }
+  .action-btn { flex: 1; min-width: 0; }
 }
 </style>
 </head>
@@ -455,7 +431,7 @@ body::before {
       <div class="logo">🦞</div>
       <div class="header-text">
         <h1>Host Dashboard</h1>
-        <div class="subtitle">Manage your waitlist</div>
+        <div class="subtitle">Complete Waitlist Management</div>
       </div>
     </div>
     
@@ -491,7 +467,6 @@ function setStatus(msg, type) {
   statusBox.className = 'status-box show ' + (type || '');
   if (!msg) statusBox.className = 'status-box';
   
-  // Auto-hide success messages after 3 seconds
   if (type === 'ok') {
     setTimeout(() => {
       if (statusBox.className.includes('ok')) {
@@ -514,8 +489,13 @@ function formatPhone(phone) {
 
 function formatTime(timestamp) {
   if (!timestamp) return '';
-  const date = new Date(timestamp);
-  return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  try {
+    const date = new Date(timestamp);
+    if (isNaN(date.getTime())) return '';
+    return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  } catch {
+    return '';
+  }
 }
 
 async function fetchWaitlist() {
@@ -524,28 +504,37 @@ async function fetchWaitlist() {
     return [];
   }
 
-  const res = await fetch(APPS + '?action=getWaitlist', { cache: 'no-store' });
-  const json = await res.json();
-  
-  if (!json.success) throw new Error(json.error || 'Failed to load');
-  
-  return Array.isArray(json.data) ? json.data : [];
+  try {
+    const res = await fetch(APPS + '?action=getWaitlist', { cache: 'no-store' });
+    const json = await res.json();
+    
+    console.log('Waitlist response:', json);
+    
+    if (!json.success) throw new Error(json.error || 'Failed to load');
+    
+    return Array.isArray(json.data) ? json.data : [];
+  } catch (err) {
+    console.error('Fetch error:', err);
+    throw err;
+  }
 }
 
 async function seatParty(name, phone, btn) {
-  const originalText = btn.textContent;
+  const originalText = btn.innerHTML;
   
   try {
     btn.disabled = true;
     btn.classList.add('seating');
-    btn.textContent = '✓ Seating...';
+    btn.innerHTML = '✓ Seating...';
     
     const payload = {
       action: 'updateWaitlistStatus',
-      name,
-      phone,
+      name: name,
+      phone: phone,
       status: 'Seated'
     };
+
+    console.log('Seating party:', payload);
 
     const res = await fetch(APPS, {
       method: 'POST',
@@ -554,30 +543,33 @@ async function seatParty(name, phone, btn) {
     });
 
     const json = await res.json();
+    console.log('Seat response:', json);
+    
     if (!json.success) throw new Error(json.error || 'Update failed');
 
     setStatus(`🔥 ${name} has been seated!`, 'ok');
     await refresh();
   } catch (err) {
+    console.error('Seat error:', err);
     setStatus('✗ Error: ' + err.message, 'err');
     btn.disabled = false;
     btn.classList.remove('seating');
-    btn.textContent = originalText;
+    btn.innerHTML = originalText;
   }
 }
 
 async function textParty(name, phone, btn) {
-  const originalText = btn.textContent;
+  const originalText = btn.innerHTML;
   
   try {
     btn.disabled = true;
     btn.classList.add('sending');
-    btn.textContent = '📱 Sending...';
+    btn.innerHTML = '📱 Sending...';
     
     const payload = {
       action: 'sendTextMessage',
-      name,
-      phone,
+      name: name,
+      phone: phone,
       message: `Hi ${name}! Your table is ready at Dodie's Cajun Diner. Please come to the host stand. See you soon! 🦞`
     };
 
@@ -590,20 +582,53 @@ async function textParty(name, phone, btn) {
     const json = await res.json();
     if (!json.success) throw new Error(json.error || 'Text failed');
 
-    setStatus(`📱 Text queued for ${name} - Twilio integration pending approval`, 'ok');
+    setStatus(`📱 Text queued for ${name}`, 'ok');
     
-    // Reset button after a moment
     setTimeout(() => {
       btn.disabled = false;
       btn.classList.remove('sending');
-      btn.textContent = originalText;
+      btn.innerHTML = originalText;
     }, 2000);
     
   } catch (err) {
     setStatus('✗ Error: ' + err.message, 'err');
     btn.disabled = false;
     btn.classList.remove('sending');
-    btn.textContent = originalText;
+    btn.innerHTML = originalText;
+  }
+}
+
+async function removeParty(name, phone, btn) {
+  if (!confirm(`Remove ${name} from waitlist?`)) return;
+  
+  const originalText = btn.innerHTML;
+  
+  try {
+    btn.disabled = true;
+    btn.innerHTML = '🗑️ Removing...';
+    
+    const payload = {
+      action: 'updateWaitlistStatus',
+      name: name,
+      phone: phone,
+      status: 'Removed'
+    };
+
+    const res = await fetch(APPS, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || 'Remove failed');
+
+    setStatus(`Removed ${name} from waitlist`, 'ok');
+    await refresh();
+  } catch (err) {
+    setStatus('✗ Error: ' + err.message, 'err');
+    btn.disabled = false;
+    btn.innerHTML = originalText;
   }
 }
 
@@ -632,7 +657,7 @@ function render(waiting) {
     const partySize = party.partySize || '—';
 
     return `
-      <div class="party-card" data-name="${encodeURIComponent(party.name)}" data-phone="${encodeURIComponent(party.phone)}">
+      <div class="party-card">
         <div class="party-info">
           <div class="party-header">
             <div class="party-name">${party.name || 'Guest'}</div>
@@ -661,11 +686,14 @@ function render(waiting) {
         </div>
         
         <div class="party-actions">
-          <button class="action-btn btn-seat">
-            ✓ Seat Party
+          <button class="action-btn btn-seat" data-name="${encodeURIComponent(party.name)}" data-phone="${encodeURIComponent(party.phone)}">
+            ✓ Seat
           </button>
-          <button class="action-btn btn-text">
-            📱 Text Party
+          <button class="action-btn btn-text" data-name="${encodeURIComponent(party.name)}" data-phone="${encodeURIComponent(party.phone)}">
+            📱 Text
+          </button>
+          <button class="action-btn btn-remove" data-name="${encodeURIComponent(party.name)}" data-phone="${encodeURIComponent(party.phone)}">
+            🗑️ Remove
           </button>
         </div>
       </div>
@@ -673,14 +701,22 @@ function render(waiting) {
   }).join('');
 
   // Add event listeners
-  waitlistEl.querySelectorAll('.party-card').forEach(card => {
-    const seatBtn = card.querySelector('.btn-seat');
-    const textBtn = card.querySelector('.btn-text');
-    const name = decodeURIComponent(card.getAttribute('data-name'));
-    const phone = decodeURIComponent(card.getAttribute('data-phone'));
-    
-    seatBtn.addEventListener('click', () => seatParty(name, phone, seatBtn));
-    textBtn.addEventListener('click', () => textParty(name, phone, textBtn));
+  waitlistEl.querySelectorAll('.btn-seat').forEach(btn => {
+    const name = decodeURIComponent(btn.getAttribute('data-name'));
+    const phone = decodeURIComponent(btn.getAttribute('data-phone'));
+    btn.addEventListener('click', () => seatParty(name, phone, btn));
+  });
+
+  waitlistEl.querySelectorAll('.btn-text').forEach(btn => {
+    const name = decodeURIComponent(btn.getAttribute('data-name'));
+    const phone = decodeURIComponent(btn.getAttribute('data-phone'));
+    btn.addEventListener('click', () => textParty(name, phone, btn));
+  });
+
+  waitlistEl.querySelectorAll('.btn-remove').forEach(btn => {
+    const name = decodeURIComponent(btn.getAttribute('data-name'));
+    const phone = decodeURIComponent(btn.getAttribute('data-phone'));
+    btn.addEventListener('click', () => removeParty(name, phone, btn));
   });
 }
 
