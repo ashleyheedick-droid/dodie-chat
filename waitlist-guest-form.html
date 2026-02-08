@@ -413,10 +413,19 @@ form.addEventListener('submit', async (e) => {
       marketingOptIn: marketingOptIn ? 'Yes' : 'No'
     };
 
-    const res = await fetch(APPS, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+    const url =
+  APPS +
+  '?action=addToWaitlist' +
+  '&name=' + encodeURIComponent(name) +
+  '&phone=' + encodeURIComponent(phone) +
+  '&partySize=' + encodeURIComponent(partySize) +
+  '&specialNotes=' + encodeURIComponent(notes) +
+  '&smsConsent=' + encodeURIComponent('Yes') +
+  '&marketingOptIn=' + encodeURIComponent(marketingOptIn ? 'Yes' : 'No');
+
+const res = await fetch(url, { method: 'GET' });
+const json = await res.json();
+
     });
 
     const json = await res.json();
