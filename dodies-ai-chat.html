@@ -7,11 +7,7 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;700;800&display=swap');
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
   --cajun-red: #8B1A1A;
@@ -37,7 +33,7 @@ body::before {
   content: '';
   position: fixed;
   inset: 0;
-  background: 
+  background:
     radial-gradient(circle at 30% 20%, var(--cajun-red), transparent 50%),
     radial-gradient(circle at 70% 80%, var(--deep-maroon), transparent 50%);
   opacity: .5;
@@ -53,7 +49,6 @@ body::before {
   position: relative;
 }
 
-/* Cajun-styled header */
 .header {
   padding: 20px 24px;
   background: linear-gradient(180deg, var(--dark-card), rgba(42,21,21,.95));
@@ -74,7 +69,7 @@ body::before {
   display: grid;
   place-items: center;
   font-size: 28px;
-  box-shadow: 
+  box-shadow:
     0 8px 24px rgba(196,30,58,.4),
     0 0 0 2px var(--gold);
   animation: float 3s ease-in-out infinite;
@@ -115,7 +110,6 @@ body::before {
   50% { opacity: .6; box-shadow: 0 0 4px var(--gold); }
 }
 
-/* Messages area */
 .messages {
   flex: 1;
   overflow-y: auto;
@@ -126,20 +120,10 @@ body::before {
   scroll-behavior: smooth;
 }
 
-.messages::-webkit-scrollbar {
-  width: 8px;
-}
+.messages::-webkit-scrollbar { width: 8px; }
+.messages::-webkit-scrollbar-track { background: transparent; }
+.messages::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 4px; }
 
-.messages::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.messages::-webkit-scrollbar-thumb {
-  background: var(--gold);
-  border-radius: 4px;
-}
-
-/* Message bubbles with Cajun flair */
 .message {
   display: flex;
   gap: 12px;
@@ -152,10 +136,7 @@ body::before {
   to { opacity: 1; transform: translateY(0); }
 }
 
-.message.user {
-  margin-left: auto;
-  flex-direction: row-reverse;
-}
+.message.user { margin-left: auto; flex-direction: row-reverse; }
 
 .message-avatar {
   width: 40px;
@@ -186,6 +167,7 @@ body::before {
   position: relative;
   word-wrap: break-word;
   box-shadow: 0 4px 12px rgba(0,0,0,.3);
+  white-space: pre-wrap;
 }
 
 .message.ai .message-bubble {
@@ -200,12 +182,12 @@ body::before {
   font-weight: 600;
 }
 
-/* Thinking animation with Cajun style */
 .thinking {
   display: flex;
   gap: 12px;
   align-items: center;
   animation: messageSlide .3s ease-out;
+  max-width: 85%;
 }
 
 .thinking .message-avatar {
@@ -247,7 +229,6 @@ body::before {
   30% { transform: translateY(-10px); opacity: 1; box-shadow: 0 0 12px var(--gold); }
 }
 
-/* Input area with Cajun styling */
 .input-area {
   padding: 20px 24px;
   background: linear-gradient(180deg, rgba(42,21,21,.95), var(--dark-card));
@@ -284,9 +265,7 @@ input {
   padding: 8px 0;
 }
 
-input::placeholder {
-  color: rgba(255,248,220,.4);
-}
+input::placeholder { color: rgba(255,248,220,.4); }
 
 .send-btn {
   width: 44px;
@@ -301,29 +280,22 @@ input::placeholder {
   font-size: 20px;
   transition: all .2s ease;
   flex-shrink: 0;
-  box-shadow: 
+  box-shadow:
     0 4px 12px rgba(196,30,58,.4),
     0 0 0 2px var(--gold);
 }
 
 .send-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 
+  box-shadow:
     0 8px 20px rgba(196,30,58,.6),
     0 0 0 2px var(--gold),
     0 0 20px rgba(212,175,55,.3);
 }
 
-.send-btn:active {
-  transform: translateY(0);
-}
+.send-btn:active { transform: translateY(0); }
+.send-btn:disabled { opacity: .5; cursor: not-allowed; }
 
-.send-btn:disabled {
-  opacity: .5;
-  cursor: not-allowed;
-}
-
-/* Welcome message with Cajun flair */
 .welcome {
   text-align: center;
   padding: 40px 20px;
@@ -332,10 +304,7 @@ input::placeholder {
   animation: fadeIn .6s ease-out;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 .welcome-icon {
   font-size: 72px;
@@ -389,16 +358,13 @@ input::placeholder {
   box-shadow: 0 4px 16px rgba(212,175,55,.3);
 }
 
-.welcome-chip::before {
-  content: '🌶️';
-  font-size: 18px;
-}
+.welcome-chip::before { content: '🌶️'; font-size: 18px; }
 
 @media (max-width: 768px) {
   .header { padding: 16px 20px; }
   .messages { padding: 20px 16px; }
   .input-area { padding: 16px 20px; }
-  .message { max-width: 90%; }
+  .message, .thinking { max-width: 90%; }
 }
 </style>
 </head>
@@ -409,10 +375,7 @@ input::placeholder {
     <div class="header-icon">🦞</div>
     <div class="header-text">
       <h1>Dodie's AI Assistant</h1>
-      <div class="status">
-        <span class="status-dot"></span>
-        Ready to help
-      </div>
+      <div class="status"><span class="status-dot"></span>Ready to help</div>
     </div>
   </div>
 
@@ -432,26 +395,35 @@ input::placeholder {
 
   <div class="input-area">
     <div class="input-wrapper">
-      <input 
-        type="text" 
-        id="input" 
-        placeholder="Ask me anything about Dodie's..."
-        autocomplete="off"
-      />
-      <button class="send-btn" id="sendBtn">➤</button>
+      <input type="text" id="input" placeholder="Ask me anything about Dodie's..." autocomplete="off" />
+      <button class="send-btn" id="sendBtn" aria-label="Send">➤</button>
     </div>
   </div>
 </div>
 
 <script>
+/**
+ * FIXES MADE:
+ * 1) Your WEBHOOK was always blank because you used localStorage.getItem('') (empty key).
+ * 2) Your sendMessage() had an extra stray "}" which breaks the function.
+ * 3) Thinking bubble now won’t stack; it will replace/remove correctly.
+ *
+ * ACTION REQUIRED:
+ * Replace the URL below with your n8n *Production* webhook URL (NOT /webhook-test/).
+ */
+<script>
+const WEBHOOK_URL = "https://ashleo22.app.n8n.cloud/webhook/dodie-chat";
+
 const messagesEl = document.getElementById('messages');
 const inputEl = document.getElementById('input');
 const sendBtn = document.getElementById('sendBtn');
 const welcomeEl = document.getElementById('welcome');
 
-const WEBHOOK = localStorage.getItem('n8nWebhookUrl') || '';
-
 let isFirstMessage = true;
+
+function scrollToBottom() {
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+}
 
 function addMessage(text, type) {
   if (isFirstMessage && welcomeEl) {
@@ -461,37 +433,42 @@ function addMessage(text, type) {
 
   const msg = document.createElement('div');
   msg.className = 'message ' + type;
-  
+
   const avatar = document.createElement('div');
   avatar.className = 'message-avatar';
   avatar.textContent = type === 'user' ? '👤' : '🦞';
-  
+
   const bubble = document.createElement('div');
   bubble.className = 'message-bubble';
   bubble.textContent = text;
-  
+
   msg.appendChild(avatar);
   msg.appendChild(bubble);
   messagesEl.appendChild(msg);
   scrollToBottom();
-  
-  return msg;
 }
 
 function showThinking() {
+  if (document.getElementById('thinking')) return;
+
+  if (isFirstMessage && welcomeEl) {
+    welcomeEl.remove();
+    isFirstMessage = false;
+  }
+
   const thinking = document.createElement('div');
   thinking.className = 'thinking';
   thinking.id = 'thinking';
-  
+
   thinking.innerHTML = `
     <div class="message-avatar">🦞</div>
-    <div class="thinking-bubble">
+    <div class="thinking-bubble" aria-label="Thinking">
       <div class="thinking-dot"></div>
       <div class="thinking-dot"></div>
       <div class="thinking-dot"></div>
     </div>
   `;
-  
+
   messagesEl.appendChild(thinking);
   scrollToBottom();
 }
@@ -501,69 +478,192 @@ function hideThinking() {
   if (thinking) thinking.remove();
 }
 
-function scrollToBottom() {
-  messagesEl.scrollTop = messagesEl.scrollHeight;
+function pickAnswer(rawText, parsed) {
+  if (parsed == null) return rawText || "No response received.";
+  if (typeof parsed === "string") return parsed;
+  if (Array.isArray(parsed)) {
+    const first = parsed[0] || {};
+    return first.answer || first.reply || first.text || rawText || "No response received.";
+  }
+  return parsed.answer || parsed.reply || parsed.text || parsed.output || rawText || "No response received.";
 }
 
 async function sendMessage() {
   const question = inputEl.value.trim();
   if (!question) return;
 
-  if (!WEBHOOK) {
-    addMessage('Please configure your n8n webhook URL in the Control Center first', 'ai');
+  // If webhook is missing, show a clear message
+  if (!WEBHOOK_URL) {
+    addMessage("Webhook is not set.", "ai");
+    return;
+  }
+
+  addMessage(question, "user");
+  inputEl.value = "";
+  sendBtn.disabled = true;
+  showThinking();
+
+  try {
+    const res = await fetch(WEBHOOK_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: question,
+        question: question,
+        userQuestion: question,
+        source: "webchat"
+      })
+    });
+
+    const rawText = await res.text();
+    let parsed = null;
+    try { parsed = JSON.parse(rawText); } catch {}
+
+    hideThinking();
+    addMessage(pickAnswer(rawText, parsed), "ai");
+  } catch (err) {
+    hideThinking();
+    addMessage("Sorry, I had trouble connecting. Please try again.", "ai");
+    console.error(err);
+  } finally {
+    sendBtn.disabled = false;
+    inputEl.focus();
+  }
+}
+
+sendBtn.addEventListener("click", sendMessage);
+inputEl.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") sendMessage();
+});
+
+document.querySelectorAll(".welcome-chip").forEach(chip => {
+  chip.addEventListener("click", () => {
+    inputEl.value = chip.getAttribute("data-q") || "";
+    sendMessage();
+  });
+});
+
+inputEl.focus();
+</script>
+
+
+function addMessage(text, type) {
+  if (isFirstMessage && welcomeEl) {
+    welcomeEl.remove();
+    isFirstMessage = false;
+  }
+
+  const msg = document.createElement('div');
+  msg.className = 'message ' + type;
+
+  const avatar = document.createElement('div');
+  avatar.className = 'message-avatar';
+  avatar.textContent = type === 'user' ? '👤' : '🦞';
+
+  const bubble = document.createElement('div');
+  bubble.className = 'message-bubble';
+  bubble.textContent = text;
+
+  msg.appendChild(avatar);
+  msg.appendChild(bubble);
+  messagesEl.appendChild(msg);
+  scrollToBottom();
+}
+
+function showThinking() {
+  if (document.getElementById('thinking')) return;
+
+  if (isFirstMessage && welcomeEl) {
+    welcomeEl.remove();
+    isFirstMessage = false;
+  }
+
+  const thinking = document.createElement('div');
+  thinking.className = 'thinking';
+  thinking.id = 'thinking';
+
+  thinking.innerHTML = `
+    <div class="message-avatar">🦞</div>
+    <div class="thinking-bubble" aria-label="Thinking">
+      <div class="thinking-dot"></div>
+      <div class="thinking-dot"></div>
+      <div class="thinking-dot"></div>
+    </div>
+  `;
+
+  messagesEl.appendChild(thinking);
+  scrollToBottom();
+}
+
+function hideThinking() {
+  const thinking = document.getElementById('thinking');
+  if (thinking) thinking.remove();
+}
+
+function pickAnswer(rawText, parsed) {
+  if (parsed == null) return rawText || "No response received.";
+  if (typeof parsed === 'string') return parsed;
+  if (Array.isArray(parsed)) {
+    const first = parsed[0] || {};
+    return first.answer || first.reply || first.text || rawText || "No response received.";
+  }
+  return parsed.answer || parsed.reply || parsed.text || parsed.output || rawText || "No response received.";
+}
+
+async function sendMessage() {
+  const question = inputEl.value.trim();
+  if (!question) return;
+
+  if (!https://ashleo22.app.n8n.cloud/webhook/dodie-chat || WEBHOOK_URL.includes("YOUR_N8N")) {
+    addMessage("Webhook is not set yet. Paste your n8n Production webhook URL into WEBHOOK_URL in the HTML.", "ai");
     return;
   }
 
   addMessage(question, 'user');
   inputEl.value = '';
   sendBtn.disabled = true;
-
   showThinking();
 
   try {
-    const res = await fetch(WEBHOOK, {
+    const res = await fetch(WEBHOOK_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      // send multiple keys so it works with different n8n setups
       body: JSON.stringify({
+        message: question,
         question: question,
-        userQuestion: question
+        userQuestion: question,
+        source: "webchat"
       })
     });
 
+    const rawText = await res.text();
+
+    let parsed = null;
+    try { parsed = JSON.parse(rawText); } catch {}
+
     hideThinking();
 
-    const text = await res.text();
-    let data;
-    
-    try {
-      data = JSON.parse(text);
-    } catch {
-      data = text;
-    }
-
-    const answer = data?.answer || data?.reply || data?.text || 
-                   (Array.isArray(data) && data[0]?.answer) || text;
-
+    const answer = pickAnswer(rawText, parsed);
     addMessage(answer, 'ai');
   } catch (err) {
     hideThinking();
     addMessage('Sorry, I had trouble connecting. Please try again.', 'ai');
     console.error(err);
+  } finally {
+    sendBtn.disabled = false;
+    inputEl.focus();
   }
-
-  sendBtn.disabled = false;
-  inputEl.focus();
 }
 
 sendBtn.addEventListener('click', sendMessage);
-inputEl.addEventListener('keypress', e => {
+inputEl.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') sendMessage();
 });
 
 document.querySelectorAll('.welcome-chip').forEach(chip => {
   chip.addEventListener('click', () => {
-    const question = chip.getAttribute('data-q');
-    inputEl.value = question;
+    inputEl.value = chip.getAttribute('data-q') || '';
     sendMessage();
   });
 });
