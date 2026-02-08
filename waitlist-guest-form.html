@@ -285,10 +285,8 @@ textarea{ min-height:90px; resize:vertical; }
 </div>
 
 <script>
-<script>
 const APPS = "https://script.google.com/macros/s/AKfycbyxEiodBfeGW0KH9pTT-oqG9shwKWYVO98gwtfUartYO4M4OKvZb9zIzude0mOmqDYcrg/exec";
 
-const form = document.getElementById('waitlistForm');
 const submitBtn = document.getElementById('submitBtn');
 const statusMsg = document.getElementById('statusMessage');
 const formView = document.getElementById('formView');
@@ -308,17 +306,22 @@ function showSuccess() {
   successView.classList.add('show');
 }
 
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
+// Single event listener on the BUTTON
+submitBtn.addEventListener('click', async () => {
   hideStatus();
 
   const name = document.getElementById('name').value.trim();
   const phoneRaw = document.getElementById('phone').value.trim();
-  const phone = phoneRaw.replace(/\D/g,'');   // ← ALWAYS send digits only
+  const phone = phoneRaw.replace(/\D/g, ''); // ← Strip to digits only
   const partySize = document.getElementById('partySize').value.trim();
   const notes = document.getElementById('notes').value.trim();
   const smsConsent = document.getElementById('smsConsent').checked;
   const marketingOptIn = document.getElementById('marketingOptIn').checked;
+
+  if (!name || !phone || !partySize) {
+    showStatus('Please fill out all required fields', 'error');
+    return;
+  }
 
   if (!smsConsent) {
     showStatus('You must agree to receive text messages', 'error');
@@ -329,31 +332,46 @@ form.addEventListener('submit', async (e) => {
   submitBtn.textContent = 'Adding...';
 
   try {
-    const res = await fetch(APPS, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        action: 'addToWaitlist',
-        name,
-        phone,
-        partySize,
-        specialNotes: notes,
-        smsConsent: smsConsent ? 'Yes' : 'No',
-        marketingOptIn: marketingOptIn ? 'Yes' : 'No'
-      })
-    });
+    const url =
+      APPS +
+      '?action=addToWaitlist' +
+      '&name=' + encodeURIComponent(name) +
+      '&phone=' + encodeURIComponent(phone) +
+      '&partySize=' + encodeURIComponent(partySize) +
+      '&specialNotes=' + encodeURIComponent(notes) +
+      '&smsConsent=Yes' +
+      '&marketingOptIn=' + encodeURIComponent(marketingOptIn ? 'Yes' : 'No');
 
+    const res = await fetch(url, { method: 'GET' });
     const json = await res.json();
 
-    if (!json.success) throw new Error('Submit failed');
+    if (!json.success) {
+      throw new Error(json.error || json.message || 'Failed to add to waitlist');
+    }
 
     showSuccess();
-
   } catch (err) {
     showStatus('Error: ' + err.message, 'error');
     submitBtn.disabled = false;
     submitBtn.textContent = 'Join Waitlist';
   }
+});
+
+// Auto-format phone number as user types
+document.getElementById('phone').addEventListener('input', (e) => {
+  let value = e.target.value.replace(/\D/g, '');
+  if (value.length > 0) {
+    if (value.length <= 3) {
+      value = `(${value}`;
+    } else if (value.length <= 6) {
+      value = `(${value.slice(0, 3)}) ${value.slice(3)}`;
+    } else {
+      value = `(${value.slice(0, 3)}) ${value.slice(3, 6)}-${value.slice(6, 10)}`;
+    }
+  }
+  e.target.value = value;
+});
+</script>
 });
 
 document.getElementById('phone').addEventListener('input', (e) => {
