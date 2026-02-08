@@ -1,60 +1,270 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Join Waitlist</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-body{font-family:sans-serif;background:#111;color:#fff;padding:24px}
-.card{max-width:420px;margin:auto;background:#1b1b1b;padding:20px;border-radius:12px}
-input,textarea,button{
-  width:100%;padding:12px;margin-top:10px;
-  border-radius:8px;border:none;font-size:16px
-}
-button{background:#c49b3a;color:#000;font-weight:bold}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dodie’s Waitlist</title>
+  <style>
+    :root{
+      --bg1:#130606;
+      --bg2:#0b0505;
+      --card:rgba(22,10,10,.86);
+      --line:rgba(215,168,58,.22);
+      --gold:#d7a83a;
+      --gold2:#b88925;
+      --text:#f6f2e8;
+      --muted:#c9bca3;
+      --shadow:0 10px 30px rgba(0,0,0,.45);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 20% 0%, rgba(178,31,45,.28), transparent 60%),
+        radial-gradient(900px 500px at 90% 20%, rgba(215,168,58,.12), transparent 60%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+      min-height:100vh;
+      padding:26px 16px 40px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+    }
+    .wrap{width:100%;max-width:520px}
+    .brand{
+      text-align:center;
+      margin-bottom:14px;
+    }
+    .logo{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:56px;height:56px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background:rgba(215,168,58,.10);
+      box-shadow:var(--shadow);
+      margin-bottom:10px;
+      font-weight:900;
+      letter-spacing:.06em;
+      color:var(--gold);
+    }
+    h1{
+      margin:0;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      font-size:18px;
+      color:var(--gold);
+    }
+    .sub{
+      margin-top:6px;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.35;
+    }
+    .card{
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      background:linear-gradient(180deg, rgba(22,10,10,.86), rgba(12,6,6,.86));
+      box-shadow:var(--shadow);
+      padding:18px;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:12px;
+      margin-top:10px;
+    }
+    label{
+      font-size:12px;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      color:var(--muted);
+      display:block;
+      margin-bottom:6px;
+    }
+    input, textarea, select{
+      width:100%;
+      padding:12px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.28);
+      color:var(--text);
+      outline:none;
+      font-size:16px;
+    }
+    input::placeholder, textarea::placeholder{color:rgba(246,242,232,.55)}
+    textarea{min-height:86px;resize:vertical}
+    .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media (max-width:420px){.row2{grid-template-columns:1fr}}
+    .consent{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      padding:12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.22);
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.35;
+    }
+    .consent input{width:auto;margin-top:2px}
+    .btn{
+      width:100%;
+      padding:13px 14px;
+      border-radius:14px;
+      border:1px solid rgba(215,168,58,.35);
+      background:linear-gradient(180deg, rgba(215,168,58,.30), rgba(215,168,58,.16));
+      color:var(--text);
+      font-weight:900;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      cursor:pointer;
+    }
+    .btn:disabled{opacity:.6;cursor:not-allowed}
+    .fineprint{
+      margin-top:10px;
+      color:rgba(201,188,163,.9);
+      font-size:12px;
+      text-align:center;
+    }
+    .toast{
+      margin-top:12px;
+      padding:12px 14px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:rgba(0,0,0,.35);
+      color:var(--text);
+      display:none;
+    }
+    .toast.show{display:block}
+  </style>
 </head>
 <body>
+  <div class="wrap">
+    <div class="brand">
+      <div class="logo">DD</div>
+      <h1>Join the Waitlist</h1>
+      <div class="sub">Add your party and we’ll keep you updated. Please use a mobile number for texts.</div>
+    </div>
 
-<div class="card">
-<h2>Join the Waitlist</h2>
+    <div class="card">
+      <form id="waitlistForm" class="grid" autocomplete="on">
+        <div>
+          <label for="name">Name</label>
+          <input id="name" placeholder="Your name" required />
+        </div>
 
-<form id="waitlistForm">
-  <input id="name" placeholder="Name" required>
-  <input id="phone" placeholder="Phone" required>
-  <input id="partySize" type="number" placeholder="Party Size" required>
-  <textarea id="notes" placeholder="Special notes"></textarea>
-  <button type="submit">Join Waitlist</button>
-</form>
+        <div class="row2">
+          <div>
+            <label for="phone">Phone</label>
+            <input id="phone" placeholder="(214) 555-1234" inputmode="tel" required />
+          </div>
+          <div>
+            <label for="partySize">Party Size</label>
+            <select id="partySize" required>
+              <option value="" selected disabled>Select</option>
+              <option>1</option><option>2</option><option>3</option><option>4</option>
+              <option>5</option><option>6</option><option>7</option><option>8</option>
+              <option>9</option><option>10</option><option>11</option><option>12</option>
+              <option>13</option><option>14</option><option>15</option><option>16</option>
+            </select>
+          </div>
+        </div>
 
-<div id="msg"></div>
-</div>
+        <div>
+          <label for="notes">Special Notes (optional)</label>
+          <textarea id="notes" placeholder="Patio request, high chair, allergy, birthday…"></textarea>
+        </div>
 
-<script>
-const APPS_SCRIPT_URL = "YOUR_EXEC_URL_HERE";
+        <div class="consent">
+          <input id="smsConsent" type="checkbox" checked />
+          <div>
+            <b style="color:var(--text)">Text updates</b><br/>
+            By checking this box, you agree to receive waitlist texts. Reply STOP to opt out.
+          </div>
+        </div>
 
-document.getElementById("waitlistForm").addEventListener("submit", async e=>{
-  e.preventDefault();
+        <button class="btn" id="submitBtn" type="submit">Add My Party</button>
+        <div class="fineprint">If you don’t receive texts, double-check your phone number.</div>
 
-  const data = {
-    action:"addToWaitlist",
-    name: name.value,
-    phone: phone.value,
-    partySize: partySize.value,
-    specialNotes: notes.value,
-    smsConsent:"Yes"
-  };
+        <div id="toast" class="toast"></div>
+      </form>
+    </div>
+  </div>
 
-  const r = await fetch(APPS_SCRIPT_URL,{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify(data)
-  });
+  <script>
+    // ✅ Put your /exec URL here (guests will NEVER see or type it)
+    const APPS_SCRIPT_URL = "PASTE_YOUR_APPS_SCRIPT_EXEC_URL_HERE";
 
-  const j = await r.json();
-  msg.innerText = j.success ? "You’re on the list!" : j.error;
-});
-</script>
+    const form = document.getElementById("waitlistForm");
+    const submitBtn = document.getElementById("submitBtn");
+    const toast = document.getElementById("toast");
 
+    function showToast(msg){
+      toast.textContent = msg;
+      toast.classList.add("show");
+    }
+
+    function toE164Maybe(phone){
+      // Light normalization; Apps Script can accept raw too.
+      const digits = String(phone || "").replace(/\D/g,"");
+      if(digits.length === 10) return "+1" + digits;
+      if(digits.length === 11 && digits.startsWith("1")) return "+" + digits;
+      return phone;
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      toast.classList.remove("show");
+
+      const name = document.getElementById("name").value.trim();
+      const phone = toE164Maybe(document.getElementById("phone").value.trim());
+      const partySize = document.getElementById("partySize").value;
+      const specialNotes = document.getElementById("notes").value.trim();
+      const smsConsent = document.getElementById("smsConsent").checked ? "Yes" : "No";
+
+      if(!APPS_SCRIPT_URL.includes("/exec")){
+        showToast("Setup error: Apps Script URL is missing.");
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Adding…";
+
+      try{
+        const r = await fetch(APPS_SCRIPT_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "addToWaitlist",
+            name,
+            phone,
+            partySize,
+            specialNotes,
+            smsConsent
+          })
+        });
+
+        const j = await r.json();
+
+        if(j && j.success){
+          showToast("You’re on the list. We’ll text you updates!");
+          form.reset();
+          document.getElementById("smsConsent").checked = true;
+        } else {
+          showToast("Couldn’t add you right now: " + (j.error || "Unknown error"));
+        }
+      } catch(err){
+        showToast("Network error. Please try again.");
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Add My Party";
+      }
+    });
+  </script>
 </body>
 </html>
