@@ -334,4 +334,207 @@ input::placeholder{color:rgba(255,248,220,.4)}
   font-size:14px;
   color:var(--cream);
   cursor:pointer;
-  tra
+  transition:all .2s ease;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.welcome-chip:hover{
+  background:linear-gradient(135deg, var(--cajun-red), rgba(42,21,21,.9));
+  border-color:var(--gold);
+  transform:translateX(6px);
+  box-shadow:0 4px 16px rgba(212,175,55,.3);
+}
+
+.welcome-chip::before{content:'🌶️'; font-size:18px}
+
+@media (max-width:768px){
+  .header{padding:16px 20px}
+  .messages{padding:20px 16px}
+  .input-area{padding:16px 20px}
+  .message,.thinking{max-width:90%}
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <div class="header">
+    <div class="header-icon">🦞</div>
+    <div class="header-text">
+      <h1>Dodie's AI Assistant</h1>
+      <div class="status">
+        <span class="status-dot"></span>
+        Ready to help
+      </div>
+    </div>
+  </div>
+
+  <div class="messages" id="messages">
+    <div class="welcome" id="welcome">
+      <div class="welcome-icon">🤖</div>
+      <h2>How Y'all Doin'?</h2>
+      <p>Ask me about the waitlist, crawfish prices, seafood availability, or anything else!</p>
+      <div class="welcome-suggestions">
+        <div class="welcome-chip" data-q="How many people are waiting?">How many people are waiting?</div>
+        <div class="welcome-chip" data-q="What's the crawfish price today?">What's the crawfish price today?</div>
+        <div class="welcome-chip" data-q="Is there a wait right now?">Is there a wait right now?</div>
+        <div class="welcome-chip" data-q="What seafood do you have?">What seafood do you have?</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="input-area">
+    <div class="input-wrapper">
+      <input
+        type="text"
+        id="input"
+        placeholder="Ask me anything about Dodie's..."
+        autocomplete="off"
+      />
+      <button class="send-btn" id="sendBtn" aria-label="Send">➤</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/**
+ * IMPORTANT:
+ * Replace this with your LIVE/PRODUCTION n8n webhook URL.
+ * Example:
+ * const WEBHOOK_URL = "https://your-n8n.domain/webhook/dodies-chat";
+ */
+const WEBHOOK_URL = "https://YOUR_N8N_WEBHOOK_URL";
+
+const messagesEl = document.getElementById('messages');
+const welcomeEl  = document.getElementById('welcome');
+const inputEl    = document.getElementById('input');
+const sendBtn    = document.getElementById('sendBtn');
+
+function scrollToBottom() {
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+function addMessage(text, who) {
+  // remove welcome on first real message
+  if (welcomeEl) welcomeEl.remove();
+
+  const row = document.createElement('div');
+  row.className = `message ${who}`;
+
+  const avatar = document.createElement('div');
+  avatar.className = 'message-avatar';
+  avatar.textContent = (who === 'user') ? '👤' : '🦞';
+
+  const bubble = document.createElement('div');
+  bubble.className = 'message-bubble';
+  bubble.textContent = text;
+
+  row.appendChild(avatar);
+  row.appendChild(bubble);
+  messagesEl.appendChild(row);
+  scrollToBottom();
+}
+
+function showThinking() {
+  if (document.getElementById('thinking')) return;
+
+  // remove welcome on first send
+  if (welcomeEl) welcomeEl.remove();
+
+  const thinking = document.createElement('div');
+  thinking.className = 'thinking';
+  thinking.id = 'thinking';
+
+  thinking.innerHTML = `
+    <div class="message-avatar">🦞</div>
+    <div class="thinking-bubble" aria-label="Thinking">
+      <div class="thinking-dot"></div>
+      <div class="thinking-dot"></div>
+      <div class="thinking-dot"></div>
+    </div>
+  `;
+
+  messagesEl.appendChild(thinking);
+  scrollToBottom();
+}
+
+function hideThinking() {
+  const thinking = document.getElementById('thinking');
+  if (thinking) thinking.remove();
+}
+
+function normalizeAnswer(payload, fallbackText) {
+  if (payload == null) return fallbackText || 'No response received.';
+
+  // if n8n returns a string
+  if (typeof payload === 'string') return payload;
+
+  // if n8n returns an array like [{ answer: "..." }]
+  if (Array.isArray(payload)) {
+    const first = payload[0] || {};
+    return first.answer || first.reply || first.text || fallbackText || 'No response received.';
+  }
+
+  // object
+  return payload.answer || payload.reply || payload.text || payload.output || fallbackText || 'No response received.';
+}
+
+async function sendMessage() {
+  const question = (inputEl.value || '').trim();
+  if (!question) return;
+
+  addMessage(question, 'user');
+  inputEl.value = '';
+  sendBtn.disabled = true;
+  showThinking();
+
+  try {
+    const res = await fetch(WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      // send BOTH keys so it works no matter what your n8n expects
+      body: JSON.stringify({
+        message: question,
+        question: question,
+        userQuestion: question,
+        source: 'webchat'
+      })
+    });
+
+    const rawText = await res.text();
+    let data = null;
+    try { data = JSON.parse(rawText); } catch { /* keep as null */ }
+
+    hideThinking();
+
+    // If webhook returns HTML error page, still show something useful
+    const answer = normalizeAnswer(data, rawText);
+    addMessage(answer, 'ai');
+  } catch (err) {
+    hideThinking();
+    addMessage('Sorry — I had trouble connecting. Please try again.', 'ai');
+    console.error(err);
+  } finally {
+    sendBtn.disabled = false;
+    inputEl.focus();
+  }
+}
+
+sendBtn.addEventListener('click', sendMessage);
+inputEl.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') sendMessage();
+});
+
+document.querySelectorAll('.welcome-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    inputEl.value = chip.getAttribute('data-q') || '';
+    sendMessage();
+  });
+});
+
+inputEl.focus();
+</script>
+</body>
+</html>
