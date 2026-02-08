@@ -444,38 +444,84 @@ input::placeholder {
 </div>
 
 <script>
-const messagesEl = document.getElementById('messages');
-const inputEl = document.getElementById('input');
-const sendBtn = document.getElementById('sendBtn');
-const welcomeEl = document.getElementById('welcome');
+const WEBHOOK_URL = "https://YOUR_N8N_WEBHOOK_URL"; // ← paste your n8n webhook here
 
-const WEBHOOK = localStorage.getItem('n8nWebhookUrl') || 'https://dodies-chat.netlify.app/dodies-ai-chat.html';
+const input = document.getElementById("chatInput");
+const sendBtn = document.getElementById("sendBtn");
+const chatBox = document.getElementById("chatMessages");
 
-let isFirstMessage = true;
+function addUser(msg) {
+  const d = document.createElement("div");
+  d.className = "msg user";
+  d.innerText = msg;
+  chatBox.appendChild(d);
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
 
-function addMessage(text, type) {
-  if (isFirstMessage && welcomeEl) {
-    welcomeEl.remove();
-    isFirstMessage = false;
+function addBot(msg) {
+  const d = document.createElement("div");
+  d.className = "msg bot";
+  d.innerText = msg;
+  chatBox.appendChild(d);
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function addThinking() {
+  const d = document.createElement("div");
+  d.className = "msg bot";
+  d.id = "thinkingBubble";
+  d.innerText = "Thinking…";
+  chatBox.appendChild(d);
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function removeThinking() {
+  const t = document.getElementById("thinkingBubble");
+  if (t) t.remove();
+}
+
+async function sendMessage() {
+  const text = input.value.trim();
+  if (!text) return;
+
+  addUser(text);
+  input.value = "";
+  addThinking();
+
+  try {
+    const res = await fetch(WEBHOOK_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: text,
+        source: "webchat"
+      })
+    });
+
+    const data = await res.json();
+
+    removeThinking();
+
+    addBot(
+      data.reply ||
+      data.text ||
+      data.output ||
+      "No response received."
+    );
+
+  } catch (err) {
+    removeThinking();
+    addBot("Connection error — webhook not responding.");
+    console.error(err);
   }
+}
 
-  const msg = document.createElement('div');
-  msg.className = 'message ' + type;
-  
-  const avatar = document.createElement('div');
-  avatar.className = 'message-avatar';
-  avatar.textContent = type === 'user' ? '👤' : '🦞';
-  
-  const bubble = document.createElement('div');
-  bubble.className = 'message-bubble';
-  bubble.textContent = text;
-  
-  msg.appendChild(avatar);
-  msg.appendChild(bubble);
-  messagesEl.appendChild(msg);
-  scrollToBottom();
-  
-  return msg;
+sendBtn.onclick = sendMessage;
+input.addEventListener("keydown", e => {
+  if (e.key === "Enter") sendMessage();
+});
+</script>
+
 }
 
 function showThinking() {
