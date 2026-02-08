@@ -508,10 +508,6 @@ function scrollToBottom() {
 async function sendMessage() {
   const question = inputEl.value.trim();
   if (!question) return;
-
-  if (!WEBHOOK) {
-    addMessage('Please configure your n8n webhook URL in the Control Center first', 'ai');
-    return;
   }
 
   addMessage(question, 'user');
