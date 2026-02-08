@@ -192,6 +192,35 @@ textarea{ min-height:90px; resize:vertical; }
   margin-bottom:24px;
 }
 
+.wait-time-box{
+  background: var(--black);
+  border: 2px solid var(--red);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.wait-time-label{
+  font-size: 13px;
+  color: var(--light-gray);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.wait-time-value{
+  font-family: 'Montserrat', sans-serif;
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--red);
+}
+
+.parties-ahead{
+  font-size: 14px;
+  color: var(--light-gray);
+  margin-top: 12px;
+}
+
 .back-btn{
   padding:12px 28px;
   background:var(--black);
@@ -274,7 +303,14 @@ textarea{ min-height:90px; resize:vertical; }
     <div class="success-view" id="successView">
       <span class="success-icon">✓</span>
       <h2>You're on the list!</h2>
-      <p>We'll send you a text when your table is ready.<br>Average wait: 15-30 minutes</p>
+      <p>We'll send you a text when your table is ready.</p>
+      
+      <div class="wait-time-box">
+        <div class="wait-time-label">Estimated Wait Time</div>
+        <div class="wait-time-value" id="estimatedWait">Loading...</div>
+        <div class="parties-ahead" id="partiesAhead"></div>
+      </div>
+      
       <a href="index.html" class="back-btn">← Back to Dashboard</a>
     </div>
 
@@ -282,7 +318,7 @@ textarea{ min-height:90px; resize:vertical; }
 </div>
 
 <script>
-const APPS = "https://script.google.com/macros/s/AKfycbx9EvvDNNt5ELhEMLm9LTmEgyVnnI8l7IgEdV2I2W-RrfHXx3ZB-vELcMEpNzB7A7rt2g/exec";
+const APPS = "https://script.google.com/macros/s/AKfycbzHE2uYN5INL1dxBg3IhE6p20O-MunxNh8xhZemlc-Wp0XgK2Fym8TKuSryPN5jjIAyJQ/exec";
 
 const submitBtn = document.getElementById('submitBtn');
 const statusMsg = document.getElementById('statusMessage');
@@ -298,9 +334,37 @@ function hideStatus() {
   statusMsg.className = 'status-message';
 }
 
-function showSuccess() {
+function calculateEstimatedWait(partiesAhead) {
+  if (partiesAhead <= 4) {
+    return { time: "15-25 min", message: `${partiesAhead} ${partiesAhead === 1 ? 'party' : 'parties'} ahead of you` };
+  } else if (partiesAhead <= 6) {
+    return { time: "30-40 min", message: `${partiesAhead} parties ahead of you` };
+  } else {
+    return { time: "45-60 min", message: `${partiesAhead} parties ahead of you` };
+  }
+}
+
+async function getWaitlistCount() {
+  try {
+    const res = await fetch(APPS + '?action=getWaitlist');
+    const json = await res.json();
+    if (json.success && json.data) {
+      return json.data.length;
+    }
+    return 0;
+  } catch (err) {
+    console.error('Error getting waitlist count:', err);
+    return 0;
+  }
+}
+
+function showSuccess(partiesAhead) {
   formView.style.display = 'none';
   successView.classList.add('show');
+  
+  const estimate = calculateEstimatedWait(partiesAhead);
+  document.getElementById('estimatedWait').textContent = estimate.time;
+  document.getElementById('partiesAhead').textContent = estimate.message;
 }
 
 submitBtn.addEventListener('click', async () => {
@@ -328,6 +392,10 @@ submitBtn.addEventListener('click', async () => {
   submitBtn.textContent = 'Adding...';
 
   try {
+    // Get current waitlist count BEFORE adding
+    const partiesAhead = await getWaitlistCount();
+    
+    // Add to waitlist
     const url =
       APPS +
       '?action=addToWaitlist' +
@@ -345,7 +413,7 @@ submitBtn.addEventListener('click', async () => {
       throw new Error(json.error || json.message || 'Failed to add to waitlist');
     }
 
-    showSuccess();
+    showSuccess(partiesAhead);
   } catch (err) {
     showStatus('Error: ' + err.message, 'error');
     submitBtn.disabled = false;
