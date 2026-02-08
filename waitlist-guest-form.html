@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -284,9 +285,10 @@ textarea{ min-height:90px; resize:vertical; }
 </div>
 
 <script>
-// ✅ PASTE YOUR /exec WEB APP URL HERE (guests will NOT be asked)
+<script>
 const APPS = "https://script.google.com/macros/s/AKfycbyxEiodBfeGW0KH9pTT-oqG9shwKWYVO98gwtfUartYO4M4OKvZb9zIzude0mOmqDYcrg/exec";
 
+const form = document.getElementById('waitlistForm');
 const submitBtn = document.getElementById('submitBtn');
 const statusMsg = document.getElementById('statusMessage');
 const formView = document.getElementById('formView');
@@ -306,12 +308,63 @@ function showSuccess() {
   successView.classList.add('show');
 }
 
-submitBtn.addEventListener('click', async () => {
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
   hideStatus();
 
-  if (!APPS || !APPS.includes('/exec')) {
-    showStatus('Setup error: missing connection URL', 'error');
+  const name = document.getElementById('name').value.trim();
+  const phoneRaw = document.getElementById('phone').value.trim();
+  const phone = phoneRaw.replace(/\D/g,'');   // ← ALWAYS send digits only
+  const partySize = document.getElementById('partySize').value.trim();
+  const notes = document.getElementById('notes').value.trim();
+  const smsConsent = document.getElementById('smsConsent').checked;
+  const marketingOptIn = document.getElementById('marketingOptIn').checked;
+
+  if (!smsConsent) {
+    showStatus('You must agree to receive text messages', 'error');
     return;
+  }
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Adding...';
+
+  try {
+    const res = await fetch(APPS, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'addToWaitlist',
+        name,
+        phone,
+        partySize,
+        specialNotes: notes,
+        smsConsent: smsConsent ? 'Yes' : 'No',
+        marketingOptIn: marketingOptIn ? 'Yes' : 'No'
+      })
+    });
+
+    const json = await res.json();
+
+    if (!json.success) throw new Error('Submit failed');
+
+    showSuccess();
+
+  } catch (err) {
+    showStatus('Error: ' + err.message, 'error');
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Join Waitlist';
+  }
+});
+
+document.getElementById('phone').addEventListener('input', (e) => {
+  let v = e.target.value.replace(/\D/g, '');
+  if (v.length <= 3) v = '(' + v;
+  else if (v.length <= 6) v = `(${v.slice(0,3)}) ${v.slice(3)}`;
+  else v = `(${v.slice(0,3)}) ${v.slice(3,6)}-${v.slice(6,10)}`;
+  e.target.value = v;
+});
+</script>
+
   }
 
   const name = document.getElementById('name').value.trim();
