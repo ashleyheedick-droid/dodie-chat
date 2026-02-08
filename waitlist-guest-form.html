@@ -385,10 +385,6 @@ function showSuccess() {
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
   hideStatus();
-
-  if (!APPS) {
-    showStatus('⚠️ Configure Apps Script URL in Dashboard first', 'error');
-    return;
   }
 
   const name = document.getElementById('name').value.trim();
