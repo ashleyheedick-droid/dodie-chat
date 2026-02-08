@@ -6,16 +6,10 @@
   <title>Dodie’s Cajun Waitlist</title>
   <style>
     :root{
-      --bg:#0b0505;
-      --bg2:#140707;
-      --card:rgba(18,8,8,.78);
-      --card2:rgba(10,4,4,.78);
+      --bg:#0b0505; --bg2:#140707;
+      --card:rgba(18,8,8,.78); --card2:rgba(10,4,4,.78);
       --line:rgba(215,168,58,.22);
-      --gold:#d7a83a;
-      --gold2:#b88925;
-      --red:#b21f2d;
-      --text:#f6f2e8;
-      --muted:#c9bca3;
+      --gold:#d7a83a; --text:#f6f2e8; --muted:#c9bca3;
       --shadow:0 16px 45px rgba(0,0,0,.55);
       --radius:22px;
     }
@@ -31,49 +25,27 @@
         linear-gradient(180deg, var(--bg2), var(--bg));
       min-height:100vh;
       padding:28px 16px 44px;
-      display:flex;
-      justify-content:center;
+      display:flex; justify-content:center;
     }
     .wrap{width:100%;max-width:520px}
-    .hero{
-      text-align:center;
-      margin-bottom:14px;
-      position:relative;
-    }
+    .hero{text-align:center;margin-bottom:14px}
     .badge{
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      padding:10px 14px;
-      border-radius:999px;
+      display:inline-flex;align-items:center;gap:10px;
+      padding:10px 14px;border-radius:999px;
       border:1px solid var(--line);
       background:rgba(215,168,58,.08);
       box-shadow:var(--shadow);
       color:var(--gold);
-      font-weight:900;
-      letter-spacing:.08em;
-      text-transform:uppercase;
-      font-size:12px;
+      font-weight:900;letter-spacing:.08em;
+      text-transform:uppercase;font-size:12px;
     }
     .badge .dot{
       width:10px;height:10px;border-radius:99px;
       background:rgba(215,168,58,.75);
       box-shadow:0 0 0 6px rgba(215,168,58,.12);
     }
-    h1{
-      margin:14px 0 6px;
-      letter-spacing:.08em;
-      text-transform:uppercase;
-      font-size:18px;
-      color:var(--gold);
-    }
-    .sub{
-      margin:0 auto;
-      max-width:420px;
-      color:var(--muted);
-      font-size:13px;
-      line-height:1.45;
-    }
+    h1{margin:14px 0 6px;letter-spacing:.08em;text-transform:uppercase;font-size:18px;color:var(--gold)}
+    .sub{margin:0 auto;max-width:420px;color:var(--muted);font-size:13px;line-height:1.45}
 
     .card{
       border:1px solid var(--line);
@@ -81,128 +53,61 @@
       background:linear-gradient(180deg, var(--card), var(--card2));
       box-shadow:var(--shadow);
       padding:18px 16px 16px;
-      position:relative;
-      overflow:hidden;
+      position:relative;overflow:hidden;
     }
-
-    /* Cute floating “bubbles” */
     .bubble{
-      position:absolute;
-      border-radius:999px;
+      position:absolute;border-radius:999px;
       border:1px solid rgba(215,168,58,.18);
       background:rgba(215,168,58,.06);
-      filter:blur(.2px);
-      animation:float 6s ease-in-out infinite;
+      animation:float 7s ease-in-out infinite;
       pointer-events:none;
     }
     .b1{width:130px;height:130px;left:-50px;top:-40px;animation-duration:7.5s}
     .b2{width:90px;height:90px;right:-30px;top:25px;animation-duration:6.5s}
     .b3{width:110px;height:110px;right:30px;bottom:-50px;animation-duration:8.3s}
-    @keyframes float{
-      0%,100%{transform:translateY(0)}
-      50%{transform:translateY(-10px)}
-    }
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
 
-    .craw{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:10px;
-      margin-bottom:10px;
-    }
-    .craw .emoji{
-      font-size:28px;
-      filter: drop-shadow(0 10px 12px rgba(0,0,0,.45));
-    }
-    .craw .title{
-      font-weight:900;
-      letter-spacing:.06em;
-      text-transform:uppercase;
-      font-size:12px;
-      color:rgba(246,242,232,.92);
-    }
-
+    .craw{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px}
+    .craw .emoji{font-size:28px;filter: drop-shadow(0 10px 12px rgba(0,0,0,.45))}
+    .craw .title{font-weight:900;letter-spacing:.06em;text-transform:uppercase;font-size:12px;color:rgba(246,242,232,.92)}
     form{display:grid;gap:12px;margin-top:8px}
-    label{
-      font-size:12px;
-      letter-spacing:.08em;
-      text-transform:uppercase;
-      color:var(--muted);
-      display:block;
-      margin-bottom:6px;
-    }
+    label{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px}
     input, textarea, select{
-      width:100%;
-      padding:12px 12px;
-      border-radius:16px;
+      width:100%;padding:12px 12px;border-radius:16px;
       border:1px solid rgba(255,255,255,.10);
       background:rgba(0,0,0,.28);
-      color:var(--text);
-      outline:none;
-      font-size:16px;
+      color:var(--text);outline:none;font-size:16px;
     }
     input::placeholder, textarea::placeholder{color:rgba(246,242,232,.55)}
     textarea{min-height:86px;resize:vertical}
     .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     @media (max-width:420px){.row2{grid-template-columns:1fr}}
-
     .consent{
-      display:flex;
-      gap:10px;
-      align-items:flex-start;
-      padding:12px;
-      border-radius:16px;
+      display:flex;gap:10px;align-items:flex-start;
+      padding:12px;border-radius:16px;
       border:1px solid rgba(255,255,255,.10);
       background:rgba(0,0,0,.22);
-      color:var(--muted);
-      font-size:13px;
-      line-height:1.35;
+      color:var(--muted);font-size:13px;line-height:1.35;
     }
     .consent input{width:auto;margin-top:2px}
     .consent b{color:var(--text)}
-
     .btn{
-      width:100%;
-      padding:13px 14px;
-      border-radius:16px;
+      width:100%;padding:13px 14px;border-radius:16px;
       border:1px solid rgba(215,168,58,.40);
       background:linear-gradient(180deg, rgba(215,168,58,.34), rgba(215,168,58,.16));
       color:var(--text);
-      font-weight:1000;
-      letter-spacing:.10em;
-      text-transform:uppercase;
+      font-weight:1000;letter-spacing:.10em;text-transform:uppercase;
       cursor:pointer;
-      transition:transform .06s ease, filter .2s ease;
     }
-    .btn:hover{filter:brightness(1.08)}
-    .btn:active{transform:translateY(1px)}
     .btn:disabled{opacity:.6;cursor:not-allowed}
-
-    .fineprint{
-      margin-top:10px;
-      color:rgba(201,188,163,.9);
-      font-size:12px;
-      text-align:center;
-    }
-
+    .fineprint{margin-top:10px;color:rgba(201,188,163,.9);font-size:12px;text-align:center}
     .toast{
-      margin-top:12px;
-      padding:12px 14px;
-      border-radius:16px;
+      margin-top:12px;padding:12px 14px;border-radius:16px;
       border:1px solid var(--line);
       background:rgba(0,0,0,.35);
-      color:var(--text);
-      display:none;
+      color:var(--text);display:none;
     }
     .toast.show{display:block}
-
-    .mini{
-      margin-top:14px;
-      text-align:center;
-      color:rgba(201,188,163,.9);
-      font-size:12px;
-    }
-    .mini a{color:rgba(215,168,58,.95);text-decoration:none}
   </style>
 </head>
 <body>
@@ -210,7 +115,7 @@
     <div class="hero">
       <div class="badge"><span class="dot"></span> Dodie’s Cajun • Waitlist</div>
       <h1>Join the Line</h1>
-      <p class="sub">Drop your info and we’ll text you when it’s almost your turn. Quick, easy, no downloads.</p>
+      <p class="sub">Add your party and we’ll text you when it’s almost your turn.</p>
     </div>
 
     <div class="card">
@@ -219,8 +124,8 @@
       <div class="craw">
         <div class="emoji">🦞</div>
         <div>
-          <div class="title">Hot & Fresh Updates</div>
-          <div style="font-size:12px;color:var(--muted);margin-top:2px;">We’ll keep you posted by text.</div>
+          <div class="title">Waitlist Text Updates</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px;">No app needed.</div>
         </div>
         <div class="emoji">🦐</div>
       </div>
@@ -249,7 +154,7 @@
         </div>
 
         <div>
-          <label for="notes">Special Notes (optional)</label>
+          <label for="notes">Special Notes</label>
           <textarea id="notes" placeholder="Patio, high chair, allergy, birthday…"></textarea>
         </div>
 
@@ -266,23 +171,18 @@
 
         <div id="toast" class="toast"></div>
       </form>
-
-      <div class="mini">Powered by Meridian • <a href="#" onclick="return false;">(no app needed)</a></div>
     </div>
   </div>
 
   <script>
-    // ✅ Put your /exec URL here (guests will NEVER see or type it)
+    // IMPORTANT: paste YOUR Apps Script /exec URL here (guests will never see it)
     const APPS_SCRIPT_URL = "PASTE_YOUR_APPS_SCRIPT_EXEC_URL_HERE";
 
     const form = document.getElementById("waitlistForm");
     const submitBtn = document.getElementById("submitBtn");
     const toast = document.getElementById("toast");
 
-    function showToast(msg){
-      toast.textContent = msg;
-      toast.classList.add("show");
-    }
+    function showToast(msg){ toast.textContent = msg; toast.classList.add("show"); }
 
     function toE164Maybe(phone){
       const digits = String(phone || "").replace(/\D/g,"");
@@ -302,7 +202,7 @@
       const smsConsent = document.getElementById("smsConsent").checked ? "Yes" : "No";
 
       if(!APPS_SCRIPT_URL.includes("/exec")){
-        showToast("Setup error: waitlist link is missing.");
+        showToast("Setup error: missing waitlist connection.");
         return;
       }
 
@@ -324,7 +224,6 @@
         });
 
         const j = await r.json();
-
         if(j && j.success){
           showToast("✅ You’re on the list! We’ll text you updates.");
           form.reset();
