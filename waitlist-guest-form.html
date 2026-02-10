@@ -534,7 +534,11 @@ async function getWaitlistCount() {
     const res = await fetch(APPS + '?action=getWaitlist');
     const json = await res.json();
     if (json.success && json.data) {
-      return json.data.length;
+      // Only count parties that are actually waiting/notified, NOT seated
+      return json.data.filter(p => {
+        const st = (p.status || '').trim().toLowerCase();
+        return st === 'waiting' || st === 'notified' || st === 'incomplete';
+      }).length;
     }
     return 0;
   } catch (err) {
