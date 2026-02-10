@@ -63,62 +63,6 @@ h1{
 }
 .subtitle{ font-size:15px; color:var(--light-gray); }
 
-/* 🦞 Cajun Seafood Button */
-.seafood-btn-wrap{
-  text-align:center;
-  margin-top:20px;
-}
-.seafood-btn{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  padding:11px 20px;
-  border:2px solid var(--red);
-  border-radius:999px;
-  background:linear-gradient(135deg, rgba(220,20,60,.22), rgba(139,0,0,.12));
-  color:#ffe4b5;
-  font-size:13px;
-  font-weight:700;
-  font-family:'Montserrat', sans-serif;
-  letter-spacing:.04em;
-  cursor:pointer;
-  text-decoration:none;
-  position:relative;
-  transition:all .25s ease;
-  box-shadow:
-    0 0 12px rgba(220,20,60,.25),
-    0 0 30px rgba(220,20,60,.08),
-    inset 0 1px 0 rgba(255,228,181,.10);
-  animation:cajunPulse 2.5s ease-in-out infinite;
-}
-.seafood-btn:hover{
-  background:linear-gradient(135deg, rgba(220,20,60,.38), rgba(139,0,0,.22));
-  border-color:#f0c040;
-  box-shadow:
-    0 0 18px rgba(240,192,64,.30),
-    0 0 40px rgba(220,20,60,.15),
-    inset 0 1px 0 rgba(255,228,181,.15);
-  transform:translateY(-2px);
-  color:#fff;
-}
-.seafood-btn:active{ transform:translateY(0); }
-.seafood-btn .dot{
-  width:8px;
-  height:8px;
-  border-radius:50%;
-  background:#ff6b6b;
-  box-shadow:0 0 6px #ff6b6b, 0 0 12px rgba(255,107,107,.4);
-  animation:dotBlink 1.4s ease-in-out infinite;
-}
-@keyframes cajunPulse{
-  0%,100%{box-shadow:0 0 12px rgba(220,20,60,.25),0 0 30px rgba(220,20,60,.08),inset 0 1px 0 rgba(255,228,181,.10)}
-  50%{box-shadow:0 0 18px rgba(220,20,60,.35),0 0 40px rgba(220,20,60,.15),inset 0 1px 0 rgba(255,228,181,.14)}
-}
-@keyframes dotBlink{
-  0%,100%{opacity:1;box-shadow:0 0 6px #ff6b6b,0 0 12px rgba(255,107,107,.4)}
-  50%{opacity:.5;box-shadow:0 0 3px #ff6b6b,0 0 6px rgba(255,107,107,.2)}
-}
-
 .form-group { margin-bottom:20px; }
 
 label{
@@ -311,14 +255,6 @@ textarea{ min-height:90px; resize:vertical; }
         <span class="logo">🦞</span>
         <h1>Join Waitlist</h1>
         <p class="subtitle">We'll notify you when your table is ready</p>
-
-        <!-- 🦞 Cajun Seafood Status Button -->
-        <div class="seafood-btn-wrap">
-          <a href="https://dodies-chat.netlify.app/live-update-inventory.html" class="seafood-btn" target="_blank">
-            <span class="dot"></span>
-            🦞 See Live Seafood Status 🔥
-          </a>
-        </div>
       </div>
 
       <form id="waitlistForm" onsubmit="return false;">
