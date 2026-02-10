@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Dodie’s Host View</title>
+  <title>Dodie's Host View</title>
   <style>
     :root{
       --bg1:#130606;
@@ -108,6 +108,64 @@
     }
     .btn.red:hover{background:rgba(178,31,45,.26)}
     .btn:disabled{opacity:.55;cursor:not-allowed}
+
+    /* 🦐 Cajun Seafood Button */
+    .seafood-btn{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:12px 22px;
+      border:2px solid var(--red);
+      border-radius:999px;
+      background:linear-gradient(135deg, rgba(178,31,45,.30), rgba(178,31,45,.12));
+      color:#ffe4b5;
+      font-size:14px;
+      font-weight:800;
+      letter-spacing:.04em;
+      cursor:pointer;
+      text-decoration:none;
+      position:relative;
+      overflow:hidden;
+      transition:all .25s ease;
+      box-shadow:
+        0 0 12px rgba(178,31,45,.25),
+        0 0 30px rgba(178,31,45,.10),
+        inset 0 1px 0 rgba(255,228,181,.12);
+      animation:cajunPulse 2.5s ease-in-out infinite;
+    }
+    .seafood-btn:hover{
+      background:linear-gradient(135deg, rgba(178,31,45,.45), rgba(178,31,45,.22));
+      border-color:#d7a83a;
+      box-shadow:
+        0 0 18px rgba(215,168,58,.35),
+        0 0 40px rgba(178,31,45,.20),
+        inset 0 1px 0 rgba(255,228,181,.18);
+      transform:translateY(-1px);
+      color:#fff;
+    }
+    .seafood-btn:active{
+      transform:translateY(0);
+    }
+    .seafood-btn .dot{
+      width:8px;
+      height:8px;
+      border-radius:50%;
+      background:#ff6b6b;
+      box-shadow:0 0 6px #ff6b6b, 0 0 12px rgba(255,107,107,.4);
+      animation:dotBlink 1.4s ease-in-out infinite;
+    }
+    @keyframes cajunPulse{
+      0%,100%{box-shadow:0 0 12px rgba(178,31,45,.25),0 0 30px rgba(178,31,45,.10),inset 0 1px 0 rgba(255,228,181,.12)}
+      50%{box-shadow:0 0 18px rgba(178,31,45,.35),0 0 40px rgba(178,31,45,.18),inset 0 1px 0 rgba(255,228,181,.15)}
+    }
+    @keyframes dotBlink{
+      0%,100%{opacity:1;box-shadow:0 0 6px #ff6b6b,0 0 12px rgba(255,107,107,.4)}
+      50%{opacity:.5;box-shadow:0 0 3px #ff6b6b,0 0 6px rgba(255,107,107,.2)}
+    }
+    .seafood-btn-wrap{
+      text-align:center;
+      margin-bottom:18px;
+    }
 
     .grid{
       margin-top:14px;
@@ -215,6 +273,14 @@
         <button class="btn" id="refreshBtn">Refresh</button>
         <button class="btn red" id="setUrlBtn">Set Apps Script URL</button>
       </div>
+    </div>
+
+    <!-- 🦐 Cajun Seafood Status Button -->
+    <div class="seafood-btn-wrap">
+      <a href="https://dodies-chat.netlify.app/live-update-inventory.html" class="seafood-btn" target="_blank">
+        <span class="dot"></span>
+        🦞 See Live Seafood Status 🔥
+      </a>
     </div>
 
     <div class="panel">
@@ -432,7 +498,7 @@
       toast("Saved Apps Script URL");
       location.reload();
     } else if (u) {
-      toast("That doesn’t look like a /exec URL");
+      toast("That doesn't look like a /exec URL");
     }
   };
 
