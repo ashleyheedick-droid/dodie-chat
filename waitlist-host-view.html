@@ -108,6 +108,13 @@
     }
     .btn.red:hover{background:rgba(178,31,45,.26)}
     .btn:disabled{opacity:.55;cursor:not-allowed}
+    .btn.muted{
+      background:rgba(100,100,100,.12);
+      border-color:rgba(100,100,100,.30);
+      font-size:11px;
+      padding:7px 10px;
+    }
+    .btn.muted:hover{background:rgba(100,100,100,.22)}
 
     /* 🦐 Cajun Seafood Button */
     .seafood-btn{
@@ -214,6 +221,27 @@
     .tag.waiting{border-color:rgba(215,168,58,.40); background:rgba(215,168,58,.10)}
     .tag.notified{border-color:rgba(215,168,58,.40); background:rgba(215,168,58,.06)}
     .tag.seated{border-color:rgba(178,31,45,.40); background:rgba(178,31,45,.10)}
+    .tag.noshow{border-color:rgba(160,120,60,.40); background:rgba(160,120,60,.08)}
+    .tag.cancelled{border-color:rgba(100,100,100,.40); background:rgba(100,100,100,.08)}
+
+    /* 🌶️ Spice Badge */
+    .spice-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:5px;
+      margin-top:6px;
+      padding:5px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:700;
+      border:1px solid rgba(255,100,50,.30);
+      background:rgba(255,80,30,.08);
+      width:fit-content;
+    }
+    .spice-badge.heat-0{ border-color:rgba(150,150,150,.30); background:rgba(150,150,150,.06); }
+    .spice-badge.heat-1{ border-color:rgba(255,160,50,.35); background:rgba(255,160,50,.08); }
+    .spice-badge.heat-2{ border-color:rgba(255,100,30,.40); background:rgba(255,100,30,.10); }
+    .spice-badge.heat-3{ border-color:rgba(255,50,20,.45); background:rgba(255,50,20,.12); }
 
     .actions{
       display:flex;
@@ -290,6 +318,8 @@
           <div class="pill" data-filter="waiting">Waiting</div>
           <div class="pill" data-filter="notified">Notified</div>
           <div class="pill" data-filter="seated">Seated</div>
+          <div class="pill" data-filter="no show">No Show</div>
+          <div class="pill" data-filter="cancelled">Cancelled</div>
           <div class="pill" data-filter="all">All</div>
         </div>
         <div class="sub" id="statusLine">Loading…</div>
@@ -373,11 +403,15 @@
       total: cache.length,
       waiting: cache.filter(p=>normalizeStatus(p.status)==="waiting").length,
       notified: cache.filter(p=>normalizeStatus(p.status)==="notified").length,
-      seated: cache.filter(p=>normalizeStatus(p.status)==="seated").length
+      seated: cache.filter(p=>normalizeStatus(p.status)==="seated").length,
+      noshow: cache.filter(p=>normalizeStatus(p.status)==="no show").length,
+      cancelled: cache.filter(p=>normalizeStatus(p.status)==="cancelled").length
     };
 
     statusLine.textContent =
-      `Total ${counts.total} • Waiting ${counts.waiting} • Notified ${counts.notified} • Seated ${counts.seated}`;
+      `Total ${counts.total} • Waiting ${counts.waiting} • Notified ${counts.notified} • Seated ${counts.seated}` +
+      (counts.noshow ? ` • No Show ${counts.noshow}` : '') +
+      (counts.cancelled ? ` • Cancelled ${counts.cancelled}` : '');
 
     listEl.innerHTML = "";
 
@@ -390,7 +424,7 @@
 
     items.forEach(p => {
       const st = normalizeStatus(p.status);
-      const tagClass = st==="seated" ? "seated" : (st==="notified" ? "notified" : "waiting");
+      const tagClass = st==="seated" ? "seated" : (st==="notified" ? "notified" : (st==="no show" ? "noshow" : (st==="cancelled" ? "cancelled" : "waiting")));
 
       const card = document.createElement("div");
       card.className = "card";
@@ -414,60 +448,62 @@
       left.appendChild(meta);
       left.appendChild(tag);
 
+      // 🌶️ Spice Level Badge
+      const spice = (p.spiceLevel || '').trim();
+      if(spice){
+        const spiceBadge = document.createElement("div");
+        const spiceMap = {
+          'no spice':  { fire:'⚪', cls:'heat-0', label:'No Spice' },
+          'mild':      { fire:'🔥', cls:'heat-1', label:'Mild' },
+          'spicy':     { fire:'🔥🔥', cls:'heat-2', label:'Spicy' },
+          'turbo hot': { fire:'🔥🔥🔥', cls:'heat-3', label:'Turbo Hot' }
+        };
+        const info = spiceMap[spice.toLowerCase()] || { fire:'🌶️', cls:'heat-1', label:spice };
+        spiceBadge.className = `spice-badge ${info.cls}`;
+        spiceBadge.textContent = `${info.fire} ${info.label}`;
+        left.appendChild(spiceBadge);
+      }
+
       const actions = document.createElement("div");
       actions.className = "actions";
 
-      const seatBtn = document.createElement("button");
-      seatBtn.className = "btn";
-      seatBtn.textContent = "Seat";
-      seatBtn.onclick = async () => {
-        try{
-          seatBtn.disabled = true;
-          await apiPost({ action:"updateWaitlistStatus", row: Number(p.row), status:"Seated" });
-          toast(`Seated: ${p.name}`);
-          await refresh();
-        }catch(err){
-          toast(`Seat failed: ${err.message}`);
-        }finally{
-          seatBtn.disabled = false;
-        }
-      };
+      // Helper to make action buttons
+      function makeBtn(label, cls, status, confirmMsg){
+        const b = document.createElement("button");
+        b.className = "btn " + cls;
+        b.textContent = label;
+        b.onclick = async () => {
+          if(confirmMsg && !confirm(confirmMsg)) return;
+          try{
+            b.disabled = true;
+            await apiPost({ action:"updateWaitlistStatus", row: Number(p.row), status:status });
+            toast(`${status}: ${p.name}`);
+            await refresh();
+          }catch(err){
+            toast(`Failed: ${err.message}`);
+          }finally{
+            b.disabled = false;
+          }
+        };
+        return b;
+      }
 
-      const notifyBtn = document.createElement("button");
-      notifyBtn.className = "btn";
-      notifyBtn.textContent = "Notify";
-      notifyBtn.onclick = async () => {
-        try{
-          notifyBtn.disabled = true;
-          await apiPost({ action:"updateWaitlistStatus", row: Number(p.row), status:"Notified" });
-          toast(`Notified: ${p.name}`);
-          await refresh();
-        }catch(err){
-          toast(`Notify failed: ${err.message}`);
-        }finally{
-          notifyBtn.disabled = false;
-        }
-      };
-
-      const backBtn = document.createElement("button");
-      backBtn.className = "btn red";
-      backBtn.textContent = "Back to Waiting";
-      backBtn.onclick = async () => {
-        try{
-          backBtn.disabled = true;
-          await apiPost({ action:"updateWaitlistStatus", row: Number(p.row), status:"Waiting" });
-          toast(`Waiting: ${p.name}`);
-          await refresh();
-        }catch(err){
-          toast(`Update failed: ${err.message}`);
-        }finally{
-          backBtn.disabled = false;
-        }
-      };
-
-      actions.appendChild(seatBtn);
-      actions.appendChild(notifyBtn);
-      actions.appendChild(backBtn);
+      // Show relevant buttons based on current status
+      if(st === "waiting"){
+        actions.appendChild(makeBtn("Notify", "", "Notified"));
+        actions.appendChild(makeBtn("Seat", "", "Seated"));
+        actions.appendChild(makeBtn("No Show", "muted", "No Show"));
+        actions.appendChild(makeBtn("Cancel", "muted", "Cancelled", `Cancel ${p.name}?`));
+      } else if(st === "notified"){
+        actions.appendChild(makeBtn("Seat", "", "Seated"));
+        actions.appendChild(makeBtn("Back to Waiting", "red", "Waiting"));
+        actions.appendChild(makeBtn("No Show", "muted", "No Show"));
+        actions.appendChild(makeBtn("Cancel", "muted", "Cancelled", `Cancel ${p.name}?`));
+      } else if(st === "seated"){
+        actions.appendChild(makeBtn("Back to Waiting", "red", "Waiting"));
+      } else if(st === "no show" || st === "cancelled"){
+        actions.appendChild(makeBtn("Back to Waiting", "red", "Waiting"));
+      }
 
       card.appendChild(left);
       card.appendChild(actions);
