@@ -19,10 +19,6 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle
 .status-dot{width:6px;height:6px;background:var(--gold);border-radius:50%;animation:pulse 2s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 8px var(--gold)}50%{opacity:.6;box-shadow:0 0 4px var(--gold)}}
 
-/* Config warning banner */
-.config-warn{background:rgba(212,175,55,.15);border-bottom:2px solid rgba(212,175,55,.4);padding:10px 24px;font-size:13px;color:var(--gold);display:none;flex-shrink:0}
-.config-warn a{color:var(--gold);font-weight:700}
-
 .messages{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:16px;scroll-behavior:smooth}
 .messages::-webkit-scrollbar{width:8px}
 .messages::-webkit-scrollbar-track{background:transparent}
@@ -73,10 +69,6 @@ input::placeholder{color:rgba(255,248,220,.4)}
     </div>
   </div>
 
-  <div class="config-warn" id="configWarn">
-    ⚠️ n8n webhook URL not configured. <a href="dodies-complete-demo.html">Visit the Control Center</a> to set it up — AI chat won't work without it.
-  </div>
-
   <div class="messages" id="messages">
     <div class="welcome" id="welcome">
       <div class="welcome-icon">🤖</div>
@@ -100,13 +92,8 @@ input::placeholder{color:rgba(255,248,220,.4)}
 </div>
 
 <script>
-// ── Read n8n webhook URL from localStorage (set by Control Center) ─────────
-const WEBHOOK_URL = localStorage.getItem('n8nWebhookUrl') || '';
-
-if (!WEBHOOK_URL) {
-  document.getElementById('configWarn').style.display = 'block';
-  document.getElementById('statusText').textContent = 'Webhook not configured';
-}
+// ── Hardcoded URL — works for any guest, no setup needed ─────────────────
+const WEBHOOK_URL = "https://ashleo22.app.n8n.cloud/webhook/dodie-chat";
 
 const messagesEl = document.getElementById('messages');
 const inputEl    = document.getElementById('input');
@@ -157,11 +144,6 @@ function pickAnswer(rawText, parsed) {
 async function sendMessage() {
   const question = inputEl.value.trim();
   if (!question) return;
-
-  if (!WEBHOOK_URL) {
-    addMessage('⚠️ The AI assistant is not configured yet. Please visit the Control Center and save your n8n webhook URL.', 'ai');
-    return;
-  }
 
   addMessage(question, 'user');
   inputEl.value = '';
