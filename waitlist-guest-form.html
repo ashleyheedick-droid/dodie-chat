@@ -87,11 +87,6 @@ textarea{min-height:90px;resize:vertical}
 <div class="container">
   <div class="card">
 
-    <div id="noConfigWarn" class="no-config">
-      ⚠️ Apps Script URL not configured.<br/>
-      Please <a href="dodies-complete-demo.html">visit the Control Center</a> and save your Google Apps Script URL first.
-    </div>
-
     <div id="formView">
       <div class="header">
         <span class="logo">🦞</span>
@@ -179,13 +174,9 @@ textarea{min-height:90px;resize:vertical}
 </div>
 
 <script>
-// ── Read config from Control Center (localStorage) ──────────────────────────
-const APPS = localStorage.getItem('appsScriptUrl') || '';
-const n8nUrl = localStorage.getItem('n8nWebhookUrl') || '';
-
-if (!APPS) {
-  document.getElementById('noConfigWarn').style.display = 'block';
-}
+// ── Hardcoded URLs — guest pages work for anyone, no setup needed ─────────
+const APPS    = "https://script.google.com/macros/s/AKfycbyQcO1XkUwXUtMYvIpyXUInYkDXbGgWTOyDlGHWpoKkUQ3uukXiMmH1CI_9XiepNXdfVg/exec";
+const n8nUrl  = localStorage.getItem('n8nWebhookUrl') || ''; // only needed if you add AI here later
 
 // ── JSONP helper (bypasses CORS completely) ───────────────────────────────────
 function jsonpGet(params) {
