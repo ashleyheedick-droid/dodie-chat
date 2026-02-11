@@ -1,272 +1,186 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html>
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Dodie's Host View</title>
   <style>
-    :root{
-      --bg1:#130606; --bg2:#0b0505; --card:#160a0a; --card2:#0f0606;
-      --gold:#d7a83a; --gold2:#b88925; --red:#b21f2d;
-      --text:#f6f2e8; --muted:#c9bca3; --line:rgba(215,168,58,.22);
-      --shadow:0 10px 30px rgba(0,0,0,.45); --radius:16px;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      color:var(--text);
-      background:
-        radial-gradient(1200px 600px at 20% 0%, rgba(178,31,45,.28), transparent 60%),
-        radial-gradient(900px 500px at 90% 20%, rgba(215,168,58,.12), transparent 60%),
-        linear-gradient(180deg, var(--bg1), var(--bg2));
-      min-height:100vh; padding:28px 18px 40px;
-    }
-    .wrap{max-width:980px;margin:0 auto}
-    .top{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:18px;}
-    h1{margin:0;letter-spacing:.08em;text-transform:uppercase;font-size:18px;color:var(--gold);}
-    .sub{margin-top:6px;color:var(--muted);font-size:13px;}
-    .panel{border:1px solid var(--line);border-radius:var(--radius);
-      background:linear-gradient(180deg, rgba(22,10,10,.75), rgba(10,4,4,.75));
-      box-shadow:var(--shadow);padding:16px;}
-    .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;}
-    .pillbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
-    .pill{border:1px solid var(--line);background:rgba(215,168,58,.08);color:var(--text);
-      padding:8px 10px;border-radius:999px;font-size:12px;cursor:pointer;user-select:none;}
-    .pill.active{background:rgba(215,168,58,.18);border-color:rgba(215,168,58,.45);}
-    .btn{border:1px solid var(--line);background:rgba(215,168,58,.10);color:var(--text);
-      padding:9px 12px;border-radius:12px;cursor:pointer;font-weight:700;letter-spacing:.02em;}
-    .btn:hover{background:rgba(215,168,58,.16)}
-    .btn.red{background:rgba(178,31,45,.18);border-color:rgba(178,31,45,.35);}
-    .btn.red:hover{background:rgba(178,31,45,.26)}
-    .btn:disabled{opacity:.55;cursor:not-allowed}
-    .btn.muted{background:rgba(100,100,100,.12);border-color:rgba(100,100,100,.30);
-      font-size:11px;padding:7px 10px;}
-    .btn.muted:hover{background:rgba(100,100,100,.22)}
-    .seafood-btn{
-      display:inline-flex;align-items:center;gap:8px;padding:12px 22px;
-      border:2px solid var(--red);border-radius:999px;
-      background:linear-gradient(135deg, rgba(178,31,45,.30), rgba(178,31,45,.12));
-      color:#ffe4b5;font-size:14px;font-weight:800;letter-spacing:.04em;cursor:pointer;text-decoration:none;
-      position:relative;overflow:hidden;transition:all .25s ease;
-      box-shadow:0 0 12px rgba(178,31,45,.25),0 0 30px rgba(178,31,45,.10),inset 0 1px 0 rgba(255,228,181,.12);
-      animation:cajunPulse 2.5s ease-in-out infinite;
-    }
-    .seafood-btn:hover{
-      background:linear-gradient(135deg, rgba(178,31,45,.45), rgba(178,31,45,.22));
-      border-color:#d7a83a;
-      box-shadow:0 0 18px rgba(215,168,58,.35),0 0 40px rgba(178,31,45,.20),inset 0 1px 0 rgba(255,228,181,.18);
-      transform:translateY(-1px);color:#fff;
-    }
-    .seafood-btn .dot{
-      width:8px;height:8px;border-radius:50%;background:#ff6b6b;
-      box-shadow:0 0 6px #ff6b6b,0 0 12px rgba(255,107,107,.4);
-      animation:dotBlink 1.4s ease-in-out infinite;
-    }
-    @keyframes cajunPulse{0%,100%{box-shadow:0 0 12px rgba(178,31,45,.25),0 0 30px rgba(178,31,45,.10),inset 0 1px 0 rgba(255,228,181,.12)}
-      50%{box-shadow:0 0 18px rgba(178,31,45,.35),0 0 40px rgba(178,31,45,.18),inset 0 1px 0 rgba(255,228,181,.15)}}
-    @keyframes dotBlink{0%,100%{opacity:1;box-shadow:0 0 6px #ff6b6b,0 0 12px rgba(255,107,107,.4)}
-      50%{opacity:.5;box-shadow:0 0 3px #ff6b6b,0 0 6px rgba(255,107,107,.2)}}
-    .seafood-btn-wrap{text-align:center;margin-bottom:18px;}
-    .grid{margin-top:14px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
-    @media (max-width:860px){ .grid{grid-template-columns:1fr;} }
-    .card{
-      border:1px solid var(--line);border-radius:var(--radius);
-      background:linear-gradient(180deg, rgba(22,10,10,.86), rgba(12,6,6,.86));
-      box-shadow:var(--shadow);padding:14px;display:flex;gap:12px;justify-content:space-between;align-items:flex-start;
-    }
-    .left{min-width:0}
-    .name{font-size:16px;font-weight:900;margin:0 0 4px;}
-    .meta{color:var(--muted);font-size:13px;line-height:1.35;overflow:hidden;text-overflow:ellipsis;}
-    .tag{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:6px 9px;border-radius:999px;
-      font-size:12px;border:1px solid var(--line);background:rgba(255,255,255,.04);width:fit-content;}
-    .tag.waiting{border-color:rgba(215,168,58,.40); background:rgba(215,168,58,.10)}
-    .tag.notified{border-color:rgba(215,168,58,.40); background:rgba(215,168,58,.06)}
-    .tag.seated{border-color:rgba(178,31,45,.40); background:rgba(178,31,45,.10)}
-    .tag.noshow{border-color:rgba(160,120,60,.40); background:rgba(160,120,60,.08)}
-    .tag.cancelled{border-color:rgba(100,100,100,.40); background:rgba(100,100,100,.08)}
-    .spice-badge{
-      display:inline-flex;align-items:center;gap:5px;margin-top:6px;padding:5px 10px;border-radius:999px;
-      font-size:12px;font-weight:700;border:1px solid rgba(255,100,50,.30);background:rgba(255,80,30,.08);width:fit-content;
-    }
-    .spice-badge.heat-0{ border-color:rgba(150,150,150,.30); background:rgba(150,150,150,.06); }
-    .spice-badge.heat-1{ border-color:rgba(255,160,50,.35); background:rgba(255,160,50,.08); }
-    .spice-badge.heat-2{ border-color:rgba(255,100,30,.40); background:rgba(255,100,30,.10); }
-    .spice-badge.heat-3{ border-color:rgba(255,50,20,.45); background:rgba(255,50,20,.12); }
-    .actions{display:flex;flex-direction:column;gap:8px;align-items:stretch;min-width:150px;}
-    .toast{
-      position:fixed;left:50%;bottom:18px;transform:translateX(-50%);
-      background:rgba(0,0,0,.75);border:1px solid var(--line);padding:10px 14px;border-radius:999px;
-      box-shadow:var(--shadow);color:var(--text);font-size:13px;opacity:0;pointer-events:none;
-      transition:opacity .2s ease, transform .2s ease;
-    }
-    .toast.show{opacity:1;transform:translateX(-50%) translateY(-4px);}
-    .hint{margin-top:10px;color:var(--muted);font-size:12px;}
-    code{color:#ffd88a;font-size:12px;}
+    body{font-family:system-ui,Segoe UI,Roboto,Arial;margin:0;background:#0b0505;color:#fff;padding:18px}
+    .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    button{padding:10px 12px;border-radius:10px;border:1px solid #7b5b22;background:#1a0c0c;color:#fff;cursor:pointer}
+    button:disabled{opacity:.5;cursor:not-allowed}
+    .pill{padding:7px 10px;border-radius:999px;border:1px solid #7b5b22;background:#120808;cursor:pointer}
+    .pill.active{background:#2a140b}
+    .grid{margin-top:14px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    @media(max-width:900px){.grid{grid-template-columns:1fr}}
+    .card{border:1px solid #3a2b12;border-radius:14px;background:#120808;padding:12px;display:flex;justify-content:space-between;gap:12px}
+    .name{font-weight:900}
+    .muted{opacity:.75;font-size:13px;margin-top:4px}
+    .tag{margin-top:8px;font-size:12px;opacity:.85}
+    .acts{display:flex;flex-direction:column;gap:8px;min-width:150px}
+    .small{font-size:12px;opacity:.75;margin-top:10px}
+    code{color:#ffd88a}
   </style>
 </head>
-
 <body>
-  <div class="wrap">
-    <div class="top">
-      <div>
-        <h1>Host View</h1>
-        <div class="sub">Seat parties, notify, and keep the line moving.</div>
-      </div>
-      <div class="pillbar">
-        <button class="btn" id="refreshBtn">Refresh</button>
-      </div>
-    </div>
 
-    <div class="seafood-btn-wrap">
-      <a href="https://dodies-chat.netlify.app/live-update-inventory.html" class="seafood-btn" target="_blank">
-        <span class="dot"></span>
-        🦞 See Live Seafood Status 🔥
-      </a>
-    </div>
+<div class="bar">
+  <button id="refresh">Refresh</button>
+  <span class="pill active" data-filter="active">Active</span>
+  <span class="pill" data-filter="waiting">Waiting</span>
+  <span class="pill" data-filter="notified">Notified</span>
+  <span class="pill" data-filter="seated">Seated</span>
+  <span class="pill" data-filter="no show">No Show</span>
+  <span class="pill" data-filter="cancelled">Cancelled</span>
+  <span class="pill" data-filter="all">All</span>
+</div>
 
-    <div class="panel">
-      <div class="row">
-        <div class="pillbar" id="filters">
-          <div class="pill active" data-filter="active">Active (Waiting + Notified)</div>
-          <div class="pill" data-filter="waiting">Waiting</div>
-          <div class="pill" data-filter="notified">Notified</div>
-          <div class="pill" data-filter="seated">Seated</div>
-          <div class="pill" data-filter="no show">No Show</div>
-          <div class="pill" data-filter="cancelled">Cancelled</div>
-          <div class="pill" data-filter="all">All</div>
-        </div>
-        <div class="sub" id="statusLine">Loading…</div>
-      </div>
-      <div class="hint">
-        Using Apps Script URL (hardcoded). If you ever change deployments, update it here.
-        <br/><code id="appsUrlLabel"></code>
-      </div>
-    </div>
+<div class="small">Apps Script: <code id="u"></code></div>
+<div class="small" id="statusLine">Loading…</div>
 
-    <div class="grid" id="list"></div>
-  </div>
-
-  <div class="toast" id="toast"></div>
+<div class="grid" id="list"></div>
 
 <script>
-  // ✅ HARD-CODED APPS SCRIPT URL (no localStorage, no redeclare issues)
+  // Hardcode your working /exec URL
   const APPS = "https://script.google.com/macros/s/AKfycbzI2geyAIRUibKJwRmFQvgUGPN2EFfdX04d_vz40F3xk0w26QfhBNDnN9loYhMgaGbuYw/exec";
+  document.getElementById("u").textContent = APPS;
 
   const listEl = document.getElementById("list");
   const statusLine = document.getElementById("statusLine");
-  const toastEl = document.getElementById("toast");
-  const refreshBtn = document.getElementById("refreshBtn");
-  const filtersEl = document.getElementById("filters");
-  document.getElementById("appsUrlLabel").textContent = APPS;
+  const refreshBtn = document.getElementById("refresh");
 
   let currentFilter = "active";
   let cache = [];
 
-  function toast(msg){
-    toastEl.textContent = msg;
-    toastEl.classList.add("show");
-    clearTimeout(window.__t);
-    window.__t = setTimeout(()=>toastEl.classList.remove("show"), 1600);
+  // JSONP helper (CORS-proof)
+  function jsonp(params){
+    return new Promise((resolve, reject) => {
+      const cb = "cb_" + Math.random().toString(36).slice(2);
+      const qs = new URLSearchParams({ ...params, callback: cb }).toString();
+      const s = document.createElement("script");
+      s.src = APPS + "?" + qs;
+
+      window[cb] = (data) => {
+        cleanup();
+        resolve(data);
+      };
+
+      s.onerror = () => {
+        cleanup();
+        reject(new Error("JSONP load failed (deployment/access/url)"));
+      };
+
+      function cleanup(){
+        delete window[cb];
+        if (s.parentNode) s.parentNode.removeChild(s);
+      }
+
+      document.body.appendChild(s);
+    });
   }
 
-  function normalizeStatus(s){
-    return String(s || "").trim().toLowerCase();
-  }
+  function norm(s){ return String(s||"").trim().toLowerCase(); }
 
   function applyFilter(items){
-    if(currentFilter === "all") return items;
-    if(currentFilter === "active"){
-      return items.filter(p => {
-        const st = normalizeStatus(p.status);
-        return st === "waiting" || st === "notified";
-      });
+    if (currentFilter === "all") return items;
+    if (currentFilter === "active") return items.filter(p => ["waiting","notified"].includes(norm(p.status)));
+    return items.filter(p => norm(p.status) === currentFilter);
+  }
+
+  async function refresh(){
+    refreshBtn.disabled = true;
+    statusLine.textContent = "Loading…";
+    try{
+      const r = await jsonp({ action:"getWaitlist" });
+      if (!r.success) throw new Error(r.error || "API error");
+      cache = r.data || [];
+      render();
+    }catch(e){
+      statusLine.textContent = "Error: " + e.message;
+      listEl.innerHTML = "";
+    }finally{
+      refreshBtn.disabled = false;
     }
-    return items.filter(p => normalizeStatus(p.status) === currentFilter);
   }
 
-  function setLoading(isLoading){
-    refreshBtn.disabled = isLoading;
-    statusLine.textContent = isLoading ? "Loading…" : statusLine.textContent;
-  }
-
-  async function apiGetWaitlist(){
-    const r = await fetch(APPS + "?action=getWaitlist", {
-      method:"GET",
-      mode:"cors",
-      redirect:"follow",
-      cache:"no-store"
-    });
-
-    const text = await r.text();
-    let j;
-    try { j = JSON.parse(text); }
-    catch { throw new Error("Non-JSON response: " + text.slice(0,160)); }
-
-    if(!j.success) throw new Error(j.error || "API error");
-    return j.data || [];
-  }
-
-  async function apiPost(payload){
-    const r = await fetch(APPS, {
-      method:"POST",
-      mode:"cors",
-      redirect:"follow",
-      cache:"no-store",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify(payload)
-    });
-
-    const text = await r.text();
-    let j;
-    try { j = JSON.parse(text); }
-    catch { throw new Error("Non-JSON response: " + text.slice(0,160)); }
-
-    if(!j.success) throw new Error(j.error || "Update failed");
-    return j;
+  async function setStatus(row, status){
+    refreshBtn.disabled = true;
+    try{
+      const r = await jsonp({ action:"updateWaitlistStatus", row:String(row), status:String(status) });
+      if (!r.success) throw new Error(r.error || "Update failed");
+      await refresh();
+    }catch(e){
+      statusLine.textContent = "Error: " + e.message;
+    }finally{
+      refreshBtn.disabled = false;
+    }
   }
 
   function render(){
     const items = applyFilter(cache);
-
     const counts = {
       total: cache.length,
-      waiting: cache.filter(p=>normalizeStatus(p.status)==="waiting").length,
-      notified: cache.filter(p=>normalizeStatus(p.status)==="notified").length,
-      seated: cache.filter(p=>normalizeStatus(p.status)==="seated").length,
-      noshow: cache.filter(p=>normalizeStatus(p.status)==="no show").length,
-      cancelled: cache.filter(p=>normalizeStatus(p.status)==="cancelled").length
+      waiting: cache.filter(p=>norm(p.status)==="waiting").length,
+      notified: cache.filter(p=>norm(p.status)==="notified").length,
+      seated: cache.filter(p=>norm(p.status)==="seated").length
     };
-
-    statusLine.textContent =
-      `Total ${counts.total} • Waiting ${counts.waiting} • Notified ${counts.notified} • Seated ${counts.seated}` +
-      (counts.noshow ? ` • No Show ${counts.noshow}` : '') +
-      (counts.cancelled ? ` • Cancelled ${counts.cancelled}` : '');
+    statusLine.textContent = `Total ${counts.total} • Waiting ${counts.waiting} • Notified ${counts.notified} • Seated ${counts.seated}`;
 
     listEl.innerHTML = "";
-
-    if(items.length === 0){
-      listEl.innerHTML = `<div class="panel" style="grid-column:1/-1;">
-        <div class="sub">No parties match this filter.</div>
-      </div>`;
+    if (!items.length){
+      listEl.innerHTML = `<div class="card" style="grid-column:1/-1">No parties for this filter.</div>`;
       return;
     }
 
-    items.forEach(p => {
-      const st = normalizeStatus(p.status);
-      const tagClass =
-        st==="seated" ? "seated" :
-        (st==="notified" ? "notified" :
-        (st==="no show" ? "noshow" :
-        (st==="cancelled" ? "cancelled" : "waiting")));
-
+    for (const p of items){
       const card = document.createElement("div");
       card.className = "card";
 
       const left = document.createElement("div");
-      left.className = "left";
+      left.innerHTML = `
+        <div class="name">${(p.name||"—")} (Party ${p.party||"?"})</div>
+        <div class="muted">${p.phone||""}${p.specialNotes ? " • "+p.specialNotes : ""}</div>
+        <div class="tag">Status: ${p.status || "—"} • Spice: ${p.spiceLevel || "—"}</div>
+      `;
 
-      const name = document.createElement("div");
-      name.className = "name";
-      name.textContent = `${p.name || "—"} (${p.party || "?"})`;
+      const acts = document.createElement("div");
+      acts.className = "acts";
 
-      const meta = document.
+      const st = norm(p.status);
+      if (st === "waiting"){
+        acts.append(btn("Notify","Notified"));
+        acts.append(btn("Seat","Seated"));
+      } else if (st === "notified"){
+        acts.append(btn("Seat","Seated"));
+        acts.append(btn("Back to Waiting","Waiting"));
+      } else {
+        acts.append(btn("Back to Waiting","Waiting"));
+      }
+
+      function btn(label, status){
+        const b = document.createElement("button");
+        b.textContent = label;
+        b.onclick = () => setStatus(p.row, status);
+        return b;
+      }
+
+      card.append(left, acts);
+      listEl.appendChild(card);
+    }
+  }
+
+  document.querySelectorAll(".pill").forEach(el=>{
+    el.addEventListener("click", ()=>{
+      document.querySelectorAll(".pill").forEach(p=>p.classList.remove("active"));
+      el.classList.add("active");
+      currentFilter = el.getAttribute("data-filter");
+      render();
+    });
+  });
+
+  refreshBtn.addEventListener("click", refresh);
+  refresh();
+</script>
+
+</body>
+</html>
