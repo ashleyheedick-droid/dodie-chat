@@ -69,10 +69,6 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,7vw,56px);font-weigh
 <div class="container">
   <a href="dodies-complete-demo.html" class="back-link">← Control Center</a>
 
-  <div id="noConfigWarn" class="no-config">
-    ⚠️ Apps Script URL not configured. <a href="dodies-complete-demo.html">Visit the Control Center</a> to set it up.
-  </div>
-
   <div class="header">
     <div class="logo-wrap">🦞</div>
     <h1>Live Seafood Update</h1>
@@ -95,13 +91,8 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,7vw,56px);font-weigh
 </div>
 
 <script>
-// ── Read config from Control Center ──────────────────────────────────────────
-const APPS = localStorage.getItem('appsScriptUrl') || '';
-
-if (!APPS) {
-  document.getElementById('noConfigWarn').style.display = 'block';
-  document.getElementById('lastUpdate').textContent = 'Configure URL in Control Center';
-}
+// ── Hardcoded URL — works for any guest, no setup needed ─────────────────
+const APPS = "https://script.google.com/macros/s/AKfycbyQcO1XkUwXUtMYvIpyXUInYkDXbGgWTOyDlGHWpoKkUQ3uukXiMmH1CI_9XiepNXdfVg/exec";
 
 const gridEl      = document.getElementById('grid');
 const lastUpdateEl = document.getElementById('lastUpdate');
@@ -203,10 +194,8 @@ async function loadInventory() {
   }
 }
 
-if (APPS) {
-  loadInventory();
-  setInterval(loadInventory, 30000);
-}
+loadInventory();
+setInterval(loadInventory, 30000);
 </script>
 </body>
 </html>
