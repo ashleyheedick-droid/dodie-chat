@@ -21,6 +21,7 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--gold);letter-s
 .test-info{flex:1}
 .test-name{font-size:14px;font-weight:700;color:var(--cream);margin-bottom:3px}
 .test-detail{font-size:11px;color:rgba(255,248,220,.4)}
+.test-error{font-size:11px;color:#ef4444;margin-top:4px;font-weight:600}
 .status-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;background:rgba(255,248,220,.15);border:2px solid rgba(255,248,220,.1);transition:all .3s}
 .status-dot.pending{background:rgba(245,158,11,.3);border-color:rgba(245,158,11,.5)}
 .status-dot.success{background:var(--emerald);border-color:var(--emerald);box-shadow:0 0 12px rgba(16,185,129,.4)}
@@ -151,9 +152,21 @@ function jsonp(params) {
   });
 }
 
-function setDot(id, state) {
+function setDot(id, state, errorMsg) {
   var el = document.getElementById(id);
   if (el) el.className = 'status-dot ' + state;
+  // Show error message next to the item
+  var item = el ? el.closest('.test-item') : null;
+  if (item) {
+    var existing = item.querySelector('.test-error');
+    if (existing) existing.remove();
+    if (state === 'error' && errorMsg) {
+      var errEl = document.createElement('div');
+      errEl.className = 'test-error';
+      errEl.textContent = errorMsg;
+      item.querySelector('.test-info').appendChild(errEl);
+    }
+  }
 }
 
 async function sendAllTestData() {
@@ -162,9 +175,13 @@ async function sendAllTestData() {
   btn.disabled = true;
   btn.textContent = 'Sending...';
 
+  // Clear any previous error messages
+  document.querySelectorAll('.test-error').forEach(function(el) { el.remove(); });
+
   var all = [].concat(testData.waitlist, testData.feedback, testData.shoutouts, testData.chats);
   var sent = 0;
   var failed = 0;
+  var errors = [];
 
   for (var i = 0; i < all.length; i++) {
     var item = all[i];
@@ -176,20 +193,30 @@ async function sendAllTestData() {
         setDot(item.id, 'success');
         sent++;
       } else {
-        setDot(item.id, 'error');
+        var errMsg = (resp && resp.error) ? resp.error : 'API returned success=false';
+        setDot(item.id, 'error', errMsg);
+        errors.push(item.params.action + ': ' + errMsg);
         failed++;
       }
     } catch (e) {
-      setDot(item.id, 'error');
+      setDot(item.id, 'error', e.message);
+      errors.push(item.params.action + ': ' + e.message);
       failed++;
     }
   }
 
   prog.textContent = 'Done! ' + sent + ' sent, ' + failed + ' failed.';
-  btn.textContent = 'All Sent!';
 
   if (failed === 0) {
+    btn.textContent = 'All Sent!';
     document.getElementById('summary').classList.add('show');
+  } else {
+    btn.textContent = 'Retry Send (' + failed + ' failed)';
+    btn.disabled = false;
+    // Show error summary in results area
+    var resultsEl = document.getElementById('results');
+    resultsEl.textContent = 'ERRORS:\n' + errors.join('\n');
+    resultsEl.classList.add('show');
   }
 }
 

@@ -156,6 +156,15 @@
         <div class="tile-desc">Private feedback direct to management — not Yelp</div>
       </button>
     </div>
+
+    <div class="section-title" style="padding:0 4px;margin-bottom:16px;margin-top:30px">🧪 Developer Tools</div>
+    <div class="launch-grid">
+      <button class="tile" id="testDataBtn" type="button">
+        <div class="tile-header"><div class="tile-icon">🧪</div><div class="badge">Test</div></div>
+        <div class="tile-label">📦 Test Data Loader</div>
+        <div class="tile-desc">Send sample waitlist, feedback, shoutouts &amp; chat data to preview all features</div>
+      </button>
+    </div>
   </div>
 
 <script>
@@ -253,6 +262,7 @@
   $('specialsBtn').addEventListener('click',  () => location.href = 'daily-specials.html');
   $('shoutoutBtn').addEventListener('click',  () => location.href = 'staff-shoutout.html');
   $('feedbackBtn').addEventListener('click',  () => location.href = 'customer-feedback.html');
+  $('testDataBtn').addEventListener('click',  () => location.href = 'test-data.html');
   $('appsScriptUrl').addEventListener('input', updateTestUrls);
 
   loadSaved();
