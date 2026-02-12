@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>✨ Join Waitlist – Dodie's Cajun Diner 🦞</title>
+<title>Join Waitlist – Dodie's Cajun Diner</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Open+Sans:wght@400;600&family=Playfair+Display:ital,wght@1,700&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
@@ -129,9 +129,9 @@ textarea{min-height:80px;resize:vertical}
     <div id="formView">
       <div class="header">
         <span class="logo">🦞</span>
-        <h1>✨ Join Waitlist ✨</h1>
-        <p class="subtitle">We'll notify you when your table is ready 💖</p>
-        <div class="tagline">"Laissez les bons temps rouler!" ✨</div>
+        <h1>Join Waitlist</h1>
+        <p class="subtitle">We'll notify you when your table is ready</p>
+        <div class="tagline">"Laissez les bons temps rouler!"</div>
         <div class="seafood-btn-wrap">
           <a href="live-update-inventory.html" class="seafood-btn">
             <span class="dot"></span>
@@ -165,7 +165,7 @@ textarea{min-height:80px;resize:vertical}
 
       <!-- Seafood Preferences -->
       <div class="pref-section">
-        <div class="pref-header">🦞 What Are You Craving? ✨ (Optional)</div>
+        <div class="pref-header">🦞 What Are You Craving? (Optional)</div>
         <div class="pref-grid" id="prefGrid">
           <button type="button" class="pref-item" data-pref="Crawfish">
             <span class="pref-icon">🦞</span>
@@ -196,7 +196,7 @@ textarea{min-height:80px;resize:vertical}
 
       <!-- Allergy Tags -->
       <div class="allergy-section">
-        <div class="allergy-header">💚 Any Allergies? (Optional)</div>
+        <div class="allergy-header">⚕️ Any Allergies? (Optional)</div>
         <div class="allergy-tags" id="allergyTags">
           <button type="button" class="allergy-tag" data-allergy="Shellfish">Shellfish</button>
           <button type="button" class="allergy-tag" data-allergy="Gluten">Gluten</button>
@@ -208,7 +208,7 @@ textarea{min-height:80px;resize:vertical}
       </div>
 
       <div class="spicy-meter">
-        <div class="spicy-header">🌶️ How Hot Do You Like It? ✨🌶️</div>
+        <div class="spicy-header">🌶️ How Hot Do You Like It? 🌶️</div>
         <div class="spicy-options" id="spicyOptions">
           <button type="button" class="spicy-opt selected" data-level="No Spice">
             <span class="fire"><span class="no-spice-dot"></span></span>
@@ -249,14 +249,14 @@ textarea{min-height:80px;resize:vertical}
         </div>
       </div>
 
-      <button type="button" class="submit-btn" id="submitBtn">✨ Join Waitlist ✨</button>
+      <button type="button" class="submit-btn" id="submitBtn">Join Waitlist</button>
       <div class="status-message" id="statusMessage"></div>
     </div>
 
     <div class="success-view" id="successView">
-      <span class="success-icon">🎉</span>
-      <h2>You're on the list! ✨</h2>
-      <p>We'll send you a text when your table is ready. While you wait, check out today's fresh seafood! 💖</p>
+      <span class="success-icon">✅</span>
+      <h2>You're on the list!</h2>
+      <p>We'll send you a text when your table is ready. While you wait, check out today's fresh seafood!</p>
       <div class="wait-time-box">
         <div class="wait-time-label">Estimated Wait Time</div>
         <div class="wait-time-value" id="estimatedWait">Calculating...</div>
@@ -405,7 +405,7 @@ document.getElementById('submitBtn').addEventListener('click', async () => {
 
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
-  btn.textContent = '✨ Adding you to the list... 💫';
+  btn.textContent = 'Adding you to the list...';
 
   try {
     let partiesAhead = 0;
@@ -451,7 +451,7 @@ document.getElementById('submitBtn').addEventListener('click', async () => {
   } catch (err) {
     showStatus(err.message, 'error');
     btn.disabled = false;
-    btn.textContent = '✨ Join Waitlist ✨';
+    btn.textContent = 'Join Waitlist';
   }
 });
 </script>

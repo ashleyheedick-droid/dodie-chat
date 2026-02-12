@@ -3,42 +3,29 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>✨ Dodie's Control Center 🦞</title>
+  <title>Dodie's Control Center</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;700;800;900&display=swap');
     :root{
       --cajun-red:#8B1A1A; --deep-maroon:#5A0E0E; --bright-red:#C41E3A;
       --gold:#D4AF37; --cream:#FFF8DC; --dark:#1a0a0a; --dark-card:#2a1515;
       --text:#ffffff; --text-muted:rgba(255,255,255,.75); --border:rgba(212,175,55,.2); --radius:24px;
-      --pink:#FF6B9D; --lavender:#C4B5FD;
     }
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:'Inter',-apple-system,sans-serif;color:var(--text);background:var(--dark);min-height:100vh;padding:40px 20px 80px;position:relative;overflow-x:hidden}
     body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle at 20% 20%,var(--cajun-red),transparent 40%),radial-gradient(circle at 80% 80%,var(--deep-maroon),transparent 40%);opacity:.6;pointer-events:none;z-index:0}
-
-    /* Floating background emoji layer */
-    .bg-emojis{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
-    .bg-emojis span{position:absolute;font-size:24px;opacity:.07;animation:floatEmoji 15s linear infinite;will-change:transform}
-    @keyframes floatEmoji{0%{transform:translateY(110vh) rotate(0deg)}100%{transform:translateY(-10vh) rotate(360deg)}}
-
     .wrap{max-width:1200px;margin:0 auto;position:relative;z-index:1}
     .hero{text-align:center;margin-bottom:50px;animation:fadeInDown .6s ease-out}
     @keyframes fadeInDown{from{opacity:0;transform:translateY(-30px)}to{opacity:1;transform:translateY(0)}}
     .logo-container{display:inline-flex;align-items:center;justify-content:center;width:100px;height:100px;background:linear-gradient(135deg,var(--bright-red),var(--cajun-red));border-radius:20px;margin-bottom:24px;box-shadow:0 20px 60px rgba(196,30,58,.4),0 0 0 3px var(--gold),0 0 20px rgba(212,175,55,.3);font-size:50px;animation:float 3s ease-in-out infinite;position:relative}
-    .logo-container::before{content:'✨';position:absolute;top:-14px;left:-14px;font-size:22px;animation:sparkleFloat 2s ease-in-out infinite alternate;pointer-events:none}
     .logo-container::after{content:'🌶️';position:absolute;top:-10px;right:-10px;font-size:30px;animation:spin 4s linear infinite}
-    @keyframes sparkleFloat{0%{opacity:.6;transform:scale(.8) translateY(0)}100%{opacity:1;transform:scale(1.1) translateY(-6px)}}
     @keyframes float{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-10px) rotate(2deg)}}
     @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
     h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(40px,6vw,64px);font-weight:400;letter-spacing:2px;line-height:1.1;color:var(--cream);text-shadow:0 2px 10px rgba(196,30,58,.6),0 0 30px rgba(212,175,55,.3);margin-bottom:12px}
     .subtitle{font-size:16px;color:var(--text-muted);max-width:600px;margin:0 auto;line-height:1.6}
     .cajun-accent{display:inline-block;padding:6px 12px;background:linear-gradient(90deg,var(--gold),#B8860B);color:var(--dark);font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:1px;border-radius:6px;margin-top:12px;box-shadow:0 4px 12px rgba(212,175,55,.3)}
-
-    /* Emoji divider row */
-    .emoji-divider{text-align:center;font-size:20px;letter-spacing:8px;margin-top:14px;opacity:.7;animation:fadeInDown .8s ease-out .3s both}
-
     .panel{background:linear-gradient(180deg,var(--dark-card),rgba(26,10,10,.95));border:2px solid var(--border);border-radius:var(--radius);padding:40px;margin-bottom:30px;box-shadow:0 20px 60px rgba(0,0,0,.6),inset 0 1px 0 rgba(212,175,55,.1);backdrop-filter:blur(20px);animation:fadeInUp .6s ease-out .2s both;position:relative}
-    .panel::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--pink),var(--bright-red),var(--lavender),var(--gold));border-radius:var(--radius) var(--radius) 0 0}
+    .panel::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--bright-red),var(--gold));border-radius:var(--radius) var(--radius) 0 0}
     @keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
     .section-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--gold);margin-bottom:20px;text-transform:uppercase}
     .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;margin-bottom:32px}
@@ -74,46 +61,34 @@
     .badge{font-size:10px;font-weight:900;padding:6px 10px;border-radius:6px;background:var(--gold);color:var(--dark);letter-spacing:.5px;text-transform:uppercase}
     .tile-label{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:1px;margin-bottom:8px;color:var(--cream)}
     .tile-desc{color:var(--text-muted);font-size:13px;line-height:1.5}
-
-    /* Tile emoji row */
-    .tile-emoji-row{margin-top:14px;font-size:14px;letter-spacing:4px;opacity:.5}
-
     .help{margin-top:24px;padding:20px;border-radius:16px;background:rgba(0,0,0,.3);border:2px solid var(--border);color:var(--text-muted);font-size:13px;line-height:1.8}
     .help strong{color:var(--gold)}
     .help code{background:rgba(0,0,0,.5);border:1px solid var(--border);padding:4px 8px;border-radius:6px;color:var(--cream);font-family:monospace;font-size:12px;word-break:break-all}
     .connected-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;background:rgba(0,200,100,.15);border:2px solid rgba(0,200,100,.3);border-radius:999px;font-size:12px;font-weight:700;color:#4ade80;margin-left:12px;vertical-align:middle}
     .dot-live{width:8px;height:8px;background:#4ade80;border-radius:50%;animation:pulse 2s ease-in-out infinite}
     @keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 8px #4ade80}50%{opacity:.5}}
-
-    /* Footer fun emoji row */
-    .footer-fun{text-align:center;margin-top:30px;font-size:22px;letter-spacing:10px;opacity:.45;animation:fadeInUp .8s ease-out .6s both}
-
     @media(max-width:768px){body{padding:30px 16px 60px}.panel{padding:28px 20px}.form-grid{grid-template-columns:1fr}.actions{flex-direction:column}.btn{width:100%;justify-content:center}}
   </style>
 </head>
 <body>
-  <!-- Floating background emojis -->
-  <div class="bg-emojis" id="bgEmojis"></div>
-
   <div class="wrap">
     <div class="hero">
       <div class="logo-container">🦞</div>
-      <h1>✨ Dodie's Cajun Diner ✨</h1>
-      <div class="subtitle">Restaurant Management System 🍽️💖</div>
+      <h1>Dodie's Cajun Diner</h1>
+      <div class="subtitle">Restaurant Management System</div>
       <div class="cajun-accent">⚡ Authentic Louisiana Technology ⚡</div>
-      <div class="emoji-divider">🦞 🌶️ 🍤 🌊 💖 🌶️ 🦞</div>
     </div>
 
     <div class="panel">
-      <div class="section-title">⚙️ System Configuration ✨</div>
+      <div class="section-title">⚙️ System Configuration</div>
 
       <div class="form-grid">
         <div class="field">
-          <label for="appsScriptUrl">📝 Google Apps Script URL</label>
+          <label for="appsScriptUrl">🔗 Google Apps Script URL</label>
           <input id="appsScriptUrl" type="text" placeholder="https://script.google.com/.../exec" />
         </div>
         <div class="field">
-          <label for="n8nWebhookUrl">🎯 n8n AI Webhook URL</label>
+          <label for="n8nWebhookUrl">🤖 n8n AI Webhook URL</label>
           <input id="n8nWebhookUrl" type="text" placeholder="https://your-instance.app.n8n.cloud/webhook/..." />
         </div>
       </div>
@@ -130,56 +105,35 @@
         <strong>🔥 Quick API Tests (paste in browser address bar):</strong><br/>
         <code id="testUrl1">[save your Apps Script URL above first]</code><br/>
         <code id="testUrl2">[save your Apps Script URL above first]</code><br/><br/>
-        <strong>💡 Tip:</strong> All pages read their URLs from this Control Center. Save once, everything just works. ✨
+        <strong>💡 Tip:</strong> All pages read their URLs from this Control Center. Save once, everything just works.
       </div>
     </div>
 
     <div class="launch-grid">
       <button class="tile" id="guestBtn" type="button">
         <div class="tile-header"><div class="tile-icon">✨</div><div class="badge">Guest</div></div>
-        <div class="tile-label">📝 Join Waitlist</div>
-        <div class="tile-desc">Guests add themselves to the waitlist from this form 💖</div>
-        <div class="tile-emoji-row">📝 ✨ 💖 🦞</div>
+        <div class="tile-label">Join Waitlist</div>
+        <div class="tile-desc">Guests add themselves to the waitlist from this form</div>
       </button>
       <button class="tile" id="hostBtn" type="button">
         <div class="tile-header"><div class="tile-icon">👥</div><div class="badge">Host</div></div>
-        <div class="tile-label">🎯 Manage Waitlist</div>
-        <div class="tile-desc">Seat waiting parties and manage the queue ⭐</div>
-        <div class="tile-emoji-row">🎯 👥 ⭐ 🌟</div>
+        <div class="tile-label">Manage Waitlist</div>
+        <div class="tile-desc">Seat waiting parties and manage the queue</div>
       </button>
       <button class="tile" id="liveBtn" type="button">
         <div class="tile-header"><div class="tile-icon">🦞</div><div class="badge">Live</div></div>
-        <div class="tile-label">🌊 Seafood Status</div>
-        <div class="tile-desc">Live crawfish & seafood availability board 🐚</div>
-        <div class="tile-emoji-row">🌊 🦞 🐚 🍤</div>
+        <div class="tile-label">Seafood Status</div>
+        <div class="tile-desc">Live crawfish & seafood availability board</div>
       </button>
       <button class="tile" id="aiBtn" type="button">
         <div class="tile-header"><div class="tile-icon">🤖</div><div class="badge">AI</div></div>
-        <div class="tile-label">💬 AI Assistant</div>
-        <div class="tile-desc">Smart chatbot for customer questions ✨</div>
-        <div class="tile-emoji-row">💬 🤖 ✨ 💫</div>
+        <div class="tile-label">AI Assistant</div>
+        <div class="tile-desc">Smart chatbot for customer questions</div>
       </button>
     </div>
-
-    <div class="footer-fun">🦞 ✨ 🌶️ 💖 🍤 🌊 ⭐ 🦞</div>
   </div>
 
 <script>
-  // Background emoji creator IIFE
-  (function() {
-    const emojis = ['🦞','🌶️','✨','💖','🍤','⭐','🌊','🐚','💫','🔥'];
-    const container = document.getElementById('bgEmojis');
-    for (let i = 0; i < 18; i++) {
-      const span = document.createElement('span');
-      span.textContent = emojis[i % emojis.length];
-      span.style.left = (Math.random() * 100) + '%';
-      span.style.animationDelay = (Math.random() * 15) + 's';
-      span.style.animationDuration = (12 + Math.random() * 10) + 's';
-      span.style.fontSize = (16 + Math.random() * 16) + 'px';
-      container.appendChild(span);
-    }
-  })();
-
   const $ = id => document.getElementById(id);
   const KEYS = { apps: 'appsScriptUrl', n8n: 'n8nWebhookUrl' };
 
@@ -202,8 +156,8 @@
     $('appsScriptUrl').value = apps;
     $('n8nWebhookUrl').value = n8n;
     updateTestUrls();
-    if (apps || n8n) setStatus('✅ Configuration loaded — all pages are connected 💫', 'ok');
-    else setStatus('👋 Enter your URLs and click Save to connect everything ✨', 'info');
+    if (apps || n8n) setStatus('✓ Configuration loaded — all pages are connected', 'ok');
+    else setStatus('👋 Enter your URLs and click Save to connect everything', 'info');
   }
 
   function save() {
@@ -215,17 +169,17 @@
     }
     if (apps) localStorage.setItem(KEYS.apps, apps); else localStorage.removeItem(KEYS.apps);
     if (n8n)  localStorage.setItem(KEYS.n8n, n8n);  else localStorage.removeItem(KEYS.n8n);
-    setStatus('🎉 Saved! All pages are now connected to your Google Sheet and n8n. 💖', 'ok');
+    setStatus('🔥 Saved! All pages are now connected to your Google Sheet and n8n.', 'ok');
     updateTestUrls();
   }
 
   function clear() {
-    if (!confirm('🗑️ Clear all saved configuration?')) return;
+    if (!confirm('Clear all saved configuration?')) return;
     localStorage.removeItem(KEYS.apps);
     localStorage.removeItem(KEYS.n8n);
     $('appsScriptUrl').value = '';
     $('n8nWebhookUrl').value = '';
-    setStatus('🧹 Configuration cleared ✨', 'info');
+    setStatus('Configuration cleared', 'info');
     updateTestUrls();
   }
 
@@ -233,7 +187,7 @@
   function test() {
     const apps = $('appsScriptUrl').value.trim();
     if (!apps) { setStatus('⚠ Enter your Apps Script URL first', 'err'); return; }
-    setStatus('⏳ Testing connection via JSONP... 💫', 'info');
+    setStatus('⏳ Testing connection via JSONP...', 'info');
 
     const cb = 'testCb_' + Date.now();
     const s  = document.createElement('script');
@@ -249,7 +203,7 @@
       cleanup();
       if (data && data.success) {
         const count = Array.isArray(data.data) ? data.data.length : 0;
-        setStatus(`🎉 Connected! Found ${count} inventory items. Everything is working! ✨`, 'ok');
+        setStatus(`🔥 Connected! Found ${count} inventory items. Everything is working!`, 'ok');
       } else {
         setStatus('✗ Got a response but it returned an error: ' + (data && data.error ? data.error : 'unknown'), 'err');
       }
