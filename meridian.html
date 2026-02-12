@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Meridian — Restaurant Technology That Actually Works</title>
+<meta name="description" content="Meridian builds intelligent software for the restaurant industry. Our flagship platform DineIQ gives restaurants AI-powered waitlists, SMS notifications, and real-time business intelligence.">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --m-ink:#0A0D14;--m-ink-90:#161B26;--m-ink-80:#1E2432;--m-ink-70:#2A3142;
+  --m-slate:#3B4559;--m-slate-light:#4F5B73;
+  --m-silver:#8892A7;--m-cloud:#B0B8CB;--m-fog:#D4DAE7;--m-mist:#EDF0F7;--m-white:#FFFFFF;
+  --m-prime:#4F6EF7;--m-prime-dark:#3B55D9;--m-prime-light:#7B94FF;--m-prime-glow:rgba(79,110,247,.12);
+  --m-prime-vivid:#6C8AFF;
+  --m-teal:#14B8A6;--m-teal-dark:#0D9488;--m-teal-glow:rgba(20,184,166,.1);
+  --m-amber:#F59E0B;--m-amber-glow:rgba(245,158,11,.1);
+  --m-rose:#EF4444;--m-emerald:#10B981;
+  --m-gradient:linear-gradient(135deg,var(--m-prime),var(--m-teal));
+  --m-gradient-warm:linear-gradient(135deg,var(--m-prime),#A855F7,var(--m-rose));
+  --radius:20px;--radius-md:14px;--radius-sm:10px;--radius-xs:6px;
+  --ease:cubic-bezier(.4,0,.2,1);--ease-spring:cubic-bezier(.34,1.56,.64,1);
+  --shadow-card:0 1px 3px rgba(0,0,0,.08),0 8px 32px rgba(0,0,0,.06);
+  --shadow-lg:0 24px 48px rgba(0,0,0,.12);
+  --shadow-glow:0 0 80px rgba(79,110,247,.08);
+}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--m-white);color:var(--m-slate);line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+::selection{background:var(--m-prime);color:white}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button{border:none;cursor:pointer;font-family:inherit}
+
+/* ── LAYOUT ──────────────────────────────────────────────────────── */
+.wrap{max-width:1240px;margin:0 auto;padding:0 32px}
+section{padding:120px 0}
+.section-eyebrow{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:3px;color:var(--m-prime);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.section-eyebrow::before{content:'';width:24px;height:2px;background:var(--m-prime);border-radius:2px}
+.section-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(32px,4.5vw,52px);font-weight:700;color:var(--m-ink);line-height:1.12;letter-spacing:-.5px;margin-bottom:16px}
+.section-desc{font-size:18px;color:var(--m-silver);max-width:540px;line-height:1.7}
+.centered{text-align:center}
+.centered .section-eyebrow{justify-content:center}
+.centered .section-desc{margin:0 auto}
+
+/* ── BUTTONS ─────────────────────────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:15px;border-radius:var(--radius-sm);transition:all .25s var(--ease);padding:14px 28px;letter-spacing:-.1px}
+.btn-primary{background:var(--m-prime);color:white;box-shadow:0 4px 16px rgba(79,110,247,.25),inset 0 1px 0 rgba(255,255,255,.1)}
+.btn-primary:hover{background:var(--m-prime-dark);transform:translateY(-2px);box-shadow:0 8px 24px rgba(79,110,247,.35)}
+.btn-ghost{background:transparent;color:var(--m-ink);border:2px solid var(--m-fog)}
+.btn-ghost:hover{border-color:var(--m-prime);color:var(--m-prime);transform:translateY(-2px)}
+.btn-dark{background:var(--m-ink);color:white;box-shadow:0 4px 16px rgba(10,13,20,.2)}
+.btn-dark:hover{background:var(--m-ink-90);transform:translateY(-2px);box-shadow:0 8px 24px rgba(10,13,20,.3)}
+.btn-lg{padding:16px 36px;font-size:16px;border-radius:var(--radius-md)}
+
+/* ── NAV ─────────────────────────────────────────────────────────── */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 32px;transition:all .3s var(--ease)}
+.nav.scrolled{background:rgba(255,255,255,.92);backdrop-filter:blur(20px);border-bottom:1px solid rgba(0,0,0,.06);box-shadow:0 1px 12px rgba(0,0,0,.04)}
+.nav-inner{max-width:1240px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:72px}
+.nav-brand{display:flex;align-items:center;gap:10px}
+.nav-mark{width:32px;height:32px;position:relative}
+.nav-mark svg{width:100%;height:100%}
+.nav-wordmark{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:var(--m-ink);letter-spacing:-.5px}
+.nav-links{display:flex;align-items:center;gap:36px}
+.nav-link{font-size:14px;font-weight:600;color:var(--m-slate-light);transition:color .2s}
+.nav-link:hover{color:var(--m-ink)}
+.nav-actions{display:flex;align-items:center;gap:12px}
+.nav-login{font-size:14px;font-weight:600;color:var(--m-slate-light);padding:8px 16px;transition:color .2s}
+.nav-login:hover{color:var(--m-ink)}
+.nav-cta{font-size:14px;font-weight:700;padding:10px 22px;background:var(--m-ink);color:white;border-radius:var(--radius-sm);transition:all .25s var(--ease)}
+.nav-cta:hover{background:var(--m-prime);transform:translateY(-1px);box-shadow:0 4px 16px rgba(79,110,247,.3)}
+
+/* ── HERO ────────────────────────────────────────────────────────── */
+.hero{padding:160px 0 120px;position:relative;overflow:hidden;background:linear-gradient(180deg,var(--m-mist) 0%,var(--m-white) 100%)}
+.hero::before{content:'';position:absolute;top:-200px;right:-200px;width:700px;height:700px;background:radial-gradient(circle,rgba(79,110,247,.06) 0%,transparent 70%);pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:-100px;left:-100px;width:500px;height:500px;background:radial-gradient(circle,rgba(20,184,166,.04) 0%,transparent 70%);pointer-events:none}
+.hero .wrap{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+.hero-content{max-width:560px}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px 6px 6px;background:white;border:1px solid var(--m-fog);border-radius:999px;font-size:13px;font-weight:600;color:var(--m-slate);margin-bottom:28px;box-shadow:var(--shadow-card);animation:fadeIn .5s var(--ease) both}
+.hero-badge-dot{width:8px;height:8px;background:var(--m-emerald);border-radius:50%;animation:blink 2s infinite}
+.hero-badge-icon{width:28px;height:28px;background:var(--m-prime-glow);border-radius:50%;display:grid;place-items:center;font-size:14px}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideRight{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}
+
+.hero h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(40px,5.5vw,64px);font-weight:700;color:var(--m-ink);line-height:1.08;letter-spacing:-1.5px;margin-bottom:20px;animation:fadeUp .6s var(--ease) .1s both}
+.hero h1 em{font-style:normal;background:var(--m-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:19px;color:var(--m-silver);line-height:1.7;margin-bottom:36px;max-width:480px;animation:fadeUp .6s var(--ease) .2s both}
+.hero-cta{display:flex;gap:14px;flex-wrap:wrap;animation:fadeUp .6s var(--ease) .3s both}
+.hero-meta{display:flex;gap:32px;margin-top:40px;animation:fadeUp .6s var(--ease) .4s both}
+.hero-meta-item{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--m-silver)}
+.hero-meta-item .check{color:var(--m-emerald);font-weight:800}
+
+/* hero visual */
+.hero-visual{position:relative;animation:fadeIn .8s var(--ease) .3s both}
+.hero-mockup{background:var(--m-ink);border-radius:var(--radius);padding:2px;box-shadow:var(--shadow-lg),0 0 0 1px rgba(0,0,0,.1);overflow:hidden;position:relative}
+.hero-screen{background:var(--m-ink-90);border-radius:18px;overflow:hidden;position:relative}
+.hero-toolbar{display:flex;align-items:center;gap:6px;padding:12px 16px;background:var(--m-ink)}
+.hero-toolbar .dot{width:10px;height:10px;border-radius:50%}
+.hero-toolbar .dot.r{background:#FF5F57}.hero-toolbar .dot.y{background:#FFBD2E}.hero-toolbar .dot.g{background:#28C840}
+.hero-toolbar .url{margin-left:12px;flex:1;height:28px;background:var(--m-ink-80);border-radius:6px;display:flex;align-items:center;padding:0 12px}
+.hero-toolbar .url span{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--m-silver)}
+
+/* dashboard mockup inside hero */
+.dash-mock{padding:20px;display:grid;grid-template-columns:1fr 1fr;gap:12px;min-height:320px}
+.dash-card{background:var(--m-ink-80);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius-sm);padding:16px;animation:fadeUp .5s var(--ease) both}
+.dash-card:nth-child(1){animation-delay:.5s}
+.dash-card:nth-child(2){animation-delay:.6s}
+.dash-card:nth-child(3){animation-delay:.7s}
+.dash-card:nth-child(4){animation-delay:.8s}
+.dash-card-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--m-silver);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.dash-card-value{font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:700;color:white;margin-bottom:4px}
+.dash-card-change{font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px}
+.dash-card-change.up{color:var(--m-emerald);background:rgba(16,185,129,.1)}
+.dash-card-change.down{color:var(--m-rose);background:rgba(239,68,68,.1)}
+.dash-bar-group{display:flex;gap:3px;align-items:end;height:48px;margin-top:12px}
+.dash-bar{width:100%;background:var(--m-prime);border-radius:3px 3px 0 0;opacity:.7;animation:barGrow 1s var(--ease-spring) both}
+@keyframes barGrow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.dash-bar:nth-child(1){height:60%;animation-delay:.6s}.dash-bar:nth-child(2){height:80%;animation-delay:.65s}
+.dash-bar:nth-child(3){height:45%;animation-delay:.7s}.dash-bar:nth-child(4){height:95%;animation-delay:.75s}
+.dash-bar:nth-child(5){height:70%;animation-delay:.8s}.dash-bar:nth-child(6){height:100%;animation-delay:.85s;opacity:1}
+.dash-bar:nth-child(7){height:55%;animation-delay:.9s}
+.dash-waitlist{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.dash-wl-row{display:flex;align-items:center;gap:8px;padding:6px 8px;background:rgba(255,255,255,.03);border-radius:6px}
+.dash-wl-avatar{width:20px;height:20px;border-radius:50%;background:var(--m-gradient)}
+.dash-wl-name{font-size:11px;color:var(--m-cloud);flex:1;font-weight:500}
+.dash-wl-badge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:999px;color:white;background:var(--m-teal)}
+.dash-wl-badge.waiting{background:var(--m-amber)}
+
+/* ── MARQUEE ─────────────────────────────────────────────────────── */
+.marquee-section{padding:48px 0;border-top:1px solid var(--m-fog);border-bottom:1px solid var(--m-fog);overflow:hidden}
+.marquee-label{text-align:center;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--m-cloud);text-transform:uppercase;letter-spacing:3px;margin-bottom:20px}
+.marquee-track{display:flex;gap:48px;animation:scroll 30s linear infinite;width:max-content}
+@keyframes scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.marquee-item{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:600;color:var(--m-fog);white-space:nowrap;display:flex;align-items:center;gap:12px}
+.marquee-item .sep{width:6px;height:6px;background:var(--m-fog);border-radius:50%;flex-shrink:0}
+
+/* ── PRODUCT SECTION ─────────────────────────────────────────────── */
+.product{background:var(--m-white)}
+.product-intro{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;margin-bottom:80px}
+.product-intro-visual{position:relative}
+.product-badge{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:var(--m-prime-glow);border:1px solid rgba(79,110,247,.15);border-radius:var(--radius-sm);margin-bottom:24px}
+.product-badge-name{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:var(--m-prime)}
+.product-badge-tag{font-size:11px;font-weight:700;color:var(--m-prime-light);text-transform:uppercase;letter-spacing:1px;padding:3px 8px;background:rgba(79,110,247,.08);border-radius:999px}
+
+.product-features{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.pf-card{padding:32px 28px;border:1px solid var(--m-fog);border-radius:var(--radius);transition:all .3s var(--ease);position:relative;overflow:hidden;background:white}
+.pf-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--m-gradient);transform:scaleX(0);transform-origin:left;transition:transform .3s var(--ease)}
+.pf-card:hover{border-color:var(--m-prime);transform:translateY(-6px);box-shadow:var(--shadow-lg),var(--shadow-glow)}
+.pf-card:hover::after{transform:scaleX(1)}
+.pf-icon{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:20px;margin-bottom:16px}
+.pf-icon.blue{background:var(--m-prime-glow);border:1px solid rgba(79,110,247,.12)}
+.pf-icon.teal{background:var(--m-teal-glow);border:1px solid rgba(20,184,166,.12)}
+.pf-icon.amber{background:var(--m-amber-glow);border:1px solid rgba(245,158,11,.12)}
+.pf-icon.rose{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.1)}
+.pf-icon.emerald{background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.1)}
+.pf-icon.purple{background:rgba(168,85,247,.06);border:1px solid rgba(168,85,247,.1)}
+.pf-title{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:var(--m-ink);margin-bottom:6px}
+.pf-desc{font-size:14px;color:var(--m-silver);line-height:1.65}
+.pf-stat{margin-top:14px;font-size:13px;font-weight:700;color:var(--m-teal);display:flex;align-items:center;gap:6px}
+
+/* ── STATS BAR ───────────────────────────────────────────────────── */
+.stats-bar{padding:80px 0;background:var(--m-ink);position:relative;overflow:hidden}
+.stats-bar::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(135deg,rgba(79,110,247,.08),rgba(20,184,166,.05));pointer-events:none}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;position:relative;z-index:1}
+.stat-item{text-align:center}
+.stat-value{font-family:'Space Grotesk',sans-serif;font-size:clamp(36px,4vw,48px);font-weight:700;color:white;line-height:1;margin-bottom:6px}
+.stat-value .accent{color:var(--m-prime-vivid)}
+.stat-label{font-size:14px;color:var(--m-silver);font-weight:500}
+
+/* ── HOW IT WORKS ────────────────────────────────────────────────── */
+.how-section{background:var(--m-mist)}
+.how-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;margin-top:60px;position:relative}
+.how-grid::before{content:'';position:absolute;top:32px;left:64px;right:64px;height:2px;background:var(--m-fog)}
+.how-step{text-align:center;position:relative}
+.how-num{width:52px;height:52px;border-radius:16px;background:white;border:2px solid var(--m-fog);display:grid;place-items:center;font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:var(--m-prime);margin:0 auto 20px;position:relative;z-index:1;transition:all .3s var(--ease)}
+.how-step:hover .how-num{background:var(--m-prime);color:white;border-color:var(--m-prime);transform:scale(1.1);box-shadow:0 8px 24px rgba(79,110,247,.25)}
+.how-title{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;color:var(--m-ink);margin-bottom:6px}
+.how-text{font-size:14px;color:var(--m-silver);line-height:1.6;max-width:220px;margin:0 auto}
+
+/* ── PRICING ─────────────────────────────────────────────────────── */
+.pricing-section{background:white}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:60px}
+.pr-card{border:1px solid var(--m-fog);border-radius:var(--radius);padding:40px 32px;transition:all .3s var(--ease);position:relative;background:white}
+.pr-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg)}
+.pr-card.featured{border-color:var(--m-prime);box-shadow:0 0 0 1px var(--m-prime),var(--shadow-lg),var(--shadow-glow)}
+.pr-card.featured::before{content:'Recommended';position:absolute;top:-13px;left:50%;transform:translateX(-50%);padding:6px 18px;background:var(--m-prime);color:white;font-size:11px;font-weight:800;border-radius:999px;text-transform:uppercase;letter-spacing:1px}
+.pr-name{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:var(--m-ink);margin-bottom:4px}
+.pr-desc{font-size:14px;color:var(--m-silver);margin-bottom:28px;line-height:1.5}
+.pr-setup{font-size:13px;color:var(--m-silver)}
+.pr-setup strong{color:var(--m-ink)}
+.pr-price{font-family:'Space Grotesk',sans-serif;font-size:52px;font-weight:700;color:var(--m-ink);line-height:1;margin:4px 0}
+.pr-period{font-size:14px;color:var(--m-cloud);margin-bottom:28px}
+.pr-divider{height:1px;background:var(--m-fog);margin-bottom:24px}
+.pr-features{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:32px}
+.pr-features li{font-size:14px;color:var(--m-slate);display:flex;align-items:flex-start;gap:10px;line-height:1.5}
+.pr-features li::before{content:'\2713';font-weight:800;font-size:13px;color:var(--m-teal);flex-shrink:0;margin-top:2px}
+.pr-btn{display:block;width:100%;padding:14px;border-radius:var(--radius-sm);font-size:15px;font-weight:700;text-align:center;transition:all .25s var(--ease)}
+
+/* ── TESTIMONIAL ─────────────────────────────────────────────────── */
+.testimonial{background:var(--m-mist);padding:100px 0}
+.test-card{max-width:720px;margin:0 auto;text-align:center}
+.test-quote{font-family:'Space Grotesk',sans-serif;font-size:clamp(22px,3vw,32px);font-weight:600;color:var(--m-ink);line-height:1.4;margin-bottom:28px;letter-spacing:-.3px}
+.test-author{display:flex;align-items:center;gap:12px;justify-content:center}
+.test-avatar{width:44px;height:44px;border-radius:50%;background:var(--m-gradient);display:grid;place-items:center;color:white;font-weight:800;font-size:16px}
+.test-info{text-align:left}
+.test-name{font-weight:700;color:var(--m-ink);font-size:15px}
+.test-role{font-size:13px;color:var(--m-silver)}
+
+/* ── CTA SECTION ─────────────────────────────────────────────────── */
+.final-cta{padding:120px 0;background:var(--m-ink);position:relative;overflow:hidden;text-align:center}
+.final-cta::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:800px;height:600px;background:radial-gradient(ellipse,rgba(79,110,247,.1),transparent 60%);pointer-events:none}
+.final-cta .wrap{position:relative;z-index:1;max-width:640px}
+.final-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(36px,5vw,52px);font-weight:700;color:white;line-height:1.12;letter-spacing:-.5px;margin-bottom:16px}
+.final-sub{font-size:18px;color:var(--m-silver);line-height:1.7;margin-bottom:36px}
+.final-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+
+/* ── FOOTER ──────────────────────────────────────────────────────── */
+.footer{padding:48px 0;border-top:1px solid var(--m-fog)}
+.footer-inner{display:flex;align-items:center;justify-content:space-between}
+.footer-brand{display:flex;align-items:center;gap:8px}
+.footer-logo{width:24px;height:24px}
+.footer-name{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:var(--m-ink)}
+.footer-links{display:flex;gap:24px}
+.footer-link{font-size:13px;font-weight:600;color:var(--m-silver);transition:color .2s}
+.footer-link:hover{color:var(--m-ink)}
+.footer-copy{font-size:13px;color:var(--m-cloud)}
+
+/* ── RESPONSIVE ──────────────────────────────────────────────────── */
+@media(max-width:1024px){
+  .hero .wrap{grid-template-columns:1fr;gap:48px}
+  .hero-content{max-width:100%;text-align:center}
+  .hero-sub{margin:0 auto 36px}
+  .hero-cta{justify-content:center}
+  .hero-meta{justify-content:center}
+  .product-intro{grid-template-columns:1fr}
+  .product-features{grid-template-columns:1fr 1fr}
+  .pricing-grid{grid-template-columns:1fr;max-width:420px;margin-left:auto;margin-right:auto}
+  .pr-card.featured{order:-1}
+}
+@media(max-width:768px){
+  section{padding:80px 0}
+  .wrap{padding:0 20px}
+  .nav{padding:0 20px}
+  .nav-links{display:none}
+  .product-features{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:1fr 1fr;gap:24px}
+  .how-grid{grid-template-columns:1fr 1fr;gap:28px}
+  .how-grid::before{display:none}
+  .footer-inner{flex-direction:column;gap:16px;text-align:center}
+  .footer-links{flex-wrap:wrap;justify-content:center}
+}
+@media(max-width:480px){
+  .hero{padding:120px 0 80px}
+  .hero-cta{flex-direction:column;align-items:center}
+  .hero-cta .btn{width:100%;justify-content:center}
+  .hero-meta{flex-direction:column;gap:12px;align-items:center}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .how-grid{grid-template-columns:1fr}
+  .final-actions{flex-direction:column;align-items:center}
+  .final-actions .btn{width:100%}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════ NAV ═══════════════════════════════════════════════════════ -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-brand">
+      <div class="nav-mark">
+        <svg viewBox="0 0 32 32" fill="none">
+          <rect width="32" height="32" rx="8" fill="url(#mg)"/>
+          <path d="M8 22V10l8 6-8 6z" fill="white" fill-opacity=".9"/>
+          <path d="M16 22V10l8 6-8 6z" fill="white" fill-opacity=".5"/>
+          <defs><linearGradient id="mg" x1="0" y1="0" x2="32" y2="32"><stop stop-color="#4F6EF7"/><stop offset="1" stop-color="#14B8A6"/></linearGradient></defs>
+        </svg>
+      </div>
+      <span class="nav-wordmark">Meridian</span>
+    </a>
+    <div class="nav-links">
+      <a href="#product" class="nav-link">Product</a>
+      <a href="#pricing" class="nav-link">Pricing</a>
+      <a href="#how" class="nav-link">How It Works</a>
+    </div>
+    <div class="nav-actions">
+      <a href="#" class="nav-login">Log In</a>
+      <a href="#pricing" class="nav-cta">Get Started</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════ HERO ══════════════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="hero-badge-icon">D</span>
+        <span>Introducing <strong>DineIQ</strong> by Meridian</span>
+      </div>
+      <h1>The operating system<br>for <em>modern restaurants</em></h1>
+      <p class="hero-sub">AI-powered waitlists. SMS notifications. Real-time dashboards. Customer intelligence. One platform that makes your restaurant run smarter.</p>
+      <div class="hero-cta">
+        <a href="#pricing" class="btn btn-primary btn-lg">See Plans & Pricing</a>
+        <a href="index.html" class="btn btn-ghost btn-lg">View Live Demo</a>
+      </div>
+      <div class="hero-meta">
+        <div class="hero-meta-item"><span class="check">&#10003;</span> Setup in days</div>
+        <div class="hero-meta-item"><span class="check">&#10003;</span> No contracts</div>
+        <div class="hero-meta-item"><span class="check">&#10003;</span> 30-day guarantee</div>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="hero-mockup">
+        <div class="hero-screen">
+          <div class="hero-toolbar">
+            <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+            <div class="url"><span>app.getdineiq.com/dashboard</span></div>
+          </div>
+          <div class="dash-mock">
+            <div class="dash-card">
+              <div class="dash-card-label">Covers Today</div>
+              <div class="dash-card-value">142</div>
+              <span class="dash-card-change up">+18%</span>
+              <div class="dash-bar-group">
+                <div class="dash-bar"></div><div class="dash-bar"></div><div class="dash-bar"></div>
+                <div class="dash-bar"></div><div class="dash-bar"></div><div class="dash-bar"></div><div class="dash-bar"></div>
+              </div>
+            </div>
+            <div class="dash-card">
+              <div class="dash-card-label">Active Waitlist</div>
+              <div class="dash-card-value">8</div>
+              <div class="dash-waitlist">
+                <div class="dash-wl-row"><div class="dash-wl-avatar"></div><span class="dash-wl-name">Johnson, party of 4</span><span class="dash-wl-badge">Seated</span></div>
+                <div class="dash-wl-row"><div class="dash-wl-avatar" style="background:var(--m-amber)"></div><span class="dash-wl-name">Williams, party of 6</span><span class="dash-wl-badge waiting">Waiting</span></div>
+                <div class="dash-wl-row"><div class="dash-wl-avatar" style="background:var(--m-rose)"></div><span class="dash-wl-name">Garcia, party of 2</span><span class="dash-wl-badge waiting">Waiting</span></div>
+              </div>
+            </div>
+            <div class="dash-card">
+              <div class="dash-card-label">Avg. Wait Time</div>
+              <div class="dash-card-value">14m</div>
+              <span class="dash-card-change up">-22%</span>
+            </div>
+            <div class="dash-card">
+              <div class="dash-card-label">Satisfaction</div>
+              <div class="dash-card-value">4.8</div>
+              <span class="dash-card-change up">+0.3</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ MARQUEE ═══════════════════════════════════════════════════ -->
+<div class="marquee-section">
+  <div class="marquee-label">Built for every cuisine &amp; concept</div>
+  <div style="overflow:hidden">
+    <div class="marquee-track">
+      <span class="marquee-item">Seafood Houses<span class="sep"></span></span>
+      <span class="marquee-item">Steakhouses<span class="sep"></span></span>
+      <span class="marquee-item">Fine Dining<span class="sep"></span></span>
+      <span class="marquee-item">Casual Dining<span class="sep"></span></span>
+      <span class="marquee-item">Fast Casual<span class="sep"></span></span>
+      <span class="marquee-item">Mexican<span class="sep"></span></span>
+      <span class="marquee-item">Italian<span class="sep"></span></span>
+      <span class="marquee-item">Asian Fusion<span class="sep"></span></span>
+      <span class="marquee-item">BBQ &amp; Smokehouse<span class="sep"></span></span>
+      <span class="marquee-item">Brunch Spots<span class="sep"></span></span>
+      <span class="marquee-item">Cajun &amp; Creole<span class="sep"></span></span>
+      <span class="marquee-item">Pizza<span class="sep"></span></span>
+      <!-- duplicate for seamless loop -->
+      <span class="marquee-item">Seafood Houses<span class="sep"></span></span>
+      <span class="marquee-item">Steakhouses<span class="sep"></span></span>
+      <span class="marquee-item">Fine Dining<span class="sep"></span></span>
+      <span class="marquee-item">Casual Dining<span class="sep"></span></span>
+      <span class="marquee-item">Fast Casual<span class="sep"></span></span>
+      <span class="marquee-item">Mexican<span class="sep"></span></span>
+      <span class="marquee-item">Italian<span class="sep"></span></span>
+      <span class="marquee-item">Asian Fusion<span class="sep"></span></span>
+      <span class="marquee-item">BBQ &amp; Smokehouse<span class="sep"></span></span>
+      <span class="marquee-item">Brunch Spots<span class="sep"></span></span>
+      <span class="marquee-item">Cajun &amp; Creole<span class="sep"></span></span>
+      <span class="marquee-item">Pizza<span class="sep"></span></span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ PRODUCT ═══════════════════════════════════════════════════ -->
+<section class="product" id="product">
+  <div class="wrap">
+    <div class="product-intro">
+      <div>
+        <div class="product-badge">
+          <span class="product-badge-name">DineIQ</span>
+          <span class="product-badge-tag">by Meridian</span>
+        </div>
+        <div class="section-eyebrow">Our Platform</div>
+        <h2 class="section-title">8 tools.<br>One connected system.</h2>
+        <p class="section-desc">Every feature feeds data to every other feature. Your AI learns from your menu. Your waitlist drives your SMS. Your feedback flows into your dashboard. Nothing exists in a silo.</p>
+      </div>
+      <div class="product-intro-visual centered">
+        <svg viewBox="0 0 400 300" fill="none" style="max-width:400px;margin:0 auto">
+          <!-- hub and spoke diagram -->
+          <circle cx="200" cy="150" r="40" fill="url(#pg)" opacity=".9"/>
+          <text x="200" y="156" text-anchor="middle" fill="white" font-family="Space Grotesk" font-weight="700" font-size="14">DineIQ</text>
+
+          <!-- spokes -->
+          <line x1="200" y1="110" x2="200" y2="50" stroke="#4F6EF7" stroke-width="2" stroke-dasharray="4 4" opacity=".4"/>
+          <line x1="238" y1="120" x2="310" y2="60" stroke="#4F6EF7" stroke-width="2" stroke-dasharray="4 4" opacity=".4"/>
+          <line x1="240" y1="150" x2="340" y2="150" stroke="#4F6EF7" stroke-width="2" stroke-dasharray="4 4" opacity=".4"/>
+          <line x1="238" y1="180" x2="310" y2="240" stroke="#4F6EF7" stroke-width="2" stroke-dasharray="4 4" opacity=".4"/>
+          <line x1="200" y1="190" x2="200" y2="260" stroke="#4F6EF7" stroke-width="2" stroke-dasharray="4 4" opacity=".4"/>
+          <line x1="162" y1="180" x2="90" y2="240" stroke="#4F6EF7" stroke-width="2" stroke-dasharray="4 4" opacity=".4"/>
+          <line x1="160" y1="150" x2="60" y2="150" stroke="#4F6EF7" stroke-width="2" stroke-dasharray="4 4" opacity=".4"/>
+          <line x1="162" y1="120" x2="90" y2="60" stroke="#4F6EF7" stroke-width="2" stroke-dasharray="4 4" opacity=".4"/>
+
+          <!-- nodes -->
+          <circle cx="200" cy="40" r="22" fill="white" stroke="#E5E7EB" stroke-width="2"/><text x="200" y="44" text-anchor="middle" font-size="18">📋</text>
+          <circle cx="310" cy="55" r="22" fill="white" stroke="#E5E7EB" stroke-width="2"/><text x="310" y="59" text-anchor="middle" font-size="18">🤖</text>
+          <circle cx="345" cy="150" r="22" fill="white" stroke="#E5E7EB" stroke-width="2"/><text x="345" y="154" text-anchor="middle" font-size="18">📊</text>
+          <circle cx="310" cy="245" r="22" fill="white" stroke="#E5E7EB" stroke-width="2"/><text x="310" y="249" text-anchor="middle" font-size="18">📱</text>
+          <circle cx="200" cy="265" r="22" fill="white" stroke="#E5E7EB" stroke-width="2"/><text x="200" y="269" text-anchor="middle" font-size="18">🔥</text>
+          <circle cx="90" cy="245" r="22" fill="white" stroke="#E5E7EB" stroke-width="2"/><text x="90" y="249" text-anchor="middle" font-size="18">📝</text>
+          <circle cx="55" cy="150" r="22" fill="white" stroke="#E5E7EB" stroke-width="2"/><text x="55" y="154" text-anchor="middle" font-size="18">⭐</text>
+          <circle cx="90" cy="55" r="22" fill="white" stroke="#E5E7EB" stroke-width="2"/><text x="90" y="59" text-anchor="middle" font-size="18">🦞</text>
+
+          <defs><linearGradient id="pg" x1="160" y1="110" x2="240" y2="190"><stop stop-color="#4F6EF7"/><stop offset="1" stop-color="#14B8A6"/></linearGradient></defs>
+        </svg>
+      </div>
+    </div>
+
+    <div class="product-features">
+      <div class="pf-card">
+        <div class="pf-icon blue">📋</div>
+        <div class="pf-title">Smart Waitlist + SMS</div>
+        <div class="pf-desc">Guests join from their phone. Get texted when their table is ready. Real-time host view with party sizes, notes, and wait times.</div>
+        <div class="pf-stat">Reduces no-shows by up to 40%</div>
+      </div>
+      <div class="pf-card">
+        <div class="pf-icon amber">🤖</div>
+        <div class="pf-title">AI Concierge</div>
+        <div class="pf-desc">Answers questions 24/7 — menu, prices, wait times, dietary info, wine pairings. Trained on YOUR restaurant's data.</div>
+        <div class="pf-stat">Handles 80% of questions automatically</div>
+      </div>
+      <div class="pf-card">
+        <div class="pf-icon teal">📊</div>
+        <div class="pf-title">Manager Dashboard</div>
+        <div class="pf-desc">Customer sentiment, peak hours, VIP tracking, staff performance, and waitlist analytics. All in real-time.</div>
+        <div class="pf-stat">Know what's happening without being on the floor</div>
+      </div>
+      <div class="pf-card">
+        <div class="pf-icon rose">🔥</div>
+        <div class="pf-title">Live Menus & Specials</div>
+        <div class="pf-desc">Real-time inventory, daily specials, and pricing. Update from your phone. No more reprinting menus.</div>
+        <div class="pf-stat">Update specials in seconds</div>
+      </div>
+      <div class="pf-card">
+        <div class="pf-icon emerald">📝</div>
+        <div class="pf-title">Private Feedback</div>
+        <div class="pf-desc">Guests tell you directly instead of Yelp. Star ratings, categorized feedback, and sentiment tracking.</div>
+        <div class="pf-stat">Catch problems before they go public</div>
+      </div>
+      <div class="pf-card">
+        <div class="pf-icon purple">⭐</div>
+        <div class="pf-title">Staff Shoutouts</div>
+        <div class="pf-desc">Customers recognize great servers by name. Tracked on your dashboard. Boosts morale, reduces turnover.</div>
+        <div class="pf-stat">Staff retention saves $3K+ per hire</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ STATS ════════════════════════════════════════════════════ -->
+<div class="stats-bar">
+  <div class="wrap">
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-value"><span class="accent">40</span>%</div>
+        <div class="stat-label">Fewer no-shows with SMS waitlist</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value"><span class="accent">15</span>hrs</div>
+        <div class="stat-label">Staff time saved per week</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">$<span class="accent">8K</span></div>
+        <div class="stat-label">Saved per prevented bad review</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">&lt;<span class="accent">1</span>wk</div>
+        <div class="stat-label">From signup to fully live</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ HOW IT WORKS ═════════════════════════════════════════════ -->
+<section class="how-section" id="how">
+  <div class="wrap centered">
+    <div class="section-eyebrow" style="justify-content:center">How It Works</div>
+    <h2 class="section-title">Live in days. Not months.</h2>
+    <p class="section-desc" style="margin:0 auto">We handle the heavy lifting. You run your restaurant.</p>
+
+    <div class="how-grid">
+      <div class="how-step">
+        <div class="how-num">1</div>
+        <div class="how-title">We Configure</div>
+        <div class="how-text">Menu, hours, staff, AI training — fully customized to your restaurant.</div>
+      </div>
+      <div class="how-step">
+        <div class="how-num">2</div>
+        <div class="how-title">QR Codes Go Up</div>
+        <div class="how-text">Printed QR codes at host stand, tables, and entrance. Guests scan and they're in.</div>
+      </div>
+      <div class="how-step">
+        <div class="how-num">3</div>
+        <div class="how-title">Data Flows In</div>
+        <div class="how-text">Waitlist entries, feedback, AI chats, shoutouts — all captured in your dashboard.</div>
+      </div>
+      <div class="how-step">
+        <div class="how-num">4</div>
+        <div class="how-title">Revenue Goes Up</div>
+        <div class="how-text">Fewer walkouts, faster turns, better reviews, happier team. Pays for itself.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ PRICING ══════════════════════════════════════════════════ -->
+<section class="pricing-section" id="pricing">
+  <div class="wrap centered">
+    <div class="section-eyebrow" style="justify-content:center">Pricing</div>
+    <h2 class="section-title">Simple, transparent pricing</h2>
+    <p class="section-desc" style="margin:0 auto">No hidden fees. No per-seat charges. Cancel anytime.</p>
+
+    <div class="pricing-grid">
+      <div class="pr-card">
+        <div class="pr-name">Starter</div>
+        <div class="pr-desc">Core tools for restaurants ready to go digital.</div>
+        <div class="pr-setup">One-time setup: <strong>$499</strong></div>
+        <div class="pr-price">$199</div>
+        <div class="pr-period">/month</div>
+        <div class="pr-divider"></div>
+        <ul class="pr-features">
+          <li>Smart Waitlist</li>
+          <li>Digital Specials Board</li>
+          <li>Customer Feedback System</li>
+          <li>Staff Shoutouts</li>
+          <li>Basic Dashboard</li>
+          <li>QR Code Set (printed)</li>
+          <li>Email Support</li>
+        </ul>
+        <a href="#" class="pr-btn btn btn-ghost" style="width:100%">Get Started</a>
+      </div>
+
+      <div class="pr-card featured">
+        <div class="pr-name">Professional</div>
+        <div class="pr-desc">Full platform with AI and SMS. Everything most restaurants need.</div>
+        <div class="pr-setup">One-time setup: <strong>$999</strong></div>
+        <div class="pr-price">$499</div>
+        <div class="pr-period">/month</div>
+        <div class="pr-divider"></div>
+        <ul class="pr-features">
+          <li>Everything in Starter</li>
+          <li>AI Concierge (24/7)</li>
+          <li>SMS Text Notifications</li>
+          <li>Live Inventory Board</li>
+          <li>Full Manager Dashboard</li>
+          <li>VIP Customer Tracking</li>
+          <li>Staff Training Session</li>
+          <li>Priority Support</li>
+        </ul>
+        <a href="#" class="pr-btn btn btn-primary" style="width:100%">Get Started</a>
+      </div>
+
+      <div class="pr-card">
+        <div class="pr-name">Enterprise</div>
+        <div class="pr-desc">Multi-location support and custom integrations.</div>
+        <div class="pr-setup">One-time setup: <strong>Custom</strong></div>
+        <div class="pr-price">$899</div>
+        <div class="pr-period">/month per location</div>
+        <div class="pr-divider"></div>
+        <ul class="pr-features">
+          <li>Everything in Professional</li>
+          <li>Multi-Location Dashboard</li>
+          <li>Custom AI Training</li>
+          <li>POS Integration</li>
+          <li>Online Ordering Module</li>
+          <li>Custom Branding</li>
+          <li>Dedicated Account Manager</li>
+          <li>Phone Support</li>
+        </ul>
+        <a href="#" class="pr-btn btn btn-ghost" style="width:100%">Contact Sales</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ TESTIMONIAL ══════════════════════════════════════════════ -->
+<section class="testimonial">
+  <div class="wrap">
+    <div class="test-card">
+      <div class="section-eyebrow" style="justify-content:center;margin-bottom:28px">Case Study</div>
+      <div class="test-quote">"We went from clipboard waitlists and phone calls to a fully digital system in three days. Our no-shows dropped, our reviews improved, and our staff actually enjoys the tech."</div>
+      <div class="test-author">
+        <div class="test-avatar">D</div>
+        <div class="test-info">
+          <div class="test-name">Dodie's Cajun Diner</div>
+          <div class="test-role">Rockwall, TX — DineIQ Professional</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ FINAL CTA ════════════════════════════════════════════════ -->
+<section class="final-cta">
+  <div class="wrap">
+    <div class="final-title">Ready to run a smarter restaurant?</div>
+    <p class="final-sub">Get DineIQ set up at your restaurant in less than a week. No contracts, no risk. 30-day performance guarantee.</p>
+    <div class="final-actions">
+      <a href="#pricing" class="btn btn-primary btn-lg">See Plans & Pricing</a>
+      <a href="index.html" class="btn btn-ghost btn-lg" style="border-color:var(--m-slate);color:var(--m-cloud)">View Live Demo</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ FOOTER ═══════════════════════════════════════════════════ -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <svg class="footer-logo" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="url(#fg)"/><path d="M8 22V10l8 6-8 6z" fill="white" fill-opacity=".9"/><path d="M16 22V10l8 6-8 6z" fill="white" fill-opacity=".5"/><defs><linearGradient id="fg" x1="0" y1="0" x2="32" y2="32"><stop stop-color="#4F6EF7"/><stop offset="1" stop-color="#14B8A6"/></linearGradient></defs></svg>
+        <span class="footer-name">Meridian</span>
+      </div>
+      <div class="footer-links">
+        <a href="#product" class="footer-link">Product</a>
+        <a href="#pricing" class="footer-link">Pricing</a>
+        <a href="#how" class="footer-link">How It Works</a>
+        <a href="index.html" class="footer-link">Live Demo</a>
+      </div>
+      <div class="footer-copy">&copy; 2026 Meridian Technologies</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Sticky nav effect
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 32);
+});
+
+// Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) {
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+
+// Intersection Observer for fade-in animations
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.pf-card, .how-step, .pr-card, .roi-card, .stat-item').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(24px)';
+  el.style.transition = 'all 0.5s cubic-bezier(.4,0,.2,1)';
+  observer.observe(el);
+});
+</script>
+
+</body>
+</html>
