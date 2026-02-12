@@ -109,6 +109,7 @@
       </div>
     </div>
 
+    <div class="section-title" style="padding:0 4px;margin-bottom:16px;margin-top:10px">🔥 Core System</div>
     <div class="launch-grid">
       <button class="tile" id="guestBtn" type="button">
         <div class="tile-header"><div class="tile-icon">✨</div><div class="badge">Guest</div></div>
@@ -129,6 +130,30 @@
         <div class="tile-header"><div class="tile-icon">🤖</div><div class="badge">AI</div></div>
         <div class="tile-label">💬 AI Assistant</div>
         <div class="tile-desc">Smart chatbot for customer questions</div>
+      </button>
+    </div>
+
+    <div class="section-title" style="padding:0 4px;margin-bottom:16px;margin-top:30px">📊 Management & Intelligence</div>
+    <div class="launch-grid">
+      <button class="tile" id="dashboardBtn" type="button">
+        <div class="tile-header"><div class="tile-icon">📊</div><div class="badge">Manager</div></div>
+        <div class="tile-label">🧠 Manager Dashboard</div>
+        <div class="tile-desc">Analytics, sentiment, staff performance & business intel</div>
+      </button>
+      <button class="tile" id="specialsBtn" type="button">
+        <div class="tile-header"><div class="tile-icon">🔥</div><div class="badge">Daily</div></div>
+        <div class="tile-label">🍽️ Daily Specials</div>
+        <div class="tile-desc">Today's deals, hours, and chef's recommendations</div>
+      </button>
+      <button class="tile" id="shoutoutBtn" type="button">
+        <div class="tile-header"><div class="tile-icon">⭐</div><div class="badge">Customer</div></div>
+        <div class="tile-label">🎉 Staff Shoutouts</div>
+        <div class="tile-desc">Customers compliment servers — logs to your dashboard</div>
+      </button>
+      <button class="tile" id="feedbackBtn" type="button">
+        <div class="tile-header"><div class="tile-icon">📝</div><div class="badge">Private</div></div>
+        <div class="tile-label">💬 Customer Feedback</div>
+        <div class="tile-desc">Private feedback direct to management — not Yelp</div>
       </button>
     </div>
   </div>
@@ -221,10 +246,14 @@
   $('saveBtn').addEventListener('click', save);
   $('testBtn').addEventListener('click', test);
   $('clearBtn').addEventListener('click', clear);
-  $('guestBtn').addEventListener('click', () => location.href = 'waitlist-guest-form.html');
-  $('hostBtn').addEventListener('click',  () => location.href = 'waitlist-host-view.html');
-  $('liveBtn').addEventListener('click',  () => location.href = 'live-update-inventory.html');
-  $('aiBtn').addEventListener('click',    () => location.href = 'dodies-ai-chat.html');
+  $('guestBtn').addEventListener('click',     () => location.href = 'waitlist-guest-form.html');
+  $('hostBtn').addEventListener('click',      () => location.href = 'waitlist-host-view.html');
+  $('liveBtn').addEventListener('click',      () => location.href = 'live-update-inventory.html');
+  $('aiBtn').addEventListener('click',        () => location.href = 'dodies-ai-chat.html');
+  $('dashboardBtn').addEventListener('click', () => location.href = 'manager-dashboard.html');
+  $('specialsBtn').addEventListener('click',  () => location.href = 'daily-specials.html');
+  $('shoutoutBtn').addEventListener('click',  () => location.href = 'staff-shoutout.html');
+  $('feedbackBtn').addEventListener('click',  () => location.href = 'customer-feedback.html');
   $('appsScriptUrl').addEventListener('input', updateTestUrls);
 
   loadSaved();
