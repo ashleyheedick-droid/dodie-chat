@@ -118,7 +118,8 @@ input::placeholder{color:rgba(255,248,220,.3)}
       <div class="status"><span class="status-dot"></span><span id="statusText">Ready to help</span></div>
     </div>
     <div class="header-nav">
-      <a href="live-update-inventory.html" class="header-btn">🦞 Live Menu</a>
+      <a href="live-update-inventory.html" class="header-btn">🦞 Menu</a>
+      <a href="daily-specials.html" class="header-btn">🔥 Specials</a>
       <a href="waitlist-guest-form.html" class="header-btn">📋 Waitlist</a>
     </div>
   </div>
@@ -177,7 +178,12 @@ input::placeholder{color:rgba(255,248,220,.3)}
         <div class="welcome-feature"><span class="feature-dot"></span>Real-time Data</div>
         <div class="welcome-feature"><span class="feature-dot"></span>Wine Pairings</div>
         <div class="welcome-feature"><span class="feature-dot"></span>Allergy Safe</div>
-        <div class="welcome-feature"><span class="feature-dot"></span>Menu Expert</div>
+        <div class="welcome-feature"><span class="feature-dot"></span>Daily Specials</div>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:center;margin-top:16px;flex-wrap:wrap">
+        <a href="staff-shoutout.html" style="padding:8px 14px;border-radius:999px;border:1px solid rgba(212,175,55,.2);background:rgba(0,0,0,.3);color:rgba(255,248,220,.7);font-size:12px;font-weight:600;text-decoration:none;transition:all .2s">⭐ Shoutout a Server</a>
+        <a href="customer-feedback.html" style="padding:8px 14px;border-radius:999px;border:1px solid rgba(212,175,55,.2);background:rgba(0,0,0,.3);color:rgba(255,248,220,.7);font-size:12px;font-weight:600;text-decoration:none;transition:all .2s">📝 Leave Feedback</a>
+        <a href="daily-specials.html" style="padding:8px 14px;border-radius:999px;border:1px solid rgba(212,175,55,.2);background:rgba(0,0,0,.3);color:rgba(255,248,220,.7);font-size:12px;font-weight:600;text-decoration:none;transition:all .2s">🔥 Today's Specials</a>
       </div>
     </div>
   </div>
@@ -186,10 +192,13 @@ input::placeholder{color:rgba(255,248,220,.3)}
     <div class="quick-actions" id="quickActions">
       <button class="quick-btn" data-q="What's fresh today?">🦞 Fresh Today</button>
       <button class="quick-btn" data-q="Current wait time?">⏰ Wait Time</button>
-      <button class="quick-btn" data-q="What do you recommend?">⭐ Recommend</button>
+      <button class="quick-btn" data-q="What are today's specials?">🔥 Specials</button>
+      <button class="quick-btn" data-q="Are y'all open right now?">🕐 Hours</button>
+      <button class="quick-btn" data-q="What do you recommend for a first-timer?">⭐ Recommend</button>
       <button class="quick-btn" data-q="What are today's prices?">💰 Prices</button>
       <button class="quick-btn" data-q="Best wine pairings for seafood?">🍷 Pairings</button>
       <button class="quick-btn" data-q="Do you have gluten-free options?">🌿 Dietary</button>
+      <button class="quick-btn" data-q="Tell me something funny">😂 Fun Fact</button>
     </div>
     <div class="input-wrapper">
       <input type="text" id="input" placeholder="Ask about seafood, prices, wait times, pairings..." autocomplete="off"/>
@@ -247,6 +256,17 @@ function pickAnswer(rawText, parsed) {
   return parsed.answer || parsed.reply || parsed.text || parsed.output || rawText || 'No response received.';
 }
 
+// Log chat to localStorage for manager dashboard analytics
+function logChat(question, sentiment) {
+  try {
+    const logs = JSON.parse(localStorage.getItem('dodie_chat_logs') || '[]');
+    logs.push({ q: question, time: new Date().toISOString(), sentiment: sentiment || 'happy' });
+    // Keep last 500 entries
+    if (logs.length > 500) logs.splice(0, logs.length - 500);
+    localStorage.setItem('dodie_chat_logs', JSON.stringify(logs));
+  } catch (e) { /* ignore storage errors */ }
+}
+
 async function sendMessage() {
   const question = inputEl.value.trim();
   if (!question) return;
@@ -256,6 +276,9 @@ async function sendMessage() {
   sendBtn.disabled = true;
   document.getElementById('statusText').textContent = 'Thinking...';
   showThinking();
+
+  // Log the chat for dashboard analytics
+  logChat(question, 'happy');
 
   try {
     const res = await fetch(WEBHOOK_URL, {
