@@ -185,7 +185,7 @@
   }
 
   function loadSaved() {
-    const apps = localStorage.getItem(KEYS.apps) || '';
+    const apps = localStorage.getItem(KEYS.apps) || "https://script.google.com/macros/s/AKfycbyQcO1XkUwXUtMYvIpyXUInYkDXbGgWTOyDlGHWpoKkUQ3uukXiMmH1CI_9XiepNXdfVg/exec";
     const n8n  = localStorage.getItem(KEYS.n8n)  || '';
     $('appsScriptUrl').value = apps;
     $('n8nWebhookUrl').value = n8n;
