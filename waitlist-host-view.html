@@ -3,21 +3,48 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Dodie's Host View</title>
+  <title>✨ Dodie's Host View 🦞</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;700;800&display=swap');
     *{box-sizing:border-box;margin:0;padding:0}
-    :root{--red:#C41E3A;--gold:#D4AF37;--dark:#0b0505;--card:#120808;--border:#3a2b12;--cream:#FFF8DC;--muted:rgba(255,248,220,.65)}
+    :root{--red:#C41E3A;--gold:#D4AF37;--dark:#0b0505;--card:#120808;--border:#3a2b12;--cream:#FFF8DC;--muted:rgba(255,248,220,.65);--pink:#FF6B9D;--lavender:#C4B5FD;--peach:#FBBF77}
     body{font-family:'Inter',system-ui,sans-serif;background:var(--dark);color:var(--cream);padding:20px;min-height:100vh}
     body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle at 20% 10%,rgba(139,26,26,.4),transparent 45%),radial-gradient(circle at 80% 90%,rgba(90,14,14,.4),transparent 45%);pointer-events:none;z-index:0}
     .wrap{max-width:1200px;margin:0 auto;position:relative;z-index:1}
+
+    /* Floating background emojis */
+    .bg-emojis{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;opacity:.05}
+    .bg-emojis span{position:absolute;font-size:40px;animation:emojiDrift 18s linear infinite}
+    .bg-emojis span:nth-child(1){left:5%;top:-10%;animation-delay:0s;animation-duration:20s}
+    .bg-emojis span:nth-child(2){left:20%;top:-10%;animation-delay:3s;animation-duration:22s}
+    .bg-emojis span:nth-child(3){left:35%;top:-10%;animation-delay:6s;animation-duration:18s}
+    .bg-emojis span:nth-child(4){left:50%;top:-10%;animation-delay:1s;animation-duration:24s}
+    .bg-emojis span:nth-child(5){left:65%;top:-10%;animation-delay:4s;animation-duration:19s}
+    .bg-emojis span:nth-child(6){left:80%;top:-10%;animation-delay:7s;animation-duration:21s}
+    .bg-emojis span:nth-child(7){left:92%;top:-10%;animation-delay:2s;animation-duration:23s}
+    .bg-emojis span:nth-child(8){left:12%;top:-10%;animation-delay:5s;animation-duration:17s}
+    @keyframes emojiDrift{
+      0%{transform:translateY(0) rotate(0deg);opacity:1}
+      100%{transform:translateY(120vh) rotate(360deg);opacity:.3}
+    }
+
+    /* Sparkle animation for logo */
+    .sparkle-wrap{display:inline-block;position:relative}
+    .sparkle-wrap::before,.sparkle-wrap::after{content:'✨';position:absolute;font-size:14px;animation:sparkle 2s ease-in-out infinite}
+    .sparkle-wrap::before{top:-8px;right:-12px;animation-delay:0s}
+    .sparkle-wrap::after{bottom:-4px;left:-10px;animation-delay:1s}
+    @keyframes sparkle{
+      0%,100%{opacity:.3;transform:scale(.7) rotate(0deg)}
+      50%{opacity:1;transform:scale(1.2) rotate(20deg)}
+    }
 
     /* Header */
     .topbar{display:flex;align-items:center;gap:16px;margin-bottom:20px;flex-wrap:wrap}
     .logo{font-size:32px;filter:drop-shadow(0 4px 8px rgba(196,30,58,.5))}
     .title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;color:var(--cream)}
     .stats{display:flex;gap:10px;margin-left:auto;flex-wrap:wrap}
-    .stat{padding:8px 14px;background:var(--card);border:1px solid var(--border);border-radius:10px;font-size:13px;font-weight:700;text-align:center;min-width:70px}
+    .stat{padding:8px 14px;background:var(--card);border:1px solid var(--border);border-radius:10px;font-size:13px;font-weight:700;text-align:center;min-width:70px;transition:all .3s ease}
+    .stat:hover{box-shadow:0 0 18px rgba(212,175,55,.25);border-color:rgba(212,175,55,.5);transform:translateY(-2px)}
     .stat-label{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:2px}
     .stat-num{color:var(--gold);font-size:20px;font-family:'Bebas Neue',sans-serif;letter-spacing:1px}
     .stat-num.red{color:var(--red)}
@@ -30,8 +57,11 @@
     .btn-refresh:disabled{opacity:.5;cursor:not-allowed}
     .pill{padding:8px 14px;border-radius:999px;border:1px solid var(--border);background:var(--card);cursor:pointer;font-size:13px;font-weight:600;color:var(--muted);transition:all .2s;font-family:inherit}
     .pill.active{background:rgba(212,175,55,.2);border-color:var(--gold);color:var(--cream)}
-    .pill:hover:not(.active){background:rgba(255,255,255,.05);border-color:#555}
+    .pill:hover:not(.active){background:rgba(255,255,255,.05);border-color:#555;transform:scale(1.03)}
     .status-line{font-size:12px;color:var(--muted);margin-top:6px;min-height:18px}
+
+    /* Emoji divider */
+    .emoji-divider{text-align:center;padding:10px 0;font-size:16px;letter-spacing:8px;opacity:.5;user-select:none}
 
     /* No config warning */
     .no-config{background:rgba(212,175,55,.1);border:2px solid rgba(212,175,55,.4);border-radius:12px;padding:16px 20px;margin-bottom:16px;color:var(--gold);font-size:14px;display:none}
@@ -40,12 +70,12 @@
     /* Cards grid */
     .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:4px}
     @media(max-width:780px){.grid{grid-template-columns:1fr}}
-    .card{border:1px solid var(--border);border-radius:14px;background:var(--card);padding:16px;display:flex;justify-content:space-between;gap:12px;transition:border-color .2s;position:relative;overflow:hidden}
+    .card{border:1px solid var(--border);border-radius:14px;background:var(--card);padding:16px;display:flex;justify-content:space-between;gap:12px;transition:border-color .2s, transform .2s;position:relative;overflow:hidden}
     .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
-    .card.waiting::before{background:linear-gradient(90deg,var(--gold),rgba(212,175,55,.3))}
-    .card.notified::before{background:linear-gradient(90deg,var(--red),rgba(196,30,58,.3))}
-    .card.seated::before{background:linear-gradient(90deg,#4ade80,rgba(74,222,128,.3))}
-    .card:hover{border-color:rgba(212,175,55,.4)}
+    .card.waiting::before{background:linear-gradient(90deg,var(--gold),var(--pink),rgba(212,175,55,.3))}
+    .card.notified::before{background:linear-gradient(90deg,var(--red),var(--pink),rgba(196,30,58,.3))}
+    .card.seated::before{background:linear-gradient(90deg,#4ade80,var(--peach),rgba(74,222,128,.3))}
+    .card:hover{border-color:rgba(212,175,55,.4);transform:scale(1.01)}
     .card-left{flex:1;min-width:0}
     .name{font-weight:900;font-size:16px;color:var(--cream);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .phone{font-size:13px;color:var(--muted);margin-bottom:4px}
@@ -62,7 +92,14 @@
     /* Action buttons */
     .acts{display:flex;flex-direction:column;gap:8px;min-width:140px}
     .act-btn{padding:9px 12px;border-radius:8px;border:1px solid;cursor:pointer;font-size:12px;font-weight:800;font-family:inherit;text-transform:uppercase;letter-spacing:.5px;transition:all .2s;text-align:center}
-    .act-btn:hover{transform:translateY(-1px)}
+    .act-btn:hover{transform:translateY(-1px);animation:btnBounce .4s ease}
+    @keyframes btnBounce{
+      0%{transform:translateY(-1px)}
+      30%{transform:translateY(-4px)}
+      50%{transform:translateY(-2px)}
+      70%{transform:translateY(-3px)}
+      100%{transform:translateY(-1px)}
+    }
     .act-btn.notify{background:rgba(212,175,55,.2);border-color:var(--gold);color:var(--gold)}
     .act-btn.notify:hover{background:rgba(212,175,55,.35)}
     .act-btn.seat{background:rgba(74,222,128,.2);border-color:#4ade80;color:#4ade80}
@@ -78,35 +115,49 @@
   </style>
 </head>
 <body>
+
+<div class="bg-emojis">
+  <span>🦞</span>
+  <span>✨</span>
+  <span>🔥</span>
+  <span>💖</span>
+  <span>🌟</span>
+  <span>🦞</span>
+  <span>✨</span>
+  <span>💫</span>
+</div>
+
 <div class="wrap">
 
   <div id="noConfigWarn" class="no-config">
-    ⚠️ Apps Script URL not configured. <a href="dodies-complete-demo.html">Visit the Control Center</a> to set it up.
+    ✨ ⚠️ Apps Script URL not configured. 💫 <a href="dodies-complete-demo.html">Visit the Control Center</a> to set it up.
   </div>
 
   <div class="topbar">
-    <div class="logo">🦞</div>
-    <div class="title">Dodie's Host View</div>
+    <div class="sparkle-wrap"><div class="logo">🦞</div></div>
+    <div class="title">✨ Dodie's Host View ✨</div>
     <div class="stats">
-      <div class="stat"><span class="stat-label">Waiting</span><span class="stat-num" id="statWaiting">–</span></div>
-      <div class="stat"><span class="stat-label">Notified</span><span class="stat-num red" id="statNotified">–</span></div>
-      <div class="stat"><span class="stat-label">Seated</span><span class="stat-num green" id="statSeated">–</span></div>
-      <div class="stat"><span class="stat-label">Total</span><span class="stat-num" id="statTotal">–</span></div>
+      <div class="stat"><span class="stat-label">⏳ Waiting</span><span class="stat-num" id="statWaiting">–</span></div>
+      <div class="stat"><span class="stat-label">📢 Notified</span><span class="stat-num red" id="statNotified">–</span></div>
+      <div class="stat"><span class="stat-label">✅ Seated</span><span class="stat-num green" id="statSeated">–</span></div>
+      <div class="stat"><span class="stat-label">📊 Total</span><span class="stat-num" id="statTotal">–</span></div>
     </div>
   </div>
 
   <div class="bar">
-    <button class="btn-refresh" id="refreshBtn">🔄 Refresh</button>
-    <span class="pill active" data-filter="active">Active</span>
-    <span class="pill" data-filter="waiting">Waiting</span>
-    <span class="pill" data-filter="notified">Notified</span>
-    <span class="pill" data-filter="seated">Seated</span>
-    <span class="pill" data-filter="no show">No Show</span>
-    <span class="pill" data-filter="cancelled">Cancelled</span>
-    <span class="pill" data-filter="all">All</span>
-    <div class="auto-refresh" style="margin-left:auto"><div class="spinner"></div>Auto-refresh 30s</div>
+    <button class="btn-refresh" id="refreshBtn">✨ Refresh 🔄</button>
+    <span class="pill active" data-filter="active">⭐ Active</span>
+    <span class="pill" data-filter="waiting">⏳ Waiting</span>
+    <span class="pill" data-filter="notified">📢 Notified</span>
+    <span class="pill" data-filter="seated">✅ Seated</span>
+    <span class="pill" data-filter="no show">👻 No Show</span>
+    <span class="pill" data-filter="cancelled">❌ Cancelled</span>
+    <span class="pill" data-filter="all">📋 All</span>
+    <div class="auto-refresh" style="margin-left:auto"><div class="spinner"></div>✨ Auto-refresh 30s</div>
   </div>
   <div class="status-line" id="statusLine">Loading…</div>
+
+  <div class="emoji-divider">🦞 ✨ 🔥 ✨ 🦞 ✨ 🔥 ✨ 🦞</div>
 
   <div class="grid" id="list"></div>
 </div>
@@ -168,6 +219,20 @@ function badgeClass(status) {
   return 'badge-other';
 }
 
+function statusEmoji(status) {
+  const s = norm(status);
+  if (s === 'waiting')  return '⏳ ';
+  if (s === 'notified') return '📢 ';
+  if (s === 'seated')   return '✅ ';
+  return '';
+}
+
+function partySizeEmoji(size) {
+  const n = parseInt(size);
+  if (n === 1) return '👤';
+  return '👥';
+}
+
 async function refresh() {
   refreshBtn.disabled = true;
   statusLine.textContent = 'Loading…';
@@ -178,8 +243,8 @@ async function refresh() {
     cache = r.data || [];
     render();
   } catch (e) {
-    statusLine.textContent = '❌ ' + e.message;
-    listEl.innerHTML = `<div class="empty">Error loading waitlist.<br><small>${e.message}</small></div>`;
+    statusLine.textContent = '😅 ❌ ' + e.message;
+    listEl.innerHTML = `<div class="empty">😅 Error loading waitlist.<br><small>${e.message}</small></div>`;
   } finally {
     refreshBtn.disabled = false;
     refreshTimer = setTimeout(refresh, 30000);
@@ -193,7 +258,7 @@ async function setStatus(row, status) {
     if (!r.success) throw new Error(r.error || 'Update failed');
     await refresh();
   } catch (e) {
-    statusLine.textContent = '❌ ' + e.message;
+    statusLine.textContent = '😅 ❌ ' + e.message;
   } finally {
     refreshBtn.disabled = false;
   }
@@ -208,12 +273,12 @@ function render() {
   document.getElementById('statNotified').textContent = n;
   document.getElementById('statSeated').textContent   = s;
   document.getElementById('statTotal').textContent    = cache.length;
-  statusLine.textContent = `Last refresh: ${new Date().toLocaleTimeString()} — ${items.length} shown`;
+  statusLine.textContent = `✨ Last refresh: ${new Date().toLocaleTimeString()} — ${items.length} shown`;
 
   listEl.innerHTML = '';
 
   if (!items.length) {
-    listEl.innerHTML = `<div class="empty">🎉 No parties for this filter!</div>`;
+    listEl.innerHTML = `<div class="empty">✨🎉 No parties for this filter! ✨</div>`;
     return;
   }
 
@@ -223,15 +288,16 @@ function render() {
     card.className = 'card ' + st;
 
     const spice = spiceDisplay(p.spiceLevel);
+    const psEmoji = partySizeEmoji(p.party);
 
     const left = document.createElement('div');
     left.className = 'card-left';
     left.innerHTML = `
-      <div class="name">${p.name || '—'} &nbsp;<span style="font-weight:600;opacity:.7">(Party of ${p.party || '?'})</span></div>
-      <div class="phone">${p.phone || '—'}</div>
+      <div class="name">${p.name || '—'} &nbsp;${psEmoji}<span style="font-weight:600;opacity:.7"> (Party of ${p.party || '?'})</span></div>
+      <div class="phone">📱 ${p.phone || '—'}</div>
       ${p.specialNotes ? `<div class="phone" style="font-style:italic">📝 ${p.specialNotes}</div>` : ''}
       <div class="meta">
-        <span class="meta-pill ${badgeClass(p.status)}">${p.status || '—'}</span>
+        <span class="meta-pill ${badgeClass(p.status)}">${statusEmoji(p.status)}${p.status || '—'}</span>
         ${spice ? `<span class="meta-pill">${spice} ${p.spiceLevel}</span>` : ''}
       </div>
     `;
@@ -240,15 +306,15 @@ function render() {
     acts.className = 'acts';
 
     if (st === 'waiting') {
-      acts.appendChild(makeBtn('🔔 Notify', 'notify', () => setStatus(p.row, 'Notified')));
-      acts.appendChild(makeBtn('✅ Seat',   'seat',   () => setStatus(p.row, 'Seated')));
+      acts.appendChild(makeBtn('📢✨ Notify', 'notify', () => setStatus(p.row, 'Notified')));
+      acts.appendChild(makeBtn('🪑✅ Seat',   'seat',   () => setStatus(p.row, 'Seated')));
     } else if (st === 'notified') {
-      acts.appendChild(makeBtn('✅ Seat',    'seat',        () => setStatus(p.row, 'Seated')));
-      acts.appendChild(makeBtn('↩ Waiting', 'waiting-back', () => setStatus(p.row, 'Waiting')));
+      acts.appendChild(makeBtn('🪑✅ Seat',    'seat',        () => setStatus(p.row, 'Seated')));
+      acts.appendChild(makeBtn('↩️ Back to Waiting', 'waiting-back', () => setStatus(p.row, 'Waiting')));
     } else {
-      acts.appendChild(makeBtn('↩ Waiting', 'waiting-back', () => setStatus(p.row, 'Waiting')));
+      acts.appendChild(makeBtn('↩️ Back to Waiting', 'waiting-back', () => setStatus(p.row, 'Waiting')));
       if (st !== 'no show' && st !== 'cancelled') {
-        acts.appendChild(makeBtn('❌ No Show',  'waiting-back', () => setStatus(p.row, 'No Show')));
+        acts.appendChild(makeBtn('👻 No Show',  'waiting-back', () => setStatus(p.row, 'No Show')));
       }
     }
 
