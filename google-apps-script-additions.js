@@ -193,8 +193,9 @@ function doGet(e) {
 
     // ── GET INVENTORY ─────────────────────────────────────────────────
     if (action === "getInventory") {
-      var sheet = sheet_(SHEET_INVENTORY);
-      var data  = sheet.getDataRange().getValues();
+      var s = ss_().getSheetByName(SHEET_INVENTORY);
+      if (!s || s.getLastRow() < 2) return out_(e, { success: true, data: [] });
+      var data  = s.getDataRange().getValues();
       var rows  = [];
       for (var i = 1; i < data.length; i++) {
         if (!data[i][0]) continue;
