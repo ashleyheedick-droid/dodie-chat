@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Leave Feedback – Cypress Bayou Kitchen</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--cajun-red:#1B5E5E;--bright-red:#2AA198;--gold:#CD7F32;--cream:#FFF8DC;--dark:#060D0D;--dark-card:#0E1A1A;--emerald:#10B981;--amber:#F59E0B;--radius:20px;--radius-sm:12px}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--dark);color:var(--cream);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;position:relative;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 30% 20%,rgba(27,94,94,.2),transparent 50%),radial-gradient(ellipse at 70% 80%,rgba(13,59,59,.15),transparent 50%);pointer-events:none}
+
+.container{max-width:560px;width:100%;position:relative;z-index:1}
+
+.card{background:linear-gradient(135deg,var(--dark-card),rgba(14,26,26,.95));border:2px solid rgba(205,127,50,.2);border-radius:var(--radius);padding:40px 36px;box-shadow:0 20px 60px rgba(0,0,0,.6);position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--gold),var(--bright-red),var(--gold))}
+
+.header{text-align:center;margin-bottom:32px}
+.logo{font-size:64px;display:block;margin-bottom:16px;filter:drop-shadow(0 6px 16px rgba(205,127,50,.4));animation:logoFloat 3s ease-in-out infinite}
+@keyframes logoFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+h1{font-family:'Bebas Neue',sans-serif;font-size:36px;font-weight:400;letter-spacing:2px;color:var(--gold);margin-bottom:6px}
+.subtitle{font-size:14px;color:rgba(255,248,220,.6);margin-bottom:4px;line-height:1.5}
+.tagline{font-family:'Playfair Display',serif;font-style:italic;font-size:14px;color:var(--gold);margin-top:8px;opacity:.7}
+.private-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:999px;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);color:var(--emerald);font-size:11px;font-weight:800;margin-top:12px;text-transform:uppercase;letter-spacing:1px}
+
+/* Star rating */
+.rating-section{margin-bottom:28px;text-align:center}
+.section-label{font-size:12px;font-weight:800;color:var(--gold);margin-bottom:14px;text-transform:uppercase;letter-spacing:1px;display:flex;align-items:center;gap:6px;justify-content:center}
+.stars{display:flex;gap:8px;justify-content:center}
+.star{font-size:44px;cursor:pointer;transition:all .2s;filter:grayscale(1) brightness(.4)}
+.star:hover,.star.active{filter:grayscale(0) brightness(1);transform:scale(1.15)}
+.star.active{animation:starPop .3s ease}
+@keyframes starPop{0%{transform:scale(1)}50%{transform:scale(1.3)}100%{transform:scale(1.15)}}
+.rating-text{font-size:14px;color:rgba(255,248,220,.5);margin-top:10px;min-height:20px;transition:all .2s}
+
+/* Category tags */
+.category-section{margin-bottom:24px}
+.category-tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.cat-tag{padding:10px 16px;border-radius:999px;border:1px solid rgba(205,127,50,.2);background:rgba(0,0,0,.3);color:rgba(255,248,220,.6);font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;font-family:inherit}
+.cat-tag:hover{border-color:rgba(205,127,50,.4);background:rgba(205,127,50,.08);color:var(--cream)}
+.cat-tag.selected{border-color:var(--gold);background:rgba(205,127,50,.15);color:var(--gold)}
+
+/* Text areas and inputs */
+textarea{width:100%;padding:16px;background:rgba(0,0,0,.4);border:2px solid rgba(205,127,50,.15);border-radius:var(--radius-sm);color:var(--cream);font-size:14px;font-family:inherit;resize:vertical;min-height:120px;outline:none;transition:all .2s}
+textarea::placeholder{color:rgba(255,248,220,.3)}
+textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(205,127,50,.1)}
+
+input{width:100%;padding:14px 16px;background:rgba(0,0,0,.4);border:2px solid rgba(205,127,50,.15);border-radius:var(--radius-sm);color:var(--cream);font-size:14px;font-family:inherit;outline:none;transition:all .2s}
+input::placeholder{color:rgba(255,248,220,.3)}
+input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(205,127,50,.1)}
+
+.form-group{margin-bottom:24px}
+
+/* Submit */
+.submit-btn{width:100%;padding:16px;border:none;border-radius:var(--radius-sm);background:linear-gradient(135deg,var(--bright-red),var(--cajun-red));color:#fff;font-size:16px;font-weight:800;font-family:'Inter',sans-serif;cursor:pointer;transition:all .25s;text-transform:uppercase;letter-spacing:1px;box-shadow:0 8px 24px rgba(42,161,152,.3),0 0 0 2px var(--gold)}
+.submit-btn:hover:not(:disabled){transform:translateY(-3px);box-shadow:0 12px 32px rgba(42,161,152,.4),0 0 0 2px var(--gold),0 0 20px rgba(205,127,50,.15)}
+.submit-btn:disabled{opacity:.5;cursor:not-allowed}
+
+.status-msg{display:none;margin-top:16px;padding:14px;border-radius:var(--radius-sm);font-size:14px;font-weight:600;text-align:center}
+.status-msg.show{display:block}
+.status-msg.error{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#f87171}
+
+/* Success view */
+.success-view{display:none;text-align:center;padding:20px 0}
+.success-view.show{display:block}
+.success-icon{font-size:80px;display:block;margin-bottom:20px;animation:popIn .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes popIn{0%{transform:scale(0)}100%{transform:scale(1)}}
+.success-view h2{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:2px;color:var(--gold);margin-bottom:12px}
+.success-view p{color:rgba(255,248,220,.6);font-size:15px;line-height:1.6;margin-bottom:24px}
+.success-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.action-btn{padding:12px 24px;border-radius:var(--radius-sm);border:1px solid rgba(205,127,50,.3);background:rgba(0,0,0,.3);color:var(--cream);font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-flex;align-items:center;gap:8px;font-family:inherit}
+.action-btn:hover{background:rgba(205,127,50,.12);border-color:var(--gold);transform:translateY(-2px)}
+.action-btn.primary{background:linear-gradient(135deg,var(--bright-red),var(--cajun-red));border-color:var(--gold);color:#fff}
+
+.back-link{display:block;text-align:center;margin-top:20px;color:var(--gold);font-size:13px;font-weight:700;text-decoration:none;transition:opacity .2s}
+.back-link:hover{opacity:.7}
+
+@media(max-width:480px){
+  .card{padding:28px 20px}
+  h1{font-size:28px}
+  .star{font-size:36px}
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="card">
+
+    <div id="formView">
+      <div class="header">
+        <span class="logo">📝</span>
+        <h1>How Was Your Visit?</h1>
+        <div class="subtitle">Your feedback goes directly to our manager — not Yelp, not Google. Just us, making things better for you.</div>
+        <div class="tagline">"Your voice shapes our table"</div>
+        <div class="private-badge">🔒 Private & Direct to Management</div>
+      </div>
+
+      <div class="rating-section">
+        <div class="section-label">How Would You Rate Your Experience?</div>
+        <div class="stars" id="stars">
+          <span class="star" data-rating="1">⭐</span>
+          <span class="star" data-rating="2">⭐</span>
+          <span class="star" data-rating="3">⭐</span>
+          <span class="star" data-rating="4">⭐</span>
+          <span class="star" data-rating="5">⭐</span>
+        </div>
+        <div class="rating-text" id="ratingText"></div>
+      </div>
+
+      <div class="category-section">
+        <div class="section-label">What's This About? (pick any)</div>
+        <div class="category-tags" id="categoryTags">
+          <button type="button" class="cat-tag" data-cat="Food Quality">🍽️ Food</button>
+          <button type="button" class="cat-tag" data-cat="Service">⭐ Service</button>
+          <button type="button" class="cat-tag" data-cat="Wait Time">⏰ Wait Time</button>
+          <button type="button" class="cat-tag" data-cat="Atmosphere">🎵 Atmosphere</button>
+          <button type="button" class="cat-tag" data-cat="Cleanliness">✨ Cleanliness</button>
+          <button type="button" class="cat-tag" data-cat="Value">💰 Value</button>
+          <button type="button" class="cat-tag" data-cat="Menu Options">📋 Menu</button>
+          <button type="button" class="cat-tag" data-cat="Compliment">💛 Compliment</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="section-label" style="justify-content:flex-start">💬 Tell Us More</div>
+        <textarea id="feedbackText" placeholder="What went great? What could we improve? Be as honest as you want — this stays between us."></textarea>
+      </div>
+
+      <div class="form-group">
+        <div class="section-label" style="justify-content:flex-start">👤 Your Name (optional)</div>
+        <input type="text" id="yourName" placeholder="First name or nickname">
+      </div>
+
+      <div class="form-group">
+        <div class="section-label" style="justify-content:flex-start">📧 Email for Follow-up (optional)</div>
+        <input type="email" id="email" placeholder="you@email.com">
+      </div>
+
+      <button type="button" class="submit-btn" id="submitBtn">Submit Feedback 📝</button>
+      <div class="status-msg" id="statusMsg"></div>
+    </div>
+
+    <div class="success-view" id="successView">
+      <span class="success-icon">💛</span>
+      <h2>Thank You!</h2>
+      <p id="successText">Your feedback has been sent directly to our management team. We read every single one and use it to make your next visit even better.</p>
+      <div class="success-actions">
+        <button class="action-btn primary" onclick="resetForm()">Submit More</button>
+        <a href="staff-shoutout.html" class="action-btn">⭐ Give a Shoutout</a>
+        <a href="bayou-ai-chat.html" class="action-btn">🤖 AI Concierge</a>
+      </div>
+    </div>
+
+    <a href="customer.html" class="back-link">← Back to Menu</a>
+  </div>
+</div>
+
+<script>
+let selectedRating = 0;
+let selectedCategories = [];
+const ratingLabels = ['', 'Needs Improvement', 'Below Average', 'It Was OK', 'Really Good!', 'ABSOLUTELY AMAZING!'];
+
+// Star rating
+document.getElementById('stars').addEventListener('click', e => {
+  const star = e.target.closest('.star');
+  if (!star) return;
+  selectedRating = parseInt(star.dataset.rating);
+  document.querySelectorAll('.star').forEach(s => {
+    s.classList.toggle('active', parseInt(s.dataset.rating) <= selectedRating);
+  });
+  document.getElementById('ratingText').textContent = ratingLabels[selectedRating];
+});
+
+// Hover effect
+document.querySelectorAll('.star').forEach(star => {
+  star.addEventListener('mouseenter', () => {
+    const r = parseInt(star.dataset.rating);
+    document.querySelectorAll('.star').forEach(s => {
+      const sr = parseInt(s.dataset.rating);
+      s.style.filter = sr <= r ? 'grayscale(0) brightness(1)' : '';
+      s.style.transform = sr <= r ? 'scale(1.1)' : '';
+    });
+  });
+  star.addEventListener('mouseleave', () => {
+    document.querySelectorAll('.star').forEach(s => {
+      if (!s.classList.contains('active')) {
+        s.style.filter = '';
+        s.style.transform = '';
+      }
+    });
+  });
+});
+
+// Category tags
+document.getElementById('categoryTags').addEventListener('click', e => {
+  const tag = e.target.closest('.cat-tag');
+  if (!tag) return;
+  tag.classList.toggle('selected');
+  const cat = tag.dataset.cat;
+  if (tag.classList.contains('selected')) {
+    selectedCategories.push(cat);
+  } else {
+    selectedCategories = selectedCategories.filter(c => c !== cat);
+  }
+});
+
+// Submit
+document.getElementById('submitBtn').addEventListener('click', () => {
+  const text = document.getElementById('feedbackText').value.trim();
+  const name = document.getElementById('yourName').value.trim() || 'Anonymous';
+  const email = document.getElementById('email').value.trim();
+  const statusEl = document.getElementById('statusMsg');
+
+  if (!selectedRating) {
+    statusEl.textContent = 'Please select a star rating!';
+    statusEl.className = 'status-msg show error';
+    return;
+  }
+  if (!text) {
+    statusEl.textContent = 'Please write some feedback!';
+    statusEl.className = 'status-msg show error';
+    return;
+  }
+
+  // Determine sentiment
+  let sentiment = 'neutral';
+  if (selectedRating >= 4) sentiment = 'happy';
+  if (selectedRating <= 2) sentiment = 'unhappy';
+
+  // Save to localStorage for dashboard
+  const feedback = {
+    rating: selectedRating,
+    text: text,
+    categories: selectedCategories,
+    from: name,
+    email: email,
+    time: new Date().toISOString(),
+    sentiment: sentiment
+  };
+
+  const existing = JSON.parse(localStorage.getItem('cypress_feedback') || '[]');
+  existing.push(feedback);
+  localStorage.setItem('cypress_feedback', JSON.stringify(existing));
+
+  // Save to Google Sheets
+  const APPS = localStorage.getItem('appsScriptUrl') || "https://script.google.com/macros/s/AKfycbwUMjebZmEMSVRBV5lJKTFAcLWodbGd9GB0WrLzJfD9f-JDaAXST8dvFpmeSJVuoPVWIg/exec";
+  if (APPS) {
+    const cb = 'fb_' + Math.random().toString(36).slice(2);
+    const params = new URLSearchParams({
+      action: 'addFeedback',
+      rating: String(selectedRating),
+      text: text,
+      categories: selectedCategories.join(', '),
+      from: name,
+      email: email,
+      sentiment: sentiment,
+      callback: cb
+    });
+    const s = document.createElement('script');
+    s.src = APPS + '?' + params.toString();
+    window[cb] = () => { delete window[cb]; s.remove(); };
+    s.onerror = () => { delete window[cb]; s.remove(); console.warn('Feedback failed to save to Google Sheets — check your Apps Script URL'); };
+    document.body.appendChild(s);
+  } else {
+    console.warn('Google Sheets not connected — open the Control Center (bayou-control-center.html) and paste your Apps Script URL to enable sheet sync');
+  }
+
+  // Show success
+  document.getElementById('formView').style.display = 'none';
+  document.getElementById('successView').classList.add('show');
+
+  if (selectedRating >= 4) {
+    document.getElementById('successText').textContent =
+      `We're so glad you had an amazing experience, ${name}! Your feedback makes our day and helps us keep raising the bar.`;
+  } else if (selectedRating <= 2) {
+    document.getElementById('successText').textContent =
+      `We're sorry your visit wasn't up to par, ${name}. Your honest feedback has been sent directly to our manager and we will work to make it right.`;
+  }
+});
+
+function resetForm() {
+  document.getElementById('formView').style.display = 'block';
+  document.getElementById('successView').classList.remove('show');
+  document.querySelectorAll('.star').forEach(s => { s.classList.remove('active'); s.style.filter = ''; s.style.transform = ''; });
+  document.querySelectorAll('.cat-tag').forEach(t => t.classList.remove('selected'));
+  document.getElementById('feedbackText').value = '';
+  document.getElementById('yourName').value = '';
+  document.getElementById('email').value = '';
+  document.getElementById('ratingText').textContent = '';
+  document.getElementById('statusMsg').className = 'status-msg';
+  selectedRating = 0;
+  selectedCategories = [];
+}
+</script>
+</body>
+</html>

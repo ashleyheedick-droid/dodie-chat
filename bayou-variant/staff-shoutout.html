@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Give a Shoutout – Cypress Bayou Kitchen</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--cajun-red:#1B5E5E;--bright-red:#2AA198;--gold:#CD7F32;--cream:#FFF8DC;--dark:#060D0D;--dark-card:#0E1A1A;--emerald:#10B981;--radius:20px;--radius-sm:12px}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--dark);color:var(--cream);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;position:relative;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 30% 20%,rgba(27,94,94,.2),transparent 50%),radial-gradient(ellipse at 70% 80%,rgba(13,59,59,.15),transparent 50%);pointer-events:none}
+
+.container{max-width:560px;width:100%;position:relative;z-index:1}
+
+.card{background:linear-gradient(135deg,var(--dark-card),rgba(14,26,26,.95));border:2px solid rgba(205,127,50,.2);border-radius:var(--radius);padding:40px 36px;box-shadow:0 20px 60px rgba(0,0,0,.6);position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--gold),var(--bright-red),var(--gold))}
+
+.header{text-align:center;margin-bottom:32px}
+.logo{font-size:64px;display:block;margin-bottom:16px;filter:drop-shadow(0 6px 16px rgba(205,127,50,.4));animation:logoFloat 3s ease-in-out infinite}
+@keyframes logoFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-8px) scale(1.05)}}
+h1{font-family:'Bebas Neue',sans-serif;font-size:36px;font-weight:400;letter-spacing:2px;color:var(--gold);margin-bottom:6px}
+.subtitle{font-size:14px;color:rgba(255,248,220,.6);margin-bottom:4px}
+.tagline{font-family:'Playfair Display',serif;font-style:italic;font-size:14px;color:var(--gold);margin-top:8px;opacity:.7}
+
+/* Staff selector */
+.staff-section{margin-bottom:24px}
+.section-label{font-size:12px;font-weight:800;color:var(--gold);margin-bottom:12px;text-transform:uppercase;letter-spacing:1px;display:flex;align-items:center;gap:6px}
+.staff-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.staff-btn{display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 8px;border:2px solid rgba(205,127,50,.15);border-radius:var(--radius-sm);background:rgba(0,0,0,.3);cursor:pointer;transition:all .25s ease;font-family:inherit}
+.staff-btn:hover{border-color:rgba(205,127,50,.4);background:rgba(205,127,50,.08);transform:translateY(-3px)}
+.staff-btn.selected{border-color:var(--gold);background:rgba(205,127,50,.15);box-shadow:0 0 20px rgba(205,127,50,.2)}
+.staff-avatar{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,var(--bright-red),var(--cajun-red));display:grid;place-items:center;font-size:24px;box-shadow:0 4px 12px rgba(42,161,152,.3)}
+.staff-btn.selected .staff-avatar{box-shadow:0 4px 16px rgba(205,127,50,.4)}
+.staff-name{font-size:13px;font-weight:800;color:var(--cream)}
+.staff-role{font-size:10px;color:rgba(255,248,220,.4);font-weight:600}
+.staff-btn.selected .staff-name{color:var(--gold)}
+
+/* Reason chips */
+.reason-section{margin-bottom:24px}
+.reason-chips{display:flex;flex-wrap:wrap;gap:8px}
+.reason-chip{padding:10px 16px;border-radius:999px;border:1px solid rgba(205,127,50,.2);background:rgba(0,0,0,.3);color:rgba(255,248,220,.6);font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;font-family:inherit}
+.reason-chip:hover{border-color:rgba(205,127,50,.4);background:rgba(205,127,50,.08);color:var(--cream)}
+.reason-chip.selected{border-color:var(--gold);background:rgba(205,127,50,.15);color:var(--gold);box-shadow:0 0 12px rgba(205,127,50,.15)}
+
+/* Message input */
+.message-section{margin-bottom:24px}
+textarea{width:100%;padding:16px;background:rgba(0,0,0,.4);border:2px solid rgba(205,127,50,.15);border-radius:var(--radius-sm);color:var(--cream);font-size:14px;font-family:inherit;resize:vertical;min-height:100px;outline:none;transition:all .2s}
+textarea::placeholder{color:rgba(255,248,220,.3)}
+textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(205,127,50,.1)}
+
+/* Your name */
+.name-section{margin-bottom:24px}
+input{width:100%;padding:14px 16px;background:rgba(0,0,0,.4);border:2px solid rgba(205,127,50,.15);border-radius:var(--radius-sm);color:var(--cream);font-size:14px;font-family:inherit;outline:none;transition:all .2s}
+input::placeholder{color:rgba(255,248,220,.3)}
+input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(205,127,50,.1)}
+
+/* Submit */
+.submit-btn{width:100%;padding:16px;border:none;border-radius:var(--radius-sm);background:linear-gradient(135deg,var(--bright-red),var(--cajun-red));color:#fff;font-size:16px;font-weight:800;font-family:'Inter',sans-serif;cursor:pointer;transition:all .25s;text-transform:uppercase;letter-spacing:1px;box-shadow:0 8px 24px rgba(42,161,152,.3),0 0 0 2px var(--gold)}
+.submit-btn:hover:not(:disabled){transform:translateY(-3px);box-shadow:0 12px 32px rgba(42,161,152,.4),0 0 0 2px var(--gold),0 0 20px rgba(205,127,50,.15)}
+.submit-btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* Status */
+.status-msg{display:none;margin-top:16px;padding:14px;border-radius:var(--radius-sm);font-size:14px;font-weight:600;text-align:center}
+.status-msg.show{display:block}
+.status-msg.error{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#f87171}
+.status-msg.success{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);color:#4ade80}
+
+/* Success view */
+.success-view{display:none;text-align:center;padding:20px 0}
+.success-view.show{display:block}
+.success-icon{font-size:80px;display:block;margin-bottom:20px;animation:popIn .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes popIn{0%{transform:scale(0)}100%{transform:scale(1)}}
+.success-view h2{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:2px;color:var(--gold);margin-bottom:12px}
+.success-view p{color:rgba(255,248,220,.6);font-size:15px;line-height:1.6;margin-bottom:24px}
+.success-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.action-btn{padding:12px 24px;border-radius:var(--radius-sm);border:1px solid rgba(205,127,50,.3);background:rgba(0,0,0,.3);color:var(--cream);font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-flex;align-items:center;gap:8px;font-family:inherit}
+.action-btn:hover{background:rgba(205,127,50,.12);border-color:var(--gold);transform:translateY(-2px)}
+.action-btn.primary{background:linear-gradient(135deg,var(--bright-red),var(--cajun-red));border-color:var(--gold);color:#fff}
+
+/* Back link */
+.back-link{display:block;text-align:center;margin-top:20px;color:var(--gold);font-size:13px;font-weight:700;text-decoration:none;transition:opacity .2s}
+.back-link:hover{opacity:.7}
+
+@media(max-width:480px){
+  .card{padding:28px 20px}
+  .staff-grid{grid-template-columns:repeat(2,1fr)}
+  h1{font-size:28px}
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="card">
+
+    <div id="formView">
+      <div class="header">
+        <span class="logo">⭐</span>
+        <h1>Give a Shoutout!</h1>
+        <div class="subtitle">Let our team know they made your day</div>
+        <div class="tagline">"Fresh from the water, made with love"</div>
+      </div>
+
+      <div class="staff-section">
+        <div class="section-label">⭐ Who Made Your Day?</div>
+        <div class="staff-grid" id="staffGrid">
+          <button type="button" class="staff-btn" data-staff="Brooke">
+            <div class="staff-avatar">👩</div>
+            <div class="staff-name">Brooke</div>
+            <div class="staff-role">Server</div>
+          </button>
+          <button type="button" class="staff-btn" data-staff="Liv">
+            <div class="staff-avatar">👸</div>
+            <div class="staff-name">Liv</div>
+            <div class="staff-role">Server</div>
+          </button>
+          <button type="button" class="staff-btn" data-staff="Ashley">
+            <div class="staff-avatar">💁</div>
+            <div class="staff-name">Ashley</div>
+            <div class="staff-role">Host</div>
+          </button>
+          <button type="button" class="staff-btn" data-staff="Marcus">
+            <div class="staff-avatar">👨‍🍳</div>
+            <div class="staff-name">Marcus</div>
+            <div class="staff-role">Chef</div>
+          </button>
+          <button type="button" class="staff-btn" data-staff="Tyler">
+            <div class="staff-avatar">🧑</div>
+            <div class="staff-name">Tyler</div>
+            <div class="staff-role">Server</div>
+          </button>
+          <button type="button" class="staff-btn" data-staff="The Whole Team">
+            <div class="staff-avatar">🦪</div>
+            <div class="staff-name">Whole Team</div>
+            <div class="staff-role">Everyone!</div>
+          </button>
+        </div>
+      </div>
+
+      <div class="reason-section">
+        <div class="section-label">💛 What Made It Great? (pick any)</div>
+        <div class="reason-chips" id="reasonChips">
+          <button type="button" class="reason-chip" data-reason="Amazing Service">Amazing Service</button>
+          <button type="button" class="reason-chip" data-reason="So Friendly">So Friendly</button>
+          <button type="button" class="reason-chip" data-reason="Fast & Efficient">Fast & Efficient</button>
+          <button type="button" class="reason-chip" data-reason="Made My Day">Made My Day</button>
+          <button type="button" class="reason-chip" data-reason="Great Recommendations">Great Recs</button>
+          <button type="button" class="reason-chip" data-reason="Went Above & Beyond">Above & Beyond</button>
+          <button type="button" class="reason-chip" data-reason="Incredible Food">Incredible Food</button>
+          <button type="button" class="reason-chip" data-reason="Kid-Friendly">Kid-Friendly</button>
+        </div>
+      </div>
+
+      <div class="message-section">
+        <div class="section-label">💬 Want to Say More? (optional)</div>
+        <textarea id="message" placeholder="Tell us what made your visit special..."></textarea>
+      </div>
+
+      <div class="name-section">
+        <div class="section-label">👤 Your Name (optional)</div>
+        <input type="text" id="yourName" placeholder="First name or nickname">
+      </div>
+
+      <button type="button" class="submit-btn" id="submitBtn">Send Shoutout ⭐</button>
+      <div class="status-msg" id="statusMsg"></div>
+    </div>
+
+    <div class="success-view" id="successView">
+      <span class="success-icon">🎉</span>
+      <h2>Shoutout Sent!</h2>
+      <p id="successText">Your kind words mean the world to our team. We'll make sure they see this!</p>
+      <div class="success-actions">
+        <button class="action-btn primary" onclick="resetForm()">Send Another</button>
+        <a href="bayou-ai-chat.html" class="action-btn">🤖 Chat with AI</a>
+        <a href="customer-feedback.html" class="action-btn">📝 Leave Feedback</a>
+      </div>
+    </div>
+
+    <a href="customer.html" class="back-link">← Back to Menu</a>
+  </div>
+</div>
+
+<script>
+let selectedStaff = '';
+let selectedReasons = [];
+
+// Staff selection
+document.getElementById('staffGrid').addEventListener('click', e => {
+  const btn = e.target.closest('.staff-btn');
+  if (!btn) return;
+  document.querySelectorAll('.staff-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedStaff = btn.dataset.staff;
+});
+
+// Reason chips (multi-select)
+document.getElementById('reasonChips').addEventListener('click', e => {
+  const chip = e.target.closest('.reason-chip');
+  if (!chip) return;
+  chip.classList.toggle('selected');
+  const reason = chip.dataset.reason;
+  if (chip.classList.contains('selected')) {
+    selectedReasons.push(reason);
+  } else {
+    selectedReasons = selectedReasons.filter(r => r !== reason);
+  }
+});
+
+// Submit
+document.getElementById('submitBtn').addEventListener('click', () => {
+  const msg = document.getElementById('message').value.trim();
+  const name = document.getElementById('yourName').value.trim() || 'Anonymous';
+  const statusEl = document.getElementById('statusMsg');
+
+  if (!selectedStaff) {
+    statusEl.textContent = 'Please select who you want to shoutout!';
+    statusEl.className = 'status-msg show error';
+    return;
+  }
+
+  if (selectedReasons.length === 0 && !msg) {
+    statusEl.textContent = 'Pick a reason or write a message!';
+    statusEl.className = 'status-msg show error';
+    return;
+  }
+
+  // Build the shoutout
+  const shoutout = {
+    staff: selectedStaff,
+    reasons: selectedReasons,
+    msg: msg || selectedReasons.join(', '),
+    from: name,
+    time: new Date().toISOString(),
+    count: 1
+  };
+
+  // Save to localStorage for dashboard
+  const existing = JSON.parse(localStorage.getItem('cypress_shoutouts') || '[]');
+  // Check if staff already has entries, increment count
+  const staffEntry = existing.find(s => s.staff === selectedStaff);
+  if (staffEntry) {
+    staffEntry.count = (staffEntry.count || 1) + 1;
+    staffEntry.msg = shoutout.msg;
+    staffEntry.from = shoutout.from;
+    staffEntry.time = shoutout.time;
+  } else {
+    existing.push(shoutout);
+  }
+  localStorage.setItem('cypress_shoutouts', JSON.stringify(existing));
+
+  // Save to Google Sheets
+  const APPS = localStorage.getItem('appsScriptUrl') || "https://script.google.com/macros/s/AKfycbwUMjebZmEMSVRBV5lJKTFAcLWodbGd9GB0WrLzJfD9f-JDaAXST8dvFpmeSJVuoPVWIg/exec";
+  if (APPS) {
+    const cb = 'shout_' + Math.random().toString(36).slice(2);
+    const params = new URLSearchParams({
+      action: 'addShoutout',
+      staff: selectedStaff,
+      reasons: selectedReasons.join(', '),
+      message: msg,
+      from: name,
+      callback: cb
+    });
+    const s = document.createElement('script');
+    s.src = APPS + '?' + params.toString();
+    window[cb] = () => { delete window[cb]; s.remove(); };
+    s.onerror = () => { delete window[cb]; s.remove(); console.warn('Shoutout failed to save to Google Sheets — check your Apps Script URL'); };
+    document.body.appendChild(s);
+  } else {
+    console.warn('Google Sheets not connected — open the Control Center (bayou-control-center.html) and paste your Apps Script URL to enable sheet sync');
+  }
+
+  // Show success
+  document.getElementById('formView').style.display = 'none';
+  document.getElementById('successView').classList.add('show');
+  document.getElementById('successText').textContent =
+    `Your shoutout to ${selectedStaff} has been sent! They're going to love hearing "${shoutout.msg}" from you, ${name}!`;
+});
+
+function resetForm() {
+  document.getElementById('formView').style.display = 'block';
+  document.getElementById('successView').classList.remove('show');
+  document.querySelectorAll('.staff-btn').forEach(b => b.classList.remove('selected'));
+  document.querySelectorAll('.reason-chip').forEach(c => c.classList.remove('selected'));
+  document.getElementById('message').value = '';
+  document.getElementById('yourName').value = '';
+  document.getElementById('statusMsg').className = 'status-msg';
+  selectedStaff = '';
+  selectedReasons = [];
+}
+</script>
+</body>
+</html>
