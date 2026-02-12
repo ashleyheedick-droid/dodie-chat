@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Today's Specials – Pit Happens BBQ</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --smoke-brown:#8B4513;--deep-hickory:#3E1A00;--fire-orange:#E25822;
+  --gold:#DAA520;--gold-light:#F0C050;--cream:#FFF8DC;--dark:#0d0806;--dark-card:#1a120e;
+  --emerald:#10B981;--amber:#F59E0B;
+  --radius:20px;--radius-sm:12px;
+  --shadow-lg:0 25px 50px -12px rgba(0,0,0,.6);
+  --shadow-glow:0 0 40px rgba(218,165,32,.15);
+  --transition:all .3s cubic-bezier(.4,0,.2,1);
+}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--dark);color:var(--cream);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 30% 20%,rgba(139,69,19,.3),transparent 50%),radial-gradient(ellipse at 70% 80%,rgba(62,26,0,.25),transparent 50%);pointer-events:none;z-index:0}
+
+.page-wrap{position:relative;z-index:1;padding:24px 20px 80px}
+.container{max-width:1000px;margin:0 auto}
+
+/* Nav */
+.top-nav{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:32px;flex-wrap:wrap;animation:fadeInDown .6s ease-out}
+@keyframes fadeInDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+.back-link{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:rgba(0,0,0,.5);border:1px solid rgba(218,165,32,.25);border-radius:var(--radius-sm);color:var(--gold);font-size:13px;font-weight:700;text-decoration:none;transition:var(--transition)}
+.back-link:hover{background:rgba(218,165,32,.12);border-color:var(--gold);transform:translateY(-2px)}
+.nav-actions{display:flex;gap:10px}
+.nav-btn{display:inline-flex;align-items:center;gap:6px;padding:10px 16px;background:rgba(0,0,0,.5);border:1px solid rgba(218,165,32,.25);border-radius:var(--radius-sm);color:var(--cream);font-size:13px;font-weight:600;cursor:pointer;transition:var(--transition);font-family:inherit;text-decoration:none}
+.nav-btn:hover{background:rgba(218,165,32,.12);border-color:var(--gold);transform:translateY(-2px)}
+
+/* Hero */
+.hero{text-align:center;margin-bottom:48px;animation:fadeInDown .6s ease-out .1s both}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 20px;background:linear-gradient(135deg,rgba(218,165,32,.15),rgba(218,165,32,.05));border:1px solid rgba(218,165,32,.3);border-radius:999px;font-size:12px;font-weight:800;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:20px}
+.hero-badge .live-dot{width:8px;height:8px;background:var(--emerald);border-radius:50%;animation:livePulse 2s ease-in-out infinite;box-shadow:0 0 12px var(--emerald)}
+@keyframes livePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.4)}}
+.logo-wrap{display:inline-flex;align-items:center;justify-content:center;width:110px;height:110px;background:linear-gradient(135deg,var(--fire-orange),var(--smoke-brown),var(--deep-hickory));border-radius:30px;margin-bottom:24px;box-shadow:0 20px 60px rgba(226,88,34,.4),0 0 0 3px var(--gold);font-size:56px;animation:logoFloat 4s ease-in-out infinite;position:relative}
+.logo-wrap::before{content:'';position:absolute;inset:-5px;border-radius:34px;background:conic-gradient(from 0deg,var(--gold),transparent,var(--fire-orange),transparent,var(--gold));opacity:.3;animation:spin 8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes logoFloat{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-12px) rotate(2deg)}}
+h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(38px,7vw,64px);font-weight:400;letter-spacing:3px;color:var(--cream);text-shadow:0 4px 20px rgba(218,165,32,.3);margin-bottom:6px}
+.hero-tagline{font-family:'Playfair Display',serif;font-style:italic;font-size:20px;color:var(--gold);margin-bottom:12px}
+.hero-subtitle{font-size:14px;color:rgba(255,248,220,.5);max-width:500px;margin:0 auto}
+.date-display{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--gold);margin-top:16px;opacity:.7}
+
+/* Hours card */
+.hours-card{background:linear-gradient(135deg,var(--dark-card),rgba(26,18,14,.95));border:2px solid var(--gold);border-radius:var(--radius);padding:28px;margin-bottom:40px;text-align:center;position:relative;overflow:hidden;animation:fadeIn .6s ease-out .3s both}
+.hours-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--fire-orange),var(--gold))}
+.hours-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;color:var(--cream);margin-bottom:12px}
+.hours-grid{display:flex;gap:20px;justify-content:center;flex-wrap:wrap}
+.hours-item{padding:12px 20px;background:rgba(0,0,0,.3);border:1px solid rgba(218,165,32,.15);border-radius:var(--radius-sm)}
+.hours-day{font-size:12px;color:rgba(255,248,220,.5);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:4px}
+.hours-time{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--gold)}
+.open-status{display:inline-flex;align-items:center;gap:8px;padding:8px 20px;border-radius:999px;font-size:14px;font-weight:800;margin-top:16px}
+.open-status.open{background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);color:var(--emerald)}
+.open-status.closed{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#f87171}
+.open-dot{width:10px;height:10px;border-radius:50%;animation:livePulse 2s ease-in-out infinite}
+.open-status.open .open-dot{background:var(--emerald);box-shadow:0 0 12px var(--emerald)}
+.open-status.closed .open-dot{background:#f87171;box-shadow:0 0 12px #f87171}
+
+/* Specials grid */
+.specials-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;margin-bottom:48px;animation:fadeIn .6s ease-out .5s both}
+
+.special-card{background:linear-gradient(160deg,var(--dark-card),rgba(26,18,14,.95));border:2px solid rgba(218,165,32,.15);border-radius:var(--radius);overflow:hidden;transition:var(--transition);position:relative}
+.special-card:hover{border-color:rgba(218,165,32,.5);transform:translateY(-8px);box-shadow:var(--shadow-lg),var(--shadow-glow)}
+.special-accent{height:4px;background:linear-gradient(90deg,var(--gold),var(--fire-orange),var(--gold));position:relative;overflow:hidden}
+.special-accent::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);animation:shimmer 3s ease-in-out infinite}
+@keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+
+.special-header{display:flex;align-items:center;justify-content:space-between;padding:24px 24px 0;gap:12px}
+.special-icon{font-size:48px;filter:drop-shadow(0 6px 12px rgba(226,88,34,.3));animation:iconFloat 3s ease-in-out infinite}
+@keyframes iconFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.special-type-badge{padding:6px 12px;border-radius:6px;font-size:10px;font-weight:900;letter-spacing:1px;text-transform:uppercase}
+.badge-daily{background:rgba(218,165,32,.15);border:1px solid rgba(218,165,32,.3);color:var(--gold)}
+.badge-happy{background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);color:var(--emerald)}
+.badge-chef{background:rgba(226,88,34,.15);border:1px solid rgba(226,88,34,.3);color:var(--fire-orange)}
+.badge-weekend{background:rgba(139,92,246,.15);border:1px solid rgba(139,92,246,.3);color:#a78bfa}
+
+.special-body{padding:16px 24px}
+.special-name{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:1px;color:var(--cream);margin-bottom:6px}
+.special-desc{font-size:13px;color:rgba(255,248,220,.5);line-height:1.6;margin-bottom:12px}
+.special-price-row{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.special-price{font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--gold)}
+.special-orig-price{font-size:16px;color:rgba(255,248,220,.3);text-decoration:line-through}
+.special-savings{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:800;background:rgba(16,185,129,.15);color:var(--emerald);border:1px solid rgba(16,185,129,.3)}
+
+.special-footer{padding:16px 24px;background:rgba(0,0,0,.2);border-top:1px solid rgba(218,165,32,.08);display:flex;justify-content:space-between;align-items:center}
+.special-available{font-size:12px;color:rgba(255,248,220,.4);font-weight:600}
+.special-order-btn{padding:10px 20px;border-radius:var(--radius-sm);border:none;background:linear-gradient(135deg,var(--fire-orange),var(--smoke-brown));color:#fff;font-size:13px;font-weight:800;font-family:inherit;cursor:pointer;transition:var(--transition);box-shadow:0 4px 12px rgba(226,88,34,.3),0 0 0 1px var(--gold)}
+.special-order-btn:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(226,88,34,.4),0 0 0 1px var(--gold)}
+
+/* What's good section */
+.recommend-section{background:linear-gradient(135deg,var(--dark-card),rgba(26,18,14,.95));border:2px solid var(--gold);border-radius:var(--radius);padding:32px;margin-bottom:40px;position:relative;overflow:hidden;animation:fadeIn .6s ease-out .7s both}
+.recommend-section::before{content:'';position:absolute;inset:0;background:conic-gradient(from 180deg,rgba(218,165,32,.05),transparent,rgba(226,88,34,.05),transparent);animation:glow 10s linear infinite}
+@keyframes glow{to{transform:rotate(360deg)}}
+.recommend-inner{position:relative;z-index:1}
+.recommend-header{display:flex;align-items:center;gap:16px;margin-bottom:20px}
+.recommend-icon{font-size:48px;animation:logoFloat 4s ease-in-out infinite}
+.recommend-title{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:2px;color:var(--gold)}
+.recommend-sub{font-size:14px;color:rgba(255,248,220,.6)}
+.recommend-items{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+.rec-item{background:rgba(0,0,0,.3);border:1px solid rgba(218,165,32,.2);border-radius:var(--radius-sm);padding:20px;text-align:center;transition:var(--transition);cursor:default}
+.rec-item:hover{border-color:var(--gold);transform:translateY(-4px);box-shadow:var(--shadow-glow)}
+.rec-icon{font-size:40px;margin-bottom:10px;display:block}
+.rec-name{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--cream);letter-spacing:1px;margin-bottom:4px}
+.rec-detail{font-size:12px;color:rgba(255,248,220,.5)}
+.rec-price{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--gold);margin-top:8px}
+
+/* CTA */
+.cta-section{text-align:center;margin-bottom:40px;animation:fadeIn .6s ease-out .9s both}
+.cta-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.cta-btn{padding:16px 32px;border-radius:var(--radius-sm);border:2px solid;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer;transition:var(--transition);text-decoration:none;display:inline-flex;align-items:center;gap:10px;text-transform:uppercase;letter-spacing:1px}
+.cta-btn.primary{background:linear-gradient(135deg,var(--fire-orange),var(--smoke-brown));border-color:var(--gold);color:#fff;box-shadow:0 8px 24px rgba(226,88,34,.3)}
+.cta-btn.primary:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(226,88,34,.5)}
+.cta-btn.secondary{background:rgba(0,0,0,.3);border-color:var(--gold);color:var(--gold)}
+.cta-btn.secondary:hover{background:rgba(218,165,32,.12);transform:translateY(-3px)}
+
+/* Footer */
+.page-footer{text-align:center;padding:40px 20px;color:rgba(255,248,220,.4);font-size:13px;border-top:1px solid rgba(218,165,32,.1)}
+.footer-brand{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px;color:var(--gold);margin-bottom:4px}
+
+@media(max-width:768px){
+  .page-wrap{padding:16px 12px 80px}
+  .specials-grid{grid-template-columns:1fr}
+  .hours-grid{flex-direction:column;align-items:center}
+  .cta-btns{flex-direction:column;align-items:center}
+  .top-nav{flex-direction:column;align-items:stretch}
+}
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+<div class="container">
+
+  <div class="top-nav">
+    <a href="customer.html" class="back-link">← Back to Menu</a>
+    <div class="nav-actions">
+      <a href="live-update-inventory.html" class="nav-btn">🥩 Full Menu</a>
+      <a href="pit-ai-chat.html" class="nav-btn">🤖 Ask AI</a>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-badge">
+      <span class="live-dot"></span>
+      Updated Daily
+    </div>
+    <div class="logo-wrap">🔥</div>
+    <h1>Today's Specials</h1>
+    <div class="hero-tagline">"Fresh Deals, Hot Off the Smoker"</div>
+    <div class="hero-subtitle">Our chef picks the best of today's catch and turns it into something special — at prices that'll make you smile.</div>
+    <div class="date-display" id="dateDisplay"></div>
+  </div>
+
+  <!-- Hours & Open Status -->
+  <div class="hours-card">
+    <div class="hours-title">🕐 Hours & Directions</div>
+    <div class="hours-grid">
+      <div class="hours-item">
+        <div class="hours-day">Mon–Thu</div>
+        <div class="hours-time">11am – 9pm</div>
+      </div>
+      <div class="hours-item">
+        <div class="hours-day">Friday</div>
+        <div class="hours-time">11am – 10pm</div>
+      </div>
+      <div class="hours-item">
+        <div class="hours-day">Saturday</div>
+        <div class="hours-time">11am – 10pm</div>
+      </div>
+      <div class="hours-item">
+        <div class="hours-day">Sunday</div>
+        <div class="hours-time">11am – 8pm</div>
+      </div>
+    </div>
+    <div class="open-status" id="openStatus">
+      <span class="open-dot"></span>
+      <span id="openText">Checking...</span>
+    </div>
+  </div>
+
+  <!-- Today's Specials -->
+  <div class="specials-grid" id="specialsGrid"></div>
+
+  <!-- What's Good Today (recommendations) -->
+  <div class="recommend-section">
+    <div class="recommend-inner">
+      <div class="recommend-header">
+        <div class="recommend-icon">👨‍🍳</div>
+        <div>
+          <div class="recommend-title">Chef's Picks</div>
+          <div class="recommend-sub">What our chef recommends today based on freshness and flavor</div>
+        </div>
+      </div>
+      <div class="recommend-items" id="chefPicks"></div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-section">
+    <div class="cta-btns">
+      <a href="waitlist-guest-form.html" class="cta-btn primary">📋 Join Waitlist</a>
+      <a href="pit-ai-chat.html" class="cta-btn secondary">🤖 Ask AI About Specials</a>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <div class="footer-brand">Pit Happens BBQ</div>
+    <div>"Low & Slow, That's How We Roll"</div>
+    <div style="margin-top:8px">Specials change daily. Prices and availability subject to change.</div>
+  </div>
+
+</div>
+</div>
+
+<script>
+// Date display
+const now = new Date();
+const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+document.getElementById('dateDisplay').textContent = `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
+
+// Open/closed status
+function checkOpenStatus() {
+  const hour = now.getHours();
+  const day = now.getDay(); // 0=Sun
+  let closeHour = 21; // 9pm default
+  if (day === 5 || day === 6) closeHour = 22; // Fri/Sat 10pm
+  if (day === 0) closeHour = 20; // Sun 8pm
+  const openHour = 11;
+
+  const statusEl = document.getElementById('openStatus');
+  const textEl = document.getElementById('openText');
+
+  if (hour >= openHour && hour < closeHour) {
+    statusEl.className = 'open-status open';
+    textEl.textContent = `We're Open! Closing at ${closeHour > 12 ? closeHour - 12 : closeHour}pm`;
+  } else {
+    statusEl.className = 'open-status closed';
+    textEl.textContent = 'Currently Closed · Opens at 11am';
+  }
+}
+checkOpenStatus();
+
+// Daily specials (rotate based on day of week)
+const daySpecials = {
+  0: [ // Sunday
+    { icon: '🥩', name: 'Sunday Brisket Plate', desc: 'All-you-can-eat brisket plate with corn, potatoes, and our secret dry rub seasoning. The perfect Sunday tradition.', price: '$24.99', origPrice: '$34.99', savings: 'Save $10', type: 'badge-daily', typeLabel: "Sunday Special", avail: 'While supplies last' },
+    { icon: '🥂', name: 'Brunch Mimosa Tower', desc: 'Unlimited mimosas with any brunch entree. Choose from classic OJ, mango, or strawberry.', price: '$18.99', origPrice: '$28.99', savings: 'Save $10', type: 'badge-happy', typeLabel: 'Brunch', avail: '11am - 2pm' },
+  ],
+  1: [ // Monday
+    { icon: '🍖', name: 'Monday Rib Night', desc: 'St. Louis ribs — dry-rubbed and smoked 5 hours over hickory. Half rack at half price all night.', price: '$12.99', origPrice: '$24.99', savings: '50% Off', type: 'badge-daily', typeLabel: "Monday Special", avail: 'All day' },
+    { icon: '🍺', name: 'Beer & Boil Combo', desc: 'Any boil plate plus a local craft beer for one low price.', price: '$16.99', origPrice: '$24.99', savings: 'Save $8', type: 'badge-happy', typeLabel: 'Happy Hour', avail: '4pm - 7pm' },
+  ],
+  2: [ // Tuesday
+    { icon: '🍗', name: 'Smoked Turkey Tuesday', desc: 'Premium smoked turkey legs with drawn butter and Old Bay. A Pit Happens tradition every Tuesday.', price: '$22.99', origPrice: '$32.99', savings: 'Save $10', type: 'badge-daily', typeLabel: "Tuesday Special", avail: 'All day' },
+    { icon: '💨', name: 'Turbo Hot Challenge', desc: 'Think you can handle it? Finish our Turbo Hot platter and get it FREE plus a Pit Happens t-shirt.', price: 'FREE*', origPrice: '$29.99', savings: 'If you finish!', type: 'badge-chef', typeLabel: "Chef's Challenge", avail: 'Dine-in only' },
+  ],
+  3: [ // Wednesday
+    { icon: '🌽', name: 'Wing & Sausage Wednesday', desc: 'Mix and match: smoked sausage links and our smoked wings. Half price on both!', price: '$11.99', origPrice: '$21.99', savings: '50% Off', type: 'badge-daily', typeLabel: "Wednesday Special", avail: 'All day' },
+    { icon: '🍺', name: 'Beer Down Wednesday', desc: 'Half-price pitchers of craft beer with any BBQ entree. The perfect midweek treat.', price: '50% Off Beer', origPrice: '', savings: 'Half Price', type: 'badge-happy', typeLabel: 'Beer Special', avail: '5pm - Close' },
+  ],
+  4: [ // Thursday
+    { icon: '🥩', name: 'Throwback Thursday Boil', desc: 'Our original recipe from day one. Classic brisket plate at the original price.', price: '$19.99', origPrice: '$29.99', savings: 'Save $10', type: 'badge-daily', typeLabel: "Throwback Thursday", avail: 'All day' },
+    { icon: '🎵', name: 'Live Music & Specials', desc: 'Live country music, drink specials, and good vibes every Thursday night.', price: '$2 off drinks', origPrice: '', savings: 'Live Music!', type: 'badge-weekend', typeLabel: 'Entertainment', avail: '7pm - 10pm' },
+  ],
+  5: [ // Friday
+    { icon: '🥩', name: 'Friday Night Feast', desc: 'The big one! Brisket, ribs, pulled pork AND sausage combo platter. Feeds 2-3 people.', price: '$49.99', origPrice: '$72.99', savings: 'Save $23', type: 'badge-chef', typeLabel: "Pitmaster's Feature", avail: 'Limited quantity' },
+    { icon: '🍹', name: 'Hurricane Happy Hour', desc: 'Our famous Smoky Old Fashioned cocktail plus appetizer sampler.', price: '$14.99', origPrice: '$22.99', savings: 'Save $8', type: 'badge-happy', typeLabel: 'Happy Hour', avail: '4pm - 7pm' },
+  ],
+  6: [ // Saturday
+    { icon: '👨‍🍳', name: 'Pitmaster\'s Sampler', desc: 'A taste of everything! Pitmaster\'s selection of brisket, ribs, pulled pork, and sausage with all the fixings.', price: '$39.99', origPrice: '$54.99', savings: 'Save $15', type: 'badge-chef', typeLabel: "Pitmaster's Special", avail: 'While supplies last' },
+    { icon: '🎉', name: 'Family Feast Pack', desc: 'Feed the whole family! Large boil with corn, potatoes, sausage, and all the sides. Serves 4-6.', price: '$79.99', origPrice: '$109.99', savings: 'Save $30', type: 'badge-weekend', typeLabel: 'Weekend Deal', avail: 'All day' },
+    { icon: '🍰', name: 'Free Dessert Saturday', desc: 'Free bread pudding or beignets with any entree purchase. Because Saturday is for treating yourself.', price: 'FREE', origPrice: '$8.99', savings: 'On the house!', type: 'badge-weekend', typeLabel: 'Weekend Bonus', avail: 'With entree' },
+  ]
+};
+
+// Render specials cards
+function renderSpecials(specials) {
+  document.getElementById('specialsGrid').innerHTML = specials.map((s, i) => `
+    <div class="special-card" style="animation:fadeIn .6s ease-out ${0.5 + i * 0.15}s both">
+      <div class="special-accent"></div>
+      <div class="special-header">
+        <span class="special-icon">${s.icon}</span>
+        <span class="special-type-badge ${s.type}">${s.typeLabel}</span>
+      </div>
+      <div class="special-body">
+        <div class="special-name">${s.name}</div>
+        <div class="special-desc">${s.desc}</div>
+        <div class="special-price-row">
+          <span class="special-price">${s.price}</span>
+          ${s.origPrice ? `<span class="special-orig-price">${s.origPrice}</span>` : ''}
+          <span class="special-savings">${s.savings}</span>
+        </div>
+      </div>
+      <div class="special-footer">
+        <span class="special-available">${s.avail}</span>
+        <a href="waitlist-guest-form.html" class="special-order-btn">Join Waitlist</a>
+      </div>
+    </div>
+  `).join('');
+}
+
+// Try fetching specials from Google Sheets first, fall back to hardcoded
+const APPS = localStorage.getItem('appsScriptUrl') || "https://script.google.com/macros/s/AKfycbwUMjebZmEMSVRBV5lJKTFAcLWodbGd9GB0WrLzJfD9f-JDaAXST8dvFpmeSJVuoPVWIg/exec";
+if (APPS) {
+  const cb = 'specials_' + Math.random().toString(36).slice(2);
+  const s = document.createElement('script');
+  s.src = APPS + '?action=getSpecials&callback=' + cb;
+  window[cb] = function(resp) {
+    delete window[cb]; s.remove();
+    if (resp && resp.success && resp.data && resp.data.length > 0) {
+      // Map sheet columns (lowercase) to display properties
+      const mapped = resp.data.map(function(r) {
+        return {
+          icon: r.icon || '',
+          name: r.name || '',
+          desc: r.description || '',
+          price: r.price || '',
+          origPrice: r.origprice || '',
+          savings: r.savings || '',
+          type: r.type || 'badge-daily',
+          typeLabel: r.type || 'Special',
+          avail: r.availability || ''
+        };
+      });
+      renderSpecials(mapped);
+    } else {
+      // Sheet returned empty — use hardcoded fallback
+      renderSpecials(daySpecials[now.getDay()] || daySpecials[5]);
+    }
+  };
+  s.onerror = function() {
+    delete window[cb]; s.remove();
+    renderSpecials(daySpecials[now.getDay()] || daySpecials[5]);
+  };
+  // Timeout fallback in case JSONP hangs
+  setTimeout(function() {
+    if (window[cb]) { delete window[cb]; s.remove(); renderSpecials(daySpecials[now.getDay()] || daySpecials[5]); }
+  }, 5000);
+  document.body.appendChild(s);
+} else {
+  // No Apps Script URL configured — use hardcoded data
+  renderSpecials(daySpecials[now.getDay()] || daySpecials[5]);
+}
+
+// Chef's picks
+const chefPicks = [
+  { icon: '🥩', name: 'Brisket Plate', detail: 'USDA Prime — extra juicy bark today', price: 'Pit Price' },
+  { icon: '🍖', name: 'St. Louis Ribs', detail: 'Smoked 5 hours over hickory this morning', price: 'Pit Price' },
+  { icon: '🐷', name: 'Pulled Pork Sandwich', detail: 'Hand-pulled, perfectly seasoned', price: 'Pit Price' },
+  { icon: '🔥', name: 'Burnt Ends', detail: 'Pitmaster\'s glazed with sweet heat — fan favorite', price: '$18.99' },
+];
+document.getElementById('chefPicks').innerHTML = chefPicks.map(p => `
+  <div class="rec-item">
+    <span class="rec-icon">${p.icon}</span>
+    <div class="rec-name">${p.name}</div>
+    <div class="rec-detail">${p.detail}</div>
+    <div class="rec-price">${p.price}</div>
+  </div>
+`).join('');
+</script>
+</body>
+</html>

@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Pit Happens Host View</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;700;800&display=swap');
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{--red:#E25822;--gold:#DAA520;--dark:#0b0805;--card:#120e08;--border:#3a2b12;--cream:#FFF8DC;--muted:rgba(255,248,220,.65)}
+    body{font-family:'Inter',system-ui,sans-serif;background:var(--dark);color:var(--cream);padding:20px;min-height:100vh}
+    body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle at 20% 10%,rgba(139,69,19,.4),transparent 45%),radial-gradient(circle at 80% 90%,rgba(62,26,0,.4),transparent 45%);pointer-events:none;z-index:0}
+    .wrap{max-width:1200px;margin:0 auto;position:relative;z-index:1}
+
+    /* Header */
+    .topbar{display:flex;align-items:center;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+    .logo{font-size:32px;filter:drop-shadow(0 4px 8px rgba(226,88,34,.5))}
+    .title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;color:var(--cream)}
+    .stats{display:flex;gap:10px;margin-left:auto;flex-wrap:wrap}
+    .stat{padding:8px 14px;background:var(--card);border:1px solid var(--border);border-radius:10px;font-size:13px;font-weight:700;text-align:center;min-width:70px}
+    .stat-label{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:2px}
+    .stat-num{color:var(--gold);font-size:20px;font-family:'Bebas Neue',sans-serif;letter-spacing:1px}
+    .stat-num.red{color:var(--red)}
+    .stat-num.green{color:#4ade80}
+
+    /* Controls bar */
+    .bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+    .btn-refresh{padding:10px 16px;border-radius:10px;border:1px solid var(--gold);background:rgba(218,165,32,.15);color:var(--gold);cursor:pointer;font-weight:700;font-family:inherit;font-size:13px;display:flex;align-items:center;gap:6px;transition:all .2s}
+    .btn-refresh:hover{background:rgba(218,165,32,.25)}
+    .btn-refresh:disabled{opacity:.5;cursor:not-allowed}
+    .pill{padding:8px 14px;border-radius:999px;border:1px solid var(--border);background:var(--card);cursor:pointer;font-size:13px;font-weight:600;color:var(--muted);transition:all .2s;font-family:inherit}
+    .pill.active{background:rgba(218,165,32,.2);border-color:var(--gold);color:var(--cream)}
+    .pill:hover:not(.active){background:rgba(255,255,255,.05);border-color:#555}
+    .status-line{font-size:12px;color:var(--muted);margin-top:6px;min-height:18px}
+
+    /* No config warning */
+    .no-config{background:rgba(218,165,32,.1);border:2px solid rgba(218,165,32,.4);border-radius:12px;padding:16px 20px;margin-bottom:16px;color:var(--gold);font-size:14px;display:none}
+    .no-config a{color:var(--gold);font-weight:700}
+
+    /* Cards grid */
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:4px}
+    @media(max-width:780px){.grid{grid-template-columns:1fr}}
+    .card{border:1px solid var(--border);border-radius:14px;background:var(--card);padding:16px;display:flex;justify-content:space-between;gap:12px;transition:border-color .2s;position:relative;overflow:hidden}
+    .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+    .card.waiting::before{background:linear-gradient(90deg,var(--gold),rgba(218,165,32,.3))}
+    .card.notified::before{background:linear-gradient(90deg,var(--red),rgba(226,88,34,.3))}
+    .card.seated::before{background:linear-gradient(90deg,#4ade80,rgba(74,222,128,.3))}
+    .card:hover{border-color:rgba(218,165,32,.4)}
+    .card-left{flex:1;min-width:0}
+    .name{font-weight:900;font-size:16px;color:var(--cream);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .phone{font-size:13px;color:var(--muted);margin-bottom:4px}
+    .meta{font-size:12px;color:var(--muted);margin-top:6px;display:flex;gap:8px;flex-wrap:wrap}
+    .meta-pill{padding:3px 8px;border-radius:6px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);white-space:nowrap}
+    .status-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin-top:8px}
+    .badge-waiting{background:rgba(218,165,32,.2);border:1px solid rgba(218,165,32,.5);color:var(--gold)}
+    .badge-notified{background:rgba(226,88,34,.2);border:1px solid rgba(226,88,34,.5);color:#ff8a8a}
+    .badge-seated{background:rgba(74,222,128,.15);border:1px solid rgba(74,222,128,.3);color:#4ade80}
+    .badge-other{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:var(--muted)}
+    .spice-bar{display:flex;gap:3px;margin-top:6px}
+    .spice-icon{font-size:13px}
+
+    /* Action buttons */
+    .acts{display:flex;flex-direction:column;gap:8px;min-width:140px}
+    .act-btn{padding:9px 12px;border-radius:8px;border:1px solid;cursor:pointer;font-size:12px;font-weight:800;font-family:inherit;text-transform:uppercase;letter-spacing:.5px;transition:all .2s;text-align:center}
+    .act-btn:hover{transform:translateY(-1px)}
+    .act-btn.notify{background:rgba(218,165,32,.2);border-color:var(--gold);color:var(--gold)}
+    .act-btn.notify:hover{background:rgba(218,165,32,.35)}
+    .act-btn.seat{background:rgba(74,222,128,.2);border-color:#4ade80;color:#4ade80}
+    .act-btn.seat:hover{background:rgba(74,222,128,.35)}
+    .act-btn.waiting-back{background:rgba(255,255,255,.07);border-color:#555;color:var(--muted)}
+    .act-btn.waiting-back:hover{background:rgba(255,255,255,.12)}
+
+    /* Auto-refresh */
+    .auto-refresh{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);padding:8px 14px;background:var(--card);border:1px solid var(--border);border-radius:999px}
+    .spinner{width:12px;height:12px;border:2px solid rgba(218,165,32,.3);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .empty{grid-column:1/-1;text-align:center;padding:48px;color:var(--muted);font-size:15px}
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <div id="noConfigWarn" class="no-config">
+    ⚠️ Apps Script URL not configured. <a href="pit-control-center.html">Visit the Control Center</a> to set it up.
+  </div>
+
+  <div class="topbar">
+    <div class="logo">🥩</div>
+    <div class="title">Pit Happens Host View</div>
+    <div class="stats">
+      <div class="stat"><span class="stat-label">Waiting</span><span class="stat-num" id="statWaiting">–</span></div>
+      <div class="stat"><span class="stat-label">Notified</span><span class="stat-num red" id="statNotified">–</span></div>
+      <div class="stat"><span class="stat-label">Seated</span><span class="stat-num green" id="statSeated">–</span></div>
+      <div class="stat"><span class="stat-label">Total</span><span class="stat-num" id="statTotal">–</span></div>
+    </div>
+  </div>
+
+  <div class="bar">
+    <button class="btn-refresh" id="refreshBtn">🔄 Refresh</button>
+    <span class="pill active" data-filter="active">Active</span>
+    <span class="pill" data-filter="waiting">Waiting</span>
+    <span class="pill" data-filter="notified">Notified</span>
+    <span class="pill" data-filter="seated">Seated</span>
+    <span class="pill" data-filter="no show">No Show</span>
+    <span class="pill" data-filter="cancelled">Cancelled</span>
+    <span class="pill" data-filter="all">All</span>
+    <div class="auto-refresh" style="margin-left:auto"><div class="spinner"></div>Auto-refresh 30s</div>
+  </div>
+  <div class="status-line" id="statusLine">Loading…</div>
+
+  <div class="grid" id="list"></div>
+</div>
+
+<script>
+// ── Read from localStorage (set by Control Center) ──────────────────────────
+const APPS = localStorage.getItem('appsScriptUrl') || "https://script.google.com/macros/s/AKfycbwUMjebZmEMSVRBV5lJKTFAcLWodbGd9GB0WrLzJfD9f-JDaAXST8dvFpmeSJVuoPVWIg/exec";
+
+if (!APPS) {
+  document.getElementById('noConfigWarn').style.display = 'block';
+  document.getElementById('statusLine').textContent = 'No Apps Script URL configured.';
+}
+
+const listEl      = document.getElementById('list');
+const statusLine  = document.getElementById('statusLine');
+const refreshBtn  = document.getElementById('refreshBtn');
+
+let currentFilter = 'active';
+let cache         = [];
+let refreshTimer  = null;
+
+// ── JSONP helper ─────────────────────────────────────────────────────────────
+function jsonp(params) {
+  return new Promise((resolve, reject) => {
+    if (!APPS) { reject(new Error('No Apps Script URL — configure in Control Center')); return; }
+    const cb  = 'cb_' + Math.random().toString(36).slice(2);
+    const qs  = new URLSearchParams({ ...params, callback: cb }).toString();
+    const s   = document.createElement('script');
+    s.src     = APPS + '?' + qs;
+    const timer = setTimeout(() => { cleanup(); reject(new Error('Request timed out')); }, 12000);
+    window[cb] = d => { clearTimeout(timer); cleanup(); resolve(d); };
+    s.onerror  = () => { clearTimeout(timer); cleanup(); reject(new Error('Script load failed')); };
+    function cleanup() { delete window[cb]; if (s.parentNode) s.parentNode.removeChild(s); }
+    document.body.appendChild(s);
+  });
+}
+
+const norm = s => String(s || '').trim().toLowerCase();
+
+function applyFilter(items) {
+  if (currentFilter === 'all')    return items;
+  if (currentFilter === 'active') return items.filter(p => ['waiting','notified'].includes(norm(p.status)));
+  return items.filter(p => norm(p.status) === currentFilter);
+}
+
+function spiceDisplay(lvl) {
+  const l = norm(lvl);
+  if (l === 'turbo hot') return '🔥🔥🔥';
+  if (l === 'spicy')     return '🔥🔥';
+  if (l === 'mild')      return '🔥';
+  return '';
+}
+
+function badgeClass(status) {
+  const s = norm(status);
+  if (s === 'waiting')  return 'badge-waiting';
+  if (s === 'notified') return 'badge-notified';
+  if (s === 'seated')   return 'badge-seated';
+  return 'badge-other';
+}
+
+async function refresh() {
+  refreshBtn.disabled = true;
+  statusLine.textContent = 'Loading…';
+  clearTimeout(refreshTimer);
+  try {
+    const r = await jsonp({ action: 'getWaitlist' });
+    if (!r.success) throw new Error(r.error || 'API error');
+    cache = r.data || [];
+    render();
+  } catch (e) {
+    statusLine.textContent = '❌ ' + e.message;
+    listEl.innerHTML = `<div class="empty">Error loading waitlist.<br><small>${e.message}</small></div>`;
+  } finally {
+    refreshBtn.disabled = false;
+    refreshTimer = setTimeout(refresh, 30000);
+  }
+}
+
+async function setStatus(row, status) {
+  refreshBtn.disabled = true;
+  try {
+    const r = await jsonp({ action: 'updateWaitlistStatus', row: String(row), status });
+    if (!r.success) throw new Error(r.error || 'Update failed');
+    await refresh();
+  } catch (e) {
+    statusLine.textContent = '❌ ' + e.message;
+  } finally {
+    refreshBtn.disabled = false;
+  }
+}
+
+function render() {
+  const items = applyFilter(cache);
+  const w = cache.filter(p => norm(p.status) === 'waiting').length;
+  const n = cache.filter(p => norm(p.status) === 'notified').length;
+  const s = cache.filter(p => norm(p.status) === 'seated').length;
+  document.getElementById('statWaiting').textContent  = w;
+  document.getElementById('statNotified').textContent = n;
+  document.getElementById('statSeated').textContent   = s;
+  document.getElementById('statTotal').textContent    = cache.length;
+  statusLine.textContent = `Last refresh: ${new Date().toLocaleTimeString()} — ${items.length} shown`;
+
+  listEl.innerHTML = '';
+
+  if (!items.length) {
+    listEl.innerHTML = `<div class="empty">🎉 No parties for this filter!</div>`;
+    return;
+  }
+
+  for (const p of items) {
+    const st       = norm(p.status);
+    const card     = document.createElement('div');
+    card.className = 'card ' + st;
+
+    const spice = spiceDisplay(p.spiceLevel);
+
+    const left = document.createElement('div');
+    left.className = 'card-left';
+    left.innerHTML = `
+      <div class="name">${p.name || '—'} &nbsp;<span style="font-weight:600;opacity:.7">(Party of ${p.party || '?'})</span></div>
+      <div class="phone">${p.phone || '—'}</div>
+      ${p.specialNotes ? `<div class="phone" style="font-style:italic">📝 ${p.specialNotes}</div>` : ''}
+      <div class="meta">
+        <span class="meta-pill ${badgeClass(p.status)}">${p.status || '—'}</span>
+        ${spice ? `<span class="meta-pill">${spice} ${p.spiceLevel}</span>` : ''}
+      </div>
+    `;
+
+    const acts = document.createElement('div');
+    acts.className = 'acts';
+
+    if (st === 'waiting') {
+      acts.appendChild(makeBtn('🔔 Notify', 'notify', () => setStatus(p.row, 'Notified')));
+      acts.appendChild(makeBtn('✅ Seat',   'seat',   () => setStatus(p.row, 'Seated')));
+    } else if (st === 'notified') {
+      acts.appendChild(makeBtn('✅ Seat',    'seat',        () => setStatus(p.row, 'Seated')));
+      acts.appendChild(makeBtn('↩ Waiting', 'waiting-back', () => setStatus(p.row, 'Waiting')));
+    } else {
+      acts.appendChild(makeBtn('↩ Waiting', 'waiting-back', () => setStatus(p.row, 'Waiting')));
+      if (st !== 'no show' && st !== 'cancelled') {
+        acts.appendChild(makeBtn('❌ No Show',  'waiting-back', () => setStatus(p.row, 'No Show')));
+      }
+    }
+
+    card.append(left, acts);
+    listEl.appendChild(card);
+  }
+}
+
+function makeBtn(label, cls, fn) {
+  const b = document.createElement('button');
+  b.className = 'act-btn ' + cls;
+  b.textContent = label;
+  b.onclick = fn;
+  return b;
+}
+
+// ── Filter pills ─────────────────────────────────────────────────────────────
+document.querySelectorAll('.pill').forEach(el => {
+  el.addEventListener('click', () => {
+    document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+    currentFilter = el.getAttribute('data-filter');
+    render();
+  });
+});
+
+refreshBtn.addEventListener('click', refresh);
+if (APPS) refresh();
+</script>
+</body>
+</html>
