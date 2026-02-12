@@ -171,8 +171,8 @@
 
   function updateTestUrls() {
     const apps = $('appsScriptUrl').value.trim() || '[save your Apps Script URL above first]';
-    $('testUrl1').textContent = apps + '?action=getInventory';
-    $('testUrl2').textContent = apps + '?action=getWaitlist';
+    $('testUrl1').textContent = apps + '?action=getDashboardStats';
+    $('testUrl2').textContent = apps + '?action=getSpecials';
   }
 
   function loadSaved() {
@@ -216,7 +216,7 @@
 
     const cb = 'testCb_' + Date.now();
     const s  = document.createElement('script');
-    s.src    = apps + '?action=getInventory&callback=' + cb;
+    s.src    = apps + '?action=getDashboardStats&callback=' + cb;
 
     const timer = setTimeout(() => {
       cleanup();
@@ -227,8 +227,7 @@
       clearTimeout(timer);
       cleanup();
       if (data && data.success) {
-        const count = Array.isArray(data.data) ? data.data.length : 0;
-        setStatus(`🔥 Connected! Found ${count} inventory items. Everything is working!`, 'ok');
+        setStatus('🔥 Connected! Google Sheets is responding. Everything is working!', 'ok');
       } else {
         setStatus('✗ Got a response but it returned an error: ' + (data && data.error ? data.error : 'unknown'), 'err');
       }

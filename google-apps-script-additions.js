@@ -8,7 +8,9 @@
  * 2. COPY everything below the line of ='s into your Code.gs file
  *    (add it INSIDE your existing doGet function, before the final closing brace)
  * 3. If you don't have a respond() function yet, also copy the helper at the bottom
- * 4. Make sure your Google Sheet has these tabs (the script auto-creates them if missing):
+ * 4. Make sure your Google Sheet has these tabs (the script auto-creates most if missing):
+ *    - "Inventory"  (columns: Item, Status, Price, LastUpdated)
+ *    - "Waitlist"   (columns: Timestamp, Name, Phone, Party, Status, SpecialNotes, SpiceLevel)
  *    - "Shoutouts"  (columns: Timestamp, Staff, Reasons, Message, From)
  *    - "Feedback"   (columns: Timestamp, Rating, Text, Categories, From, Email, Sentiment)
  *    - "Specials"   (columns: Day, Icon, Name, Description, Price, OrigPrice, Savings, Type, Availability)
@@ -26,6 +28,75 @@ function doGet(e) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var action = (e.parameter.action || '').trim();
   var callback = e.parameter.callback || '';
+
+  // === INVENTORY (live seafood board) ===
+  if (action === 'getInventory') {
+    var sheet = ss.getSheetByName('Inventory');
+    if (!sheet) return respond({ success: true, data: [] }, callback);
+    var data = sheet.getDataRange().getValues();
+    var headers = data[0];
+    var rows = data.slice(1).map(function(row) {
+      var obj = {};
+      headers.forEach(function(h, i) { obj[h.trim().replace(/\s+/g, '').replace(/^(.)/, function(m) { return m.toLowerCase(); })] = row[i]; });
+      return obj;
+    });
+    return respond({ success: true, data: rows }, callback);
+  }
+
+  // === WAITLIST ===
+  if (action === 'getWaitlist') {
+    var sheet = ss.getSheetByName('Waitlist');
+    if (!sheet) return respond({ success: true, data: [] }, callback);
+    var data = sheet.getDataRange().getValues();
+    var headers = data[0];
+    var rows = data.slice(1).map(function(row, idx) {
+      var obj = { row: idx + 2 }; // sheet row number (1-indexed, skip header)
+      headers.forEach(function(h, i) {
+        var key = h.trim();
+        // Map column names to the keys the frontend expects
+        if (key === 'Party' || key === 'PartySize') obj.party = row[i];
+        else if (key === 'SpecialNotes') obj.specialNotes = row[i];
+        else if (key === 'SpiceLevel') obj.spiceLevel = row[i];
+        else obj[key.toLowerCase()] = row[i];
+      });
+      return obj;
+    });
+    return respond({ success: true, data: rows }, callback);
+  }
+
+  if (action === 'addToWaitlist') {
+    var sheet = ss.getSheetByName('Waitlist');
+    if (!sheet) {
+      sheet = ss.insertSheet('Waitlist');
+      sheet.appendRow(['Timestamp', 'Name', 'Phone', 'Party', 'Status', 'SpecialNotes', 'SpiceLevel']);
+    }
+    sheet.appendRow([
+      new Date().toISOString(),
+      e.parameter.name || '',
+      e.parameter.phone || '',
+      e.parameter.partySize || '',
+      'Waiting',
+      e.parameter.specialNotes || '',
+      e.parameter.spiceLevel || ''
+    ]);
+    return respond({ success: true, message: 'Added to waitlist!' }, callback);
+  }
+
+  if (action === 'updateWaitlistStatus') {
+    var sheet = ss.getSheetByName('Waitlist');
+    if (!sheet) return respond({ success: false, error: 'Waitlist sheet not found' }, callback);
+    var row = parseInt(e.parameter.row, 10);
+    if (!row || row < 2) return respond({ success: false, error: 'Invalid row' }, callback);
+    // Status is in column 5 (E)
+    var headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+    var statusCol = -1;
+    for (var i = 0; i < headers.length; i++) {
+      if (headers[i].toString().trim().toLowerCase() === 'status') { statusCol = i + 1; break; }
+    }
+    if (statusCol === -1) return respond({ success: false, error: 'Status column not found' }, callback);
+    sheet.getRange(row, statusCol).setValue(e.parameter.status || '');
+    return respond({ success: true, message: 'Status updated!' }, callback);
+  }
 
   // === SHOUTOUTS ===
   if (action === 'addShoutout') {
