@@ -1,271 +1,340 @@
 /**
+ * DODIE'S COMPLETE API — Waitlist + Inventory + Premium Features
  * ============================================================================
- * GOOGLE APPS SCRIPT — DODIE'S PREMIUM FEATURES
- * ============================================================================
+ * Paste this ENTIRE file into Google Apps Script (Code.gs) and deploy as:
+ *   Execute as: Me
+ *   Who has access: Anyone
  *
- * HOW TO USE:
- * 1. Open your Google Sheet → Extensions → Apps Script
- * 2. COPY everything below the line of ='s into your Code.gs file
- *    (add it INSIDE your existing doGet function, before the final closing brace)
- * 3. If you don't have a respond() function yet, also copy the helper at the bottom
- * 4. Make sure your Google Sheet has these tabs (the script auto-creates most if missing):
- *    - "Inventory"  (columns: Item, Status, Price, LastUpdated)
- *    - "Waitlist"   (columns: Timestamp, Name, Phone, Party, Status, SpecialNotes, SpiceLevel)
- *    - "Shoutouts"  (columns: Timestamp, Staff, Reasons, Message, From)
- *    - "Feedback"   (columns: Timestamp, Rating, Text, Categories, From, Email, Sentiment)
- *    - "Specials"   (columns: Day, Icon, Name, Description, Price, OrigPrice, Savings, Type, Availability)
- *    - "ChatLogs"   (columns: Timestamp, Question, Sentiment)
- *    - "VIPs"       (columns: Name, Visits, LastVisit, Favorite, TotalSpent)
- * 5. Deploy → New Deployment → Web App → Execute as Me → Anyone can access
- * 6. Copy the URL into Dodie's Control Center page
+ * Sheets needed:
+ *   "Waitlist"    — your waitlist data
+ *   "Live Update" — your seafood inventory (columns: Item, Status, Price, Last Updated)
+ *   "Shoutouts"   — staff shoutouts (auto-created if missing)
+ *   "Feedback"    — customer feedback (auto-created if missing)
+ *   "Specials"    — daily specials (columns: Day, Icon, Name, Description, Price, OrigPrice, Savings, Type, Availability)
+ *   "ChatLogs"    — AI chat logs (auto-created if missing)
+ *   "VIPs"        — VIP customers (columns: Name, Visits, LastVisit, Favorite, TotalSpent)
  * ============================================================================
  */
 
-// ─── PASTE INSIDE YOUR doGet(e) FUNCTION ────────────────────────────────────
-// If you don't have a doGet yet, use this complete one:
+const SPREADSHEET_ID = "1klPJoKovTp_lPKUMWWwT26JZw7OmEZ6VVv4rPk20FHs";
+const SHEET_WAITLIST  = "Waitlist";
+const SHEET_INVENTORY = "Live Update";
 
-function doGet(e) {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var action = (e.parameter.action || '').trim();
-  var callback = e.parameter.callback || '';
+const COL = {
+  TIME_IN: 1, NAME: 2, PHONE: 3, PARTY: 4, NOTES: 5,
+  STATUS: 6, TIME_SAT: 7, WAIT_MIN: 8,
+  OPT_IN_SMS: 9, FUTURE_TEXTS: 10, SPICE: 11
+};
 
-  // === INVENTORY (live seafood board) ===
-  if (action === 'getInventory') {
-    var sheet = ss.getSheetByName('Inventory');
-    if (!sheet) return respond({ success: true, data: [] }, callback);
-    var data = sheet.getDataRange().getValues();
-    var headers = data[0];
-    var rows = data.slice(1).map(function(row) {
-      var obj = {};
-      headers.forEach(function(h, i) { obj[h.trim().replace(/\s+/g, '').replace(/^(.)/, function(m) { return m.toLowerCase(); })] = row[i]; });
-      return obj;
-    });
-    return respond({ success: true, data: rows }, callback);
-  }
+// ─── HELPERS ────────────────────────────────────────────────────────────────
 
-  // === WAITLIST ===
-  if (action === 'getWaitlist') {
-    var sheet = ss.getSheetByName('Waitlist');
-    if (!sheet) return respond({ success: true, data: [] }, callback);
-    var data = sheet.getDataRange().getValues();
-    var headers = data[0];
-    var rows = data.slice(1).map(function(row, idx) {
-      var obj = { row: idx + 2 }; // sheet row number (1-indexed, skip header)
-      headers.forEach(function(h, i) {
-        var key = h.trim();
-        // Map column names to the keys the frontend expects
-        if (key === 'Party' || key === 'PartySize') obj.party = row[i];
-        else if (key === 'SpecialNotes') obj.specialNotes = row[i];
-        else if (key === 'SpiceLevel') obj.spiceLevel = row[i];
-        else obj[key.toLowerCase()] = row[i];
-      });
-      return obj;
-    });
-    return respond({ success: true, data: rows }, callback);
-  }
-
-  if (action === 'addToWaitlist') {
-    var sheet = ss.getSheetByName('Waitlist');
-    if (!sheet) {
-      sheet = ss.insertSheet('Waitlist');
-      sheet.appendRow(['Timestamp', 'Name', 'Phone', 'Party', 'Status', 'SpecialNotes', 'SpiceLevel']);
-    }
-    sheet.appendRow([
-      new Date().toISOString(),
-      e.parameter.name || '',
-      e.parameter.phone || '',
-      e.parameter.partySize || '',
-      'Waiting',
-      e.parameter.specialNotes || '',
-      e.parameter.spiceLevel || ''
-    ]);
-    return respond({ success: true, message: 'Added to waitlist!' }, callback);
-  }
-
-  if (action === 'updateWaitlistStatus') {
-    var sheet = ss.getSheetByName('Waitlist');
-    if (!sheet) return respond({ success: false, error: 'Waitlist sheet not found' }, callback);
-    var row = parseInt(e.parameter.row, 10);
-    if (!row || row < 2) return respond({ success: false, error: 'Invalid row' }, callback);
-    // Status is in column 5 (E)
-    var headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
-    var statusCol = -1;
-    for (var i = 0; i < headers.length; i++) {
-      if (headers[i].toString().trim().toLowerCase() === 'status') { statusCol = i + 1; break; }
-    }
-    if (statusCol === -1) return respond({ success: false, error: 'Status column not found' }, callback);
-    sheet.getRange(row, statusCol).setValue(e.parameter.status || '');
-    return respond({ success: true, message: 'Status updated!' }, callback);
-  }
-
-  // === SHOUTOUTS ===
-  if (action === 'addShoutout') {
-    var sheet = ss.getSheetByName('Shoutouts');
-    if (!sheet) {
-      sheet = ss.insertSheet('Shoutouts');
-      sheet.appendRow(['Timestamp', 'Staff', 'Reasons', 'Message', 'From']);
-    }
-    sheet.appendRow([
-      new Date().toISOString(),
-      e.parameter.staff || '',
-      e.parameter.reasons || '',
-      e.parameter.message || '',
-      e.parameter.from || 'Anonymous'
-    ]);
-    return respond({ success: true, message: 'Shoutout saved!' }, callback);
-  }
-
-  if (action === 'getShoutouts') {
-    var sheet = ss.getSheetByName('Shoutouts');
-    if (!sheet) return respond({ success: true, data: [] }, callback);
-    var data = sheet.getDataRange().getValues();
-    var headers = data[0];
-    var rows = data.slice(1).map(function(row) {
-      var obj = {};
-      headers.forEach(function(h, i) { obj[h.toLowerCase()] = row[i]; });
-      return obj;
-    });
-    return respond({ success: true, data: rows }, callback);
-  }
-
-  // === CUSTOMER FEEDBACK ===
-  if (action === 'addFeedback') {
-    var sheet = ss.getSheetByName('Feedback');
-    if (!sheet) {
-      sheet = ss.insertSheet('Feedback');
-      sheet.appendRow(['Timestamp', 'Rating', 'Text', 'Categories', 'From', 'Email', 'Sentiment']);
-    }
-    sheet.appendRow([
-      new Date().toISOString(),
-      e.parameter.rating || '',
-      e.parameter.text || '',
-      e.parameter.categories || '',
-      e.parameter.from || 'Anonymous',
-      e.parameter.email || '',
-      e.parameter.sentiment || 'neutral'
-    ]);
-    return respond({ success: true, message: 'Feedback saved!' }, callback);
-  }
-
-  if (action === 'getFeedback') {
-    var sheet = ss.getSheetByName('Feedback');
-    if (!sheet) return respond({ success: true, data: [] }, callback);
-    var data = sheet.getDataRange().getValues();
-    var headers = data[0];
-    var rows = data.slice(1).map(function(row) {
-      var obj = {};
-      headers.forEach(function(h, i) { obj[h.toLowerCase()] = row[i]; });
-      return obj;
-    });
-    return respond({ success: true, data: rows }, callback);
-  }
-
-  // === DAILY SPECIALS ===
-  if (action === 'getSpecials') {
-    var sheet = ss.getSheetByName('Specials');
-    if (!sheet) return respond({ success: true, data: [] }, callback);
-    var data = sheet.getDataRange().getValues();
-    var headers = data[0];
-    var today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
-    var rows = data.slice(1)
-      .filter(function(row) { return row[0] === today || row[0] === 'Every Day'; })
-      .map(function(row) {
-        var obj = {};
-        headers.forEach(function(h, i) { obj[h.toLowerCase()] = row[i]; });
-        return obj;
-      });
-    return respond({ success: true, data: rows }, callback);
-  }
-
-  // === CHAT LOGS (for dashboard analytics) ===
-  if (action === 'logChat') {
-    var sheet = ss.getSheetByName('ChatLogs');
-    if (!sheet) {
-      sheet = ss.insertSheet('ChatLogs');
-      sheet.appendRow(['Timestamp', 'Question', 'Sentiment']);
-    }
-    sheet.appendRow([
-      new Date().toISOString(),
-      e.parameter.question || '',
-      e.parameter.sentiment || 'neutral'
-    ]);
-    return respond({ success: true }, callback);
-  }
-
-  if (action === 'getChatLogs') {
-    var sheet = ss.getSheetByName('ChatLogs');
-    if (!sheet) return respond({ success: true, data: [] }, callback);
-    var data = sheet.getDataRange().getValues();
-    var headers = data[0];
-    var rows = data.slice(1).map(function(row) {
-      var obj = {};
-      headers.forEach(function(h, i) { obj[h.toLowerCase()] = row[i]; });
-      return obj;
-    });
-    return respond({ success: true, data: rows }, callback);
-  }
-
-  // === VIP CUSTOMERS ===
-  if (action === 'getVIPs') {
-    var sheet = ss.getSheetByName('VIPs');
-    if (!sheet) return respond({ success: true, data: [] }, callback);
-    var data = sheet.getDataRange().getValues();
-    var headers = data[0];
-    var rows = data.slice(1).map(function(row) {
-      var obj = {};
-      headers.forEach(function(h, i) { obj[h.toLowerCase()] = row[i]; });
-      return obj;
-    });
-    rows.sort(function(a, b) { return (b.visits || 0) - (a.visits || 0); });
-    return respond({ success: true, data: rows }, callback);
-  }
-
-  // === DASHBOARD ANALYTICS (aggregated) ===
-  if (action === 'getDashboardStats') {
-    var stats = {};
-
-    var chatSheet = ss.getSheetByName('ChatLogs');
-    stats.totalChats = chatSheet ? Math.max(chatSheet.getLastRow() - 1, 0) : 0;
-
-    var shoutSheet = ss.getSheetByName('Shoutouts');
-    stats.totalShoutouts = shoutSheet ? Math.max(shoutSheet.getLastRow() - 1, 0) : 0;
-
-    var fbSheet = ss.getSheetByName('Feedback');
-    if (fbSheet && fbSheet.getLastRow() > 1) {
-      var fbData = fbSheet.getRange(2, 2, fbSheet.getLastRow() - 1, 1).getValues();
-      var sum = fbData.reduce(function(a, b) { return a + (Number(b[0]) || 0); }, 0);
-      stats.totalFeedback = fbData.length;
-      stats.avgRating = (sum / fbData.length).toFixed(1);
-    } else {
-      stats.totalFeedback = 0;
-      stats.avgRating = 0;
-    }
-
-    var wlSheet = ss.getSheetByName('Waitlist');
-    if (wlSheet && wlSheet.getLastRow() > 1) {
-      var wlData = wlSheet.getDataRange().getValues();
-      stats.totalWaitlist = wlData.length - 1;
-      stats.seated = wlData.filter(function(r) { return String(r[4] || '').toLowerCase() === 'seated'; }).length;
-    } else {
-      stats.totalWaitlist = 0;
-      stats.seated = 0;
-    }
-
-    return respond({ success: true, data: stats }, callback);
-  }
-
-  // === FALLBACK: unknown action ===
-  return respond({ success: false, error: 'Unknown action: ' + action }, callback);
+function ss_() {
+  return SpreadsheetApp.openById(SPREADSHEET_ID);
 }
 
-// ─── HELPER: JSONP + JSON response ─────────────────────────────────────────
-function respond(data, callback) {
-  if (callback) {
+function sheet_(name) {
+  var s = ss_().getSheetByName(name);
+  if (!s) throw new Error('Sheet not found: "' + name + '"');
+  return s;
+}
+
+function sheetOrCreate_(name, headers) {
+  var s = ss_().getSheetByName(name);
+  if (!s) {
+    s = ss_().insertSheet(name);
+    s.appendRow(headers);
+  }
+  return s;
+}
+
+function toDate_(v) {
+  if (v instanceof Date && !isNaN(v.getTime())) return v;
+  var d = new Date(v);
+  return isNaN(d.getTime()) ? null : d;
+}
+
+function mins_(a, b) {
+  return Math.max(0, Math.round((b.getTime() - a.getTime()) / 60000));
+}
+
+function pick_(p, keys, fallback) {
+  for (var k = 0; k < keys.length; k++) {
+    var v = p[keys[k]];
+    if (v !== undefined && v !== null && String(v).trim() !== "") return String(v).trim();
+  }
+  return fallback;
+}
+
+// JSONP-capable output
+function out_(e, obj) {
+  var cb   = e && e.parameter && e.parameter.callback ? String(e.parameter.callback) : "";
+  var json = JSON.stringify(obj);
+  if (cb) {
     return ContentService
-      .createTextOutput(callback + '(' + JSON.stringify(data) + ')')
+      .createTextOutput(cb + "(" + json + ");")
       .setMimeType(ContentService.MimeType.JAVASCRIPT);
   }
   return ContentService
-    .createTextOutput(JSON.stringify(data))
+    .createTextOutput(json)
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+function updateRollingWait_(sheet) {
+  var lastRow = sheet.getLastRow();
+  if (lastRow < 2) return;
+  var now    = new Date();
+  var values = sheet.getRange(2, 1, lastRow - 1, COL.SPICE).getValues();
+  for (var i = 0; i < values.length; i++) {
+    var r      = i + 2;
+    var timeIn = toDate_(values[i][COL.TIME_IN - 1]);
+    var status = String(values[i][COL.STATUS - 1] || "").toLowerCase();
+    var timeSat = toDate_(values[i][COL.TIME_SAT - 1]);
+    if (!timeIn) continue;
+    if (status === "waiting" || status === "notified") {
+      sheet.getRange(r, COL.WAIT_MIN).setValue(mins_(timeIn, now));
+    } else if (status === "seated") {
+      var sat = timeSat || now;
+      if (!timeSat) sheet.getRange(r, COL.TIME_SAT).setValue(sat);
+      sheet.getRange(r, COL.WAIT_MIN).setValue(mins_(timeIn, sat));
+    }
+  }
+}
+
+// Helper to read a generic sheet as array of objects (lowercase keys)
+function readSheet_(name) {
+  var s = ss_().getSheetByName(name);
+  if (!s || s.getLastRow() < 2) return [];
+  var data = s.getDataRange().getValues();
+  var headers = data[0];
+  var rows = [];
+  for (var i = 1; i < data.length; i++) {
+    var obj = {};
+    for (var j = 0; j < headers.length; j++) {
+      obj[String(headers[j]).toLowerCase()] = data[i][j];
+    }
+    rows.push(obj);
+  }
+  return rows;
+}
+
+// ─── MAIN ROUTER ────────────────────────────────────────────────────────────
+
+function doGet(e) {
+  try {
+    var p      = (e && e.parameter) ? e.parameter : {};
+    var action = String(p.action || "").trim();
+
+    // ══════════════════════════════════════════════════════════════════════
+    // CORE: WAITLIST + INVENTORY
+    // ══════════════════════════════════════════════════════════════════════
+
+    // ── ADD TO WAITLIST ────────────────────────────────────────────────
+    if (action === "addToWaitlist") {
+      var sheet = sheet_(SHEET_WAITLIST);
+      var spice = pick_(p, ["spiceLevel","spice","spice_level","heat","heatLevel"], "No Spice");
+      var norm = spice.toLowerCase().replace(/\s+/g, " ").trim();
+      if (norm === "turbo hot" || norm === "turbohot") spice = "Turbo Hot";
+      else if (norm === "spicy")                        spice = "Spicy";
+      else if (norm === "mild")                         spice = "Mild";
+      else                                              spice = "No Spice";
+      sheet.appendRow([
+        new Date(),
+        pick_(p, ["name","fullName"], ""),
+        pick_(p, ["phone","phoneNumber","tel"], ""),
+        pick_(p, ["partySize","party","size"], ""),
+        pick_(p, ["specialNotes","notes","note"], ""),
+        "Waiting",
+        "",
+        "",
+        pick_(p, ["smsConsent","optIn"], "Yes"),
+        pick_(p, ["marketingOptIn","futureTextAlerts"], "No"),
+        spice
+      ]);
+      return out_(e, { success: true });
+    }
+
+    // ── UPDATE STATUS ──────────────────────────────────────────────────
+    if (action === "updateWaitlistStatus") {
+      var rowNum   = Number(p.row);
+      var newStatus = String(p.status || "").trim();
+      if (!rowNum || rowNum < 2) return out_(e, { success: false, error: "Invalid row" });
+      var sheet = sheet_(SHEET_WAITLIST);
+      sheet.getRange(rowNum, COL.STATUS).setValue(newStatus);
+      if (String(newStatus).toLowerCase() === "seated") {
+        var now    = new Date();
+        var timeIn = toDate_(sheet.getRange(rowNum, COL.TIME_IN).getValue());
+        sheet.getRange(rowNum, COL.TIME_SAT).setValue(now);
+        if (timeIn) sheet.getRange(rowNum, COL.WAIT_MIN).setValue(mins_(timeIn, now));
+      }
+      return out_(e, { success: true });
+    }
+
+    // ── GET WAITLIST ───────────────────────────────────────────────────
+    if (action === "getWaitlist") {
+      var sheet = sheet_(SHEET_WAITLIST);
+      updateRollingWait_(sheet);
+      var v   = sheet.getDataRange().getValues();
+      var rows = [];
+      for (var i = 1; i < v.length; i++) {
+        if (!v[i][COL.NAME - 1]) continue;
+        rows.push({
+          row:          i + 1,
+          name:         v[i][COL.NAME - 1],
+          phone:        v[i][COL.PHONE - 1],
+          party:        v[i][COL.PARTY - 1],
+          specialNotes: v[i][COL.NOTES - 1],
+          status:       v[i][COL.STATUS - 1],
+          spiceLevel:   v[i][COL.SPICE - 1] || "",
+          waitMin:      v[i][COL.WAIT_MIN - 1] || 0
+        });
+      }
+      return out_(e, { success: true, data: rows });
+    }
+
+    // ── GET INVENTORY ─────────────────────────────────────────────────
+    if (action === "getInventory") {
+      var sheet = sheet_(SHEET_INVENTORY);
+      var data  = sheet.getDataRange().getValues();
+      var rows  = [];
+      for (var i = 1; i < data.length; i++) {
+        if (!data[i][0]) continue;
+        rows.push({
+          item:        data[i][0],
+          status:      data[i][1],
+          price:       data[i][2],
+          lastUpdated: data[i][3]
+        });
+      }
+      return out_(e, { success: true, data: rows });
+    }
+
+    // ══════════════════════════════════════════════════════════════════════
+    // PREMIUM: SHOUTOUTS, FEEDBACK, SPECIALS, CHAT, VIPs, DASHBOARD
+    // ══════════════════════════════════════════════════════════════════════
+
+    // ── SHOUTOUTS ─────────────────────────────────────────────────────
+    if (action === "addShoutout") {
+      var sheet = sheetOrCreate_("Shoutouts", ["Timestamp", "Staff", "Reasons", "Message", "From"]);
+      sheet.appendRow([
+        new Date().toISOString(),
+        p.staff || "",
+        p.reasons || "",
+        p.message || "",
+        p.from || "Anonymous"
+      ]);
+      return out_(e, { success: true, message: "Shoutout saved!" });
+    }
+
+    if (action === "getShoutouts") {
+      return out_(e, { success: true, data: readSheet_("Shoutouts") });
+    }
+
+    // ── CUSTOMER FEEDBACK ─────────────────────────────────────────────
+    if (action === "addFeedback") {
+      var sheet = sheetOrCreate_("Feedback", ["Timestamp", "Rating", "Text", "Categories", "From", "Email", "Sentiment"]);
+      sheet.appendRow([
+        new Date().toISOString(),
+        p.rating || "",
+        p.text || "",
+        p.categories || "",
+        p.from || "Anonymous",
+        p.email || "",
+        p.sentiment || "neutral"
+      ]);
+      return out_(e, { success: true, message: "Feedback saved!" });
+    }
+
+    if (action === "getFeedback") {
+      return out_(e, { success: true, data: readSheet_("Feedback") });
+    }
+
+    // ── DAILY SPECIALS ────────────────────────────────────────────────
+    if (action === "getSpecials") {
+      var s = ss_().getSheetByName("Specials");
+      if (!s || s.getLastRow() < 2) return out_(e, { success: true, data: [] });
+      var data = s.getDataRange().getValues();
+      var headers = data[0];
+      var today = new Date().toLocaleDateString("en-US", { weekday: "long" });
+      var rows = [];
+      for (var i = 1; i < data.length; i++) {
+        var day = String(data[i][0]).trim();
+        if (day === today || day === "Every Day") {
+          var obj = {};
+          for (var j = 0; j < headers.length; j++) {
+            obj[String(headers[j]).toLowerCase()] = data[i][j];
+          }
+          rows.push(obj);
+        }
+      }
+      return out_(e, { success: true, data: rows });
+    }
+
+    // ── CHAT LOGS ─────────────────────────────────────────────────────
+    if (action === "logChat") {
+      var sheet = sheetOrCreate_("ChatLogs", ["Timestamp", "Question", "Sentiment"]);
+      sheet.appendRow([
+        new Date().toISOString(),
+        p.question || "",
+        p.sentiment || "neutral"
+      ]);
+      return out_(e, { success: true });
+    }
+
+    if (action === "getChatLogs") {
+      return out_(e, { success: true, data: readSheet_("ChatLogs") });
+    }
+
+    // ── VIP CUSTOMERS ─────────────────────────────────────────────────
+    if (action === "getVIPs") {
+      var rows = readSheet_("VIPs");
+      rows.sort(function(a, b) { return (Number(b.visits) || 0) - (Number(a.visits) || 0); });
+      return out_(e, { success: true, data: rows });
+    }
+
+    // ── DASHBOARD STATS ───────────────────────────────────────────────
+    if (action === "getDashboardStats") {
+      var spreadsheet = ss_();
+      var stats = {};
+
+      var chatSheet = spreadsheet.getSheetByName("ChatLogs");
+      stats.totalChats = chatSheet ? Math.max(chatSheet.getLastRow() - 1, 0) : 0;
+
+      var shoutSheet = spreadsheet.getSheetByName("Shoutouts");
+      stats.totalShoutouts = shoutSheet ? Math.max(shoutSheet.getLastRow() - 1, 0) : 0;
+
+      var fbSheet = spreadsheet.getSheetByName("Feedback");
+      if (fbSheet && fbSheet.getLastRow() > 1) {
+        var fbData = fbSheet.getRange(2, 2, fbSheet.getLastRow() - 1, 1).getValues();
+        var sum = 0;
+        for (var i = 0; i < fbData.length; i++) sum += (Number(fbData[i][0]) || 0);
+        stats.totalFeedback = fbData.length;
+        stats.avgRating = (sum / fbData.length).toFixed(1);
+      } else {
+        stats.totalFeedback = 0;
+        stats.avgRating = 0;
+      }
+
+      var wlSheet = spreadsheet.getSheetByName("Waitlist");
+      if (wlSheet && wlSheet.getLastRow() > 1) {
+        var wlData = wlSheet.getDataRange().getValues();
+        stats.totalWaitlist = wlData.length - 1;
+        var seated = 0;
+        for (var i = 1; i < wlData.length; i++) {
+          if (String(wlData[i][COL.STATUS - 1] || "").toLowerCase() === "seated") seated++;
+        }
+        stats.seated = seated;
+      } else {
+        stats.totalWaitlist = 0;
+        stats.seated = 0;
+      }
+
+      return out_(e, { success: true, data: stats });
+    }
+
+    // ── FALLBACK ──────────────────────────────────────────────────────
+    return out_(e, { success: false, error: "Unknown action: " + action });
+
+  } catch (err) {
+    return out_(e, { success: false, error: err.message });
+  }
 }
