@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Live Seafood Market – Dodie's Cajun Diner</title>
+<title>✨ Live Seafood Market – Dodie's Cajun Diner 🦞</title>
 <meta name="description" content="Real-time fresh seafood availability, market prices, and sourcing info from Dodie's Cajun Diner. Gulf Coast crawfish, oysters, crab, and shrimp updated live.">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,700&display=swap');
@@ -16,7 +16,7 @@
   --amber:#F59E0B;--amber-bg:rgba(245,158,11,.12);
   --rose:#EF4444;--rose-bg:rgba(239,68,68,.12);
   --blue:#3B82F6;--blue-bg:rgba(59,130,246,.12);
-  --purple:#8B5CF6;
+  --purple:#8B5CF6;--pink:#FF6B9D;--lavender:#C4B5FD;
   --radius:20px;--radius-sm:12px;--radius-xs:8px;
   --shadow-lg:0 25px 50px -12px rgba(0,0,0,.6);
   --shadow-glow:0 0 40px rgba(212,175,55,.15);
@@ -33,6 +33,12 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:
   radial-gradient(ellipse 400px 400px at 50% 50%,rgba(212,175,55,.08),transparent);
   animation:ambientShift 30s ease-in-out infinite alternate}
 @keyframes ambientShift{0%{opacity:.8}50%{opacity:.5}100%{opacity:.75}}
+
+/* Floating emoji background */
+.bg-emojis-inv{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.bg-emojis-inv .float-emoji{position:absolute;font-size:24px;opacity:.08;animation:floatEmojiInv linear infinite;filter:blur(1px)}
+@keyframes floatEmojiInv{0%{transform:translateY(100vh) rotate(0deg) scale(0.5);opacity:0}10%{opacity:.08}90%{opacity:.05}100%{transform:translateY(-10vh) rotate(360deg) scale(1);opacity:0}}
+
 .ambient-particles{position:absolute;inset:0;overflow:hidden}
 .particle{position:absolute;width:2px;height:2px;background:var(--gold);border-radius:50%;opacity:0;animation:particleFloat linear infinite}
 @keyframes particleFloat{0%{opacity:0;transform:translateY(100vh) scale(0)}10%{opacity:.6}90%{opacity:.3}100%{opacity:0;transform:translateY(-10vh) scale(1)}}
@@ -268,6 +274,7 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(42px,8vw,72px);font-weigh
 <div class="ambient">
   <div class="ambient-particles" id="particles"></div>
 </div>
+<div class="bg-emojis-inv" id="bgEmojisInv"></div>
 
 <div class="page-wrap">
 <div class="container">
@@ -292,11 +299,11 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(42px,8vw,72px);font-weigh
       Live Market Prices
     </div>
     <div class="logo-wrap">🦞</div>
-    <h1>Fresh Seafood Market</h1>
-    <div class="hero-tagline">"Straight from the Gulf to Your Table"</div>
+    <h1>✨ Fresh Seafood Market ✨</h1>
+    <div class="hero-tagline">"Straight from the Gulf to Your Table" 🌊💖</div>
     <div class="hero-subtitle">
-      Real-time availability, market pricing, and sourcing transparency.
-      Our seafood is delivered fresh daily from Louisiana's finest Gulf Coast waters.
+      📊✨ Real-time availability, market pricing, and sourcing transparency.
+      Our seafood is delivered fresh daily from Louisiana's finest Gulf Coast waters. 🦞💫
     </div>
   </div>
 
@@ -344,8 +351,8 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(42px,8vw,72px);font-weigh
       <div class="daily-catch-header">
         <div class="daily-catch-icon">🎣</div>
         <div>
-          <div class="daily-catch-title">Today's Fresh Catch</div>
-          <div class="daily-catch-sub">Delivered this morning from the Gulf Coast</div>
+          <div class="daily-catch-title">✨ Today's Fresh Catch ✨</div>
+          <div class="daily-catch-sub">Delivered this morning from the Gulf Coast 🌊💖</div>
         </div>
       </div>
       <div class="daily-catch-items" id="dailyCatchItems"></div>
@@ -359,32 +366,32 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(42px,8vw,72px);font-weigh
   <div class="sourcing-section">
     <div class="sourcing-header">
       <span style="font-size:28px">🗺️</span>
-      <div class="sourcing-title">Where We Source</div>
+      <div class="sourcing-title">Where We Source 🌍✨</div>
     </div>
     <div class="sourcing-grid">
       <div class="source-card">
         <span class="source-card-icon">🦞</span>
-        <div class="source-card-name">Louisiana Bayou</div>
+        <div class="source-card-name">Louisiana Bayou 💚</div>
         <div class="source-card-detail">Wild-caught crawfish from the Atchafalaya Basin, the heart of Cajun country</div>
-        <span class="source-card-tag">Wild Caught</span>
+        <span class="source-card-tag">✨ Wild Caught</span>
       </div>
       <div class="source-card">
         <span class="source-card-icon">🦪</span>
-        <div class="source-card-name">Gulf Coast Reefs</div>
+        <div class="source-card-name">Gulf Coast Reefs 🌊</div>
         <div class="source-card-detail">Premium oysters harvested from pristine Gulf waters off the Louisiana coast</div>
-        <span class="source-card-tag">Reef Harvested</span>
+        <span class="source-card-tag">✨ Reef Harvested</span>
       </div>
       <div class="source-card">
         <span class="source-card-icon">🦀</span>
-        <div class="source-card-name">Alaska & Pacific</div>
+        <div class="source-card-name">Alaska & Pacific ❄️</div>
         <div class="source-card-detail">Snow crab sourced from sustainable fisheries in the cold Pacific waters</div>
-        <span class="source-card-tag">Sustainable</span>
+        <span class="source-card-tag">✨ Sustainable</span>
       </div>
       <div class="source-card">
         <span class="source-card-icon">🍤</span>
-        <div class="source-card-name">Gulf Shrimp Boats</div>
+        <div class="source-card-name">Gulf Shrimp Boats 🚤</div>
         <div class="source-card-detail">Wild-caught Gulf shrimp from local fishing families we've partnered with for years</div>
-        <span class="source-card-tag">Local Partners</span>
+        <span class="source-card-tag">✨ Local Partners</span>
       </div>
     </div>
   </div>
@@ -448,7 +455,7 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(42px,8vw,72px);font-weigh
 
   <!-- Footer -->
   <div class="page-footer">
-    <div class="footer-brand">Dodie's Cajun Diner</div>
+    <div class="footer-brand">✨ Dodie's Cajun Diner ✨</div>
     <div class="footer-tagline">"Laissez les bons temps rouler!"</div>
     <div>Prices & availability updated in real-time. Market prices may fluctuate.</div>
     <div class="refresh-indicator">
@@ -929,8 +936,26 @@ document.getElementById('viewToggle').addEventListener('click', function() {
   this.classList.toggle('active', !isList);
 });
 
+// ── Floating background emojis ────────────────────────────────────────────────
+function createBgEmojisInv() {
+  const container = document.getElementById('bgEmojisInv');
+  if (!container) return;
+  const emojis = ['🦞','🦪','🦀','🍤','🌊','✨','💖','🐚','🎣','🌟'];
+  for (let i = 0; i < 20; i++) {
+    const span = document.createElement('span');
+    span.classList.add('float-emoji');
+    span.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    span.style.left = Math.random() * 100 + '%';
+    span.style.fontSize = (16 + Math.random() * 18) + 'px';
+    span.style.animationDuration = (18 + Math.random() * 25) + 's';
+    span.style.animationDelay = (Math.random() * 20) + 's';
+    container.appendChild(span);
+  }
+}
+
 // ── Init ──────────────────────────────────────────────────────────────────────
 createParticles();
+createBgEmojisInv();
 loadInventory();
 setInterval(loadInventory, 30000);
 </script>
