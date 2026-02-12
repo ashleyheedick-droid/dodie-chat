@@ -332,6 +332,29 @@ function doGet(e) {
       return out_(e, { success: true, data: stats });
     }
 
+    // ── RESTAURANT LEAD / SIGNUP ──────────────────────────────────────
+    if (action === "addLead") {
+      var sheet = sheetOrCreate_("Leads", ["Timestamp", "Contact Name", "Role", "Email", "Phone", "Restaurant", "City", "Cuisine", "Capacity", "Biggest Pain", "Plan"]);
+      sheet.appendRow([
+        new Date().toISOString(),
+        p.contactName || "",
+        p.contactRole || "",
+        p.email || "",
+        p.phone || "",
+        p.restaurantName || "",
+        p.city || "",
+        p.cuisineType || "",
+        p.seatingCapacity || "",
+        p.biggestPain || "",
+        p.plan || "Professional"
+      ]);
+      return out_(e, { success: true, message: "Lead captured!" });
+    }
+
+    if (action === "getLeads") {
+      return out_(e, { success: true, data: readSheet_("Leads") });
+    }
+
     // ── FALLBACK ──────────────────────────────────────────────────────
     return out_(e, { success: false, error: "Unknown action: " + action });
 

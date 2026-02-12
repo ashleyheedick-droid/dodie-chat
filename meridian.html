@@ -239,11 +239,20 @@ section{padding:120px 0}
   .pricing-grid{grid-template-columns:1fr;max-width:420px;margin-left:auto;margin-right:auto}
   .pr-card.featured{order:-1}
 }
+/* Mobile hamburger */
+.hamburger{display:none;background:none;border:none;cursor:pointer;padding:8px;color:var(--m-slate);font-size:24px;line-height:1}
+.mobile-menu{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,.98);z-index:200;flex-direction:column;align-items:center;justify-content:center;gap:32px}
+.mobile-menu.open{display:flex}
+.mobile-menu a{color:var(--m-ink);font-size:20px;font-weight:700;text-decoration:none}
+.mobile-close{position:absolute;top:20px;right:24px;background:none;border:none;color:var(--m-slate);font-size:32px;cursor:pointer}
+
 @media(max-width:768px){
   section{padding:80px 0}
   .wrap{padding:0 20px}
   .nav{padding:0 20px}
   .nav-links{display:none}
+  .nav-actions .nav-login{display:none}
+  .hamburger{display:block}
   .product-features{grid-template-columns:1fr}
   .stats-grid{grid-template-columns:1fr 1fr;gap:24px}
   .how-grid{grid-template-columns:1fr 1fr;gap:28px}
@@ -266,6 +275,16 @@ section{padding:120px 0}
 <body>
 
 <!-- ═══════ NAV ═══════════════════════════════════════════════════════ -->
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" onclick="document.getElementById('mobileMenu').classList.remove('open')">&times;</button>
+  <a href="#product" onclick="document.getElementById('mobileMenu').classList.remove('open')">Product</a>
+  <a href="#pricing" onclick="document.getElementById('mobileMenu').classList.remove('open')">Pricing</a>
+  <a href="#how" onclick="document.getElementById('mobileMenu').classList.remove('open')">How It Works</a>
+  <a href="index.html">Live Demo</a>
+  <a href="signup.html" style="padding:14px 32px;background:var(--m-prime);color:white;border-radius:10px">Get Started</a>
+</div>
+
 <nav class="nav" id="nav">
   <div class="nav-inner">
     <a href="#" class="nav-brand">
@@ -286,7 +305,8 @@ section{padding:120px 0}
     </div>
     <div class="nav-actions">
       <a href="#" class="nav-login">Log In</a>
-      <a href="#pricing" class="nav-cta">Get Started</a>
+      <a href="signup.html" class="nav-cta">Get Started</a>
+      <button class="hamburger" onclick="document.getElementById('mobileMenu').classList.add('open')">&#9776;</button>
     </div>
   </div>
 </nav>
@@ -554,7 +574,7 @@ section{padding:120px 0}
           <li>QR Code Set (printed)</li>
           <li>Email Support</li>
         </ul>
-        <a href="#" class="pr-btn btn btn-ghost" style="width:100%">Get Started</a>
+        <a href="signup.html?plan=starter" class="pr-btn btn btn-ghost" style="width:100%">Get Started</a>
       </div>
 
       <div class="pr-card featured">
@@ -574,7 +594,7 @@ section{padding:120px 0}
           <li>Staff Training Session</li>
           <li>Priority Support</li>
         </ul>
-        <a href="#" class="pr-btn btn btn-primary" style="width:100%">Get Started</a>
+        <a href="signup.html?plan=professional" class="pr-btn btn btn-primary" style="width:100%">Get Started</a>
       </div>
 
       <div class="pr-card">
@@ -594,7 +614,7 @@ section{padding:120px 0}
           <li>Dedicated Account Manager</li>
           <li>Phone Support</li>
         </ul>
-        <a href="#" class="pr-btn btn btn-ghost" style="width:100%">Contact Sales</a>
+        <a href="signup.html?plan=enterprise" class="pr-btn btn btn-ghost" style="width:100%">Contact Sales</a>
       </div>
     </div>
   </div>
@@ -642,6 +662,8 @@ section{padding:120px 0}
         <a href="#pricing" class="footer-link">Pricing</a>
         <a href="#how" class="footer-link">How It Works</a>
         <a href="index.html" class="footer-link">Live Demo</a>
+        <a href="terms.html" class="footer-link">Terms</a>
+        <a href="privacy.html" class="footer-link">Privacy</a>
       </div>
       <div class="footer-copy">&copy; 2026 Meridian Technologies</div>
     </div>

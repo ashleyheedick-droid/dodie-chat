@@ -213,7 +213,22 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,6vw,56px);font-weigh
 <body>
 <div class="ambient"></div>
 
-<div class="page-wrap">
+<!-- AUTH GATE -->
+<div id="authGate" style="position:fixed;inset:0;z-index:9999;background:var(--dark);display:flex;align-items:center;justify-content:center">
+  <div style="max-width:400px;width:100%;padding:40px 24px;text-align:center">
+    <div style="font-size:48px;margin-bottom:20px">&#128274;</div>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:2px;color:var(--cream);margin-bottom:8px">Manager Access</div>
+    <div style="font-size:14px;color:rgba(255,248,220,.5);margin-bottom:32px">Enter your access code to view the dashboard</div>
+    <div style="position:relative">
+      <input type="password" id="authPin" placeholder="Enter access code" maxlength="20" style="width:100%;padding:16px 20px;background:var(--dark-card);border:2px solid rgba(212,175,55,.25);border-radius:var(--radius-sm);color:var(--cream);font-size:18px;font-family:inherit;text-align:center;letter-spacing:4px;outline:none;transition:var(--transition)">
+    </div>
+    <button id="authSubmit" style="width:100%;padding:14px;margin-top:16px;background:linear-gradient(135deg,var(--bright-red),var(--cajun-red));color:#fff;font-size:16px;font-weight:800;font-family:inherit;border:none;border-radius:var(--radius-sm);cursor:pointer;transition:var(--transition);letter-spacing:1px;text-transform:uppercase;box-shadow:0 8px 24px rgba(196,30,58,.3)">Unlock Dashboard</button>
+    <div id="authError" style="display:none;margin-top:12px;padding:10px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);border-radius:8px;color:var(--rose);font-size:13px;font-weight:600">Incorrect access code. Try again.</div>
+    <div style="margin-top:24px;font-size:12px;color:rgba(255,248,220,.3)">Default code: <span style="color:var(--gold)">dodie2026</span><br>Change it in Settings once inside.</div>
+  </div>
+</div>
+
+<div class="page-wrap" id="dashboardContent" style="display:none">
 <div class="container">
 
   <!-- Top nav -->
@@ -390,6 +405,7 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,6vw,56px);font-weigh
     </div>
   </div>
 
+</div>
 </div>
 </div>
 
@@ -839,9 +855,44 @@ document.getElementById('refreshAll').addEventListener('click', () => {
   loadDashboard();
 });
 
-// ── Init ────────────────────────────────────────────────────────────────────
-loadDashboard();
-setInterval(loadDashboard, 30000);
+// ── AUTH GATE ────────────────────────────────────────────────────────────────
+(function() {
+  var DEFAULT_PIN = 'dodie2026';
+  var storedPin = localStorage.getItem('dineiq_manager_pin') || DEFAULT_PIN;
+  var isAuthed = sessionStorage.getItem('dineiq_manager_auth') === 'true';
+
+  if (isAuthed) {
+    document.getElementById('authGate').style.display = 'none';
+    document.getElementById('dashboardContent').style.display = 'block';
+    loadDashboard();
+    setInterval(loadDashboard, 30000);
+    return;
+  }
+
+  function tryAuth() {
+    var input = document.getElementById('authPin').value;
+    if (input === storedPin) {
+      sessionStorage.setItem('dineiq_manager_auth', 'true');
+      document.getElementById('authGate').style.display = 'none';
+      document.getElementById('dashboardContent').style.display = 'block';
+      loadDashboard();
+      setInterval(loadDashboard, 30000);
+    } else {
+      document.getElementById('authError').style.display = 'block';
+      document.getElementById('authPin').value = '';
+      document.getElementById('authPin').style.borderColor = 'var(--rose)';
+      setTimeout(function() {
+        document.getElementById('authPin').style.borderColor = 'rgba(212,175,55,.25)';
+      }, 1500);
+    }
+  }
+
+  document.getElementById('authSubmit').addEventListener('click', tryAuth);
+  document.getElementById('authPin').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') tryAuth();
+  });
+  document.getElementById('authPin').focus();
+})();
 </script>
 </body>
 </html>

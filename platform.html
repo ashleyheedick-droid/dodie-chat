@@ -196,9 +196,18 @@ section{padding:100px 24px}
   .pricing-grid{grid-template-columns:1fr;max-width:440px;margin-left:auto;margin-right:auto}
   .price-card.popular{order:-1}
 }
+/* Mobile hamburger */
+.hamburger{display:none;background:none;border:none;cursor:pointer;padding:8px;color:var(--gray-300);font-size:24px;line-height:1}
+.mobile-menu{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(11,15,26,.98);z-index:200;flex-direction:column;align-items:center;justify-content:center;gap:32px}
+.mobile-menu.open{display:flex}
+.mobile-menu a{color:var(--white);font-size:20px;font-weight:700;text-decoration:none;transition:color .2s}
+.mobile-menu a:hover{color:var(--primary-light)}
+.mobile-close{position:absolute;top:20px;right:24px;background:none;border:none;color:var(--gray-300);font-size:32px;cursor:pointer}
+
 @media(max-width:768px){
   section{padding:80px 16px}
   .nav-links{display:none}
+  .hamburger{display:block}
   .problem-grid{grid-template-columns:1fr}
   .feature-grid{grid-template-columns:1fr}
   .steps-grid{grid-template-columns:1fr 1fr;gap:32px}
@@ -229,10 +238,21 @@ section{padding:100px 24px}
       <a href="#features" class="nav-link">Features</a>
       <a href="#pricing" class="nav-link">Pricing</a>
       <a href="#how" class="nav-link">How It Works</a>
-      <a href="#pricing" class="nav-cta">Get Started</a>
+      <a href="signup.html" class="nav-cta">Get Started</a>
     </div>
+    <button class="hamburger" onclick="document.getElementById('mobileMenu').classList.add('open')">&#9776;</button>
   </div>
 </nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" onclick="document.getElementById('mobileMenu').classList.remove('open')">&times;</button>
+  <a href="#features" onclick="document.getElementById('mobileMenu').classList.remove('open')">Features</a>
+  <a href="#pricing" onclick="document.getElementById('mobileMenu').classList.remove('open')">Pricing</a>
+  <a href="#how" onclick="document.getElementById('mobileMenu').classList.remove('open')">How It Works</a>
+  <a href="index.html">Live Demo</a>
+  <a href="signup.html" style="padding:14px 32px;background:var(--primary);border-radius:10px">Get Started</a>
+</div>
 
 <div class="page-wrap">
 
@@ -457,7 +477,7 @@ section{padding:100px 24px}
           <li>QR Codes (printed)</li>
           <li>Email Support</li>
         </ul>
-        <a href="#" class="price-btn outline">Get Started</a>
+        <a href="signup.html?plan=starter" class="price-btn outline">Get Started</a>
       </div>
 
       <div class="price-card popular">
@@ -476,7 +496,7 @@ section{padding:100px 24px}
           <li>Staff Training Session</li>
           <li>Priority Support</li>
         </ul>
-        <a href="#" class="price-btn primary">Get Started</a>
+        <a href="signup.html?plan=professional" class="price-btn primary">Get Started</a>
       </div>
 
       <div class="price-card">
@@ -495,7 +515,7 @@ section{padding:100px 24px}
           <li>Dedicated Account Manager</li>
           <li>Phone Support</li>
         </ul>
-        <a href="#" class="price-btn outline">Contact Us</a>
+        <a href="signup.html?plan=enterprise" class="price-btn outline">Contact Us</a>
       </div>
 
     </div>
@@ -549,7 +569,7 @@ section{padding:100px 24px}
     <h2 class="cta-title">Ready to fill more tables?</h2>
     <p class="cta-sub">Get DineIQ set up at your restaurant in less than a week. No contracts. No risk. 30-day performance guarantee.</p>
     <div class="cta-actions">
-      <a href="#pricing" class="btn btn-primary btn-lg">See Pricing</a>
+      <a href="signup.html" class="btn btn-primary btn-lg">Get Started</a>
       <a href="index.html" class="btn btn-outline btn-lg">See Live Demo</a>
     </div>
   </div>
@@ -559,6 +579,10 @@ section{padding:100px 24px}
 <footer class="footer">
   <div class="footer-brand">DineIQ</div>
   <div class="footer-text">Smart restaurant technology. Setup in days, not months.</div>
+  <div style="margin-top:12px;display:flex;gap:16px;justify-content:center">
+    <a href="terms.html" style="color:var(--gray-500);font-size:13px;text-decoration:none">Terms of Service</a>
+    <a href="privacy.html" style="color:var(--gray-500);font-size:13px;text-decoration:none">Privacy Policy</a>
+  </div>
 </footer>
 
 </div>
