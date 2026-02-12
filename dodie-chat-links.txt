@@ -1,0 +1,59 @@
+DODIE'S CHAT — ALL LIVE LINKS
+==============================
+Share these with anyone to test. All links are live and free.
+
+BASE URL: https://ashleyheedick-droid.github.io/dodie-chat
+
+
+--- MAIN PAGES ---
+
+Homepage / Dodie's Pitch
+https://ashleyheedick-droid.github.io/dodie-chat/index.html
+
+Meridian Technologies (Company Website)
+https://ashleyheedick-droid.github.io/dodie-chat/meridian.html
+
+DineIQ SaaS Platform (Product Sales Page)
+https://ashleyheedick-droid.github.io/dodie-chat/platform.html
+
+
+--- CUSTOMER-FACING ---
+
+Customer Order Page
+https://ashleyheedick-droid.github.io/dodie-chat/customer.html
+
+Customer Feedback
+https://ashleyheedick-droid.github.io/dodie-chat/customer-feedback.html
+
+Waitlist — Guest Sign-Up
+https://ashleyheedick-droid.github.io/dodie-chat/waitlist-guest-form.html
+
+Daily Specials
+https://ashleyheedick-droid.github.io/dodie-chat/daily-specials.html
+
+
+--- STAFF / MANAGEMENT ---
+
+Manager Dashboard
+https://ashleyheedick-droid.github.io/dodie-chat/manager-dashboard.html
+
+Waitlist — Host View
+https://ashleyheedick-droid.github.io/dodie-chat/waitlist-host-view.html
+
+Live Inventory Updates
+https://ashleyheedick-droid.github.io/dodie-chat/live-update-inventory.html
+
+Staff Shoutouts
+https://ashleyheedick-droid.github.io/dodie-chat/staff-shoutout.html
+
+
+--- AI / DEMO ---
+
+Dodie's AI Chat
+https://ashleyheedick-droid.github.io/dodie-chat/dodies-ai-chat.html
+
+Dodie's Complete Demo
+https://ashleyheedick-droid.github.io/dodie-chat/dodies-complete-demo.html
+
+Test Data Setup
+https://ashleyheedick-droid.github.io/dodie-chat/test-data.html
