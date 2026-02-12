@@ -244,7 +244,7 @@ document.getElementById('submitBtn').addEventListener('click', () => {
   localStorage.setItem('dodie_feedback', JSON.stringify(existing));
 
   // Save to Google Sheets
-  const APPS = localStorage.getItem('appsScriptUrl') || "https://script.google.com/macros/s/AKfycbyQcO1XkUwXUtMYvIpyXUInYkDXbGgWTOyDlGHWpoKkUQ3uukXiMmH1CI_9XiepNXdfVg/exec";
+  const APPS = localStorage.getItem('appsScriptUrl') || "https://script.google.com/macros/s/AKfycbwUMjebZmEMSVRBV5lJKTFAcLWodbGd9GB0WrLzJfD9f-JDaAXST8dvFpmeSJVuoPVWIg/exec";
   if (APPS) {
     const cb = 'fb_' + Math.random().toString(36).slice(2);
     const params = new URLSearchParams({
