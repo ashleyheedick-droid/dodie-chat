@@ -1,29 +1,32 @@
 /**
  * ============================================================================
- * GOOGLE APPS SCRIPT ADDITIONS FOR DODIE'S PREMIUM FEATURES
+ * GOOGLE APPS SCRIPT — DODIE'S PREMIUM FEATURES
  * ============================================================================
  *
- * INSTRUCTIONS:
- * 1. Open your Google Apps Script project (the one connected to your sheet)
- * 2. Add the functions below to your existing script
- * 3. Make sure you have these NEW tabs/sheets in your Google Sheet:
+ * HOW TO USE:
+ * 1. Open your Google Sheet → Extensions → Apps Script
+ * 2. COPY everything below the line of ='s into your Code.gs file
+ *    (add it INSIDE your existing doGet function, before the final closing brace)
+ * 3. If you don't have a respond() function yet, also copy the helper at the bottom
+ * 4. Make sure your Google Sheet has these tabs (the script auto-creates them if missing):
  *    - "Shoutouts"  (columns: Timestamp, Staff, Reasons, Message, From)
  *    - "Feedback"   (columns: Timestamp, Rating, Text, Categories, From, Email, Sentiment)
  *    - "Specials"   (columns: Day, Icon, Name, Description, Price, OrigPrice, Savings, Type, Availability)
  *    - "ChatLogs"   (columns: Timestamp, Question, Sentiment)
  *    - "VIPs"       (columns: Name, Visits, LastVisit, Favorite, TotalSpent)
- * 4. Re-deploy your Apps Script (Deploy > New Deployment)
- * 5. Copy the new URL to your Control Center if it changed
- *
- * ADD THESE to your existing doGet(e) function's action handlers:
+ * 5. Deploy → New Deployment → Web App → Execute as Me → Anyone can access
+ * 6. Copy the URL into Dodie's Control Center page
  * ============================================================================
  */
 
-// ── Add these cases inside your existing doGet(e) switch/if block ──────────
+// ─── PASTE INSIDE YOUR doGet(e) FUNCTION ────────────────────────────────────
+// If you don't have a doGet yet, use this complete one:
 
-// In your doGet function, add these action handlers:
+function doGet(e) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var action = (e.parameter.action || '').trim();
+  var callback = e.parameter.callback || '';
 
-/*
   // === SHOUTOUTS ===
   if (action === 'addShoutout') {
     var sheet = ss.getSheetByName('Shoutouts');
@@ -142,7 +145,6 @@
       headers.forEach(function(h, i) { obj[h.toLowerCase()] = row[i]; });
       return obj;
     });
-    // Sort by visits descending
     rows.sort(function(a, b) { return (b.visits || 0) - (a.visits || 0); });
     return respond({ success: true, data: rows }, callback);
   }
@@ -151,15 +153,12 @@
   if (action === 'getDashboardStats') {
     var stats = {};
 
-    // Chat count
     var chatSheet = ss.getSheetByName('ChatLogs');
     stats.totalChats = chatSheet ? Math.max(chatSheet.getLastRow() - 1, 0) : 0;
 
-    // Shoutout count
     var shoutSheet = ss.getSheetByName('Shoutouts');
     stats.totalShoutouts = shoutSheet ? Math.max(shoutSheet.getLastRow() - 1, 0) : 0;
 
-    // Feedback count & avg rating
     var fbSheet = ss.getSheetByName('Feedback');
     if (fbSheet && fbSheet.getLastRow() > 1) {
       var fbData = fbSheet.getRange(2, 2, fbSheet.getLastRow() - 1, 1).getValues();
@@ -171,7 +170,6 @@
       stats.avgRating = 0;
     }
 
-    // Waitlist stats
     var wlSheet = ss.getSheetByName('Waitlist');
     if (wlSheet && wlSheet.getLastRow() > 1) {
       var wlData = wlSheet.getDataRange().getValues();
@@ -184,15 +182,12 @@
 
     return respond({ success: true, data: stats }, callback);
   }
-*/
 
-/**
- * ============================================================================
- * HELPER: If you don't already have a respond() function, add this:
- * ============================================================================
- */
+  // === FALLBACK: unknown action ===
+  return respond({ success: false, error: 'Unknown action: ' + action }, callback);
+}
 
-/*
+// ─── HELPER: JSONP + JSON response ─────────────────────────────────────────
 function respond(data, callback) {
   if (callback) {
     return ContentService
@@ -203,4 +198,3 @@ function respond(data, callback) {
     .createTextOutput(JSON.stringify(data))
     .setMimeType(ContentService.MimeType.JSON);
 }
-*/

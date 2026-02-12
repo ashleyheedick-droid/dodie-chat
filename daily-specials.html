@@ -279,30 +279,74 @@ const daySpecials = {
   ]
 };
 
-// Render specials
-const todaySpecials = daySpecials[now.getDay()] || daySpecials[5];
-document.getElementById('specialsGrid').innerHTML = todaySpecials.map((s, i) => `
-  <div class="special-card" style="animation:fadeIn .6s ease-out ${0.5 + i * 0.15}s both">
-    <div class="special-accent"></div>
-    <div class="special-header">
-      <span class="special-icon">${s.icon}</span>
-      <span class="special-type-badge ${s.type}">${s.typeLabel}</span>
-    </div>
-    <div class="special-body">
-      <div class="special-name">${s.name}</div>
-      <div class="special-desc">${s.desc}</div>
-      <div class="special-price-row">
-        <span class="special-price">${s.price}</span>
-        ${s.origPrice ? `<span class="special-orig-price">${s.origPrice}</span>` : ''}
-        <span class="special-savings">${s.savings}</span>
+// Render specials cards
+function renderSpecials(specials) {
+  document.getElementById('specialsGrid').innerHTML = specials.map((s, i) => `
+    <div class="special-card" style="animation:fadeIn .6s ease-out ${0.5 + i * 0.15}s both">
+      <div class="special-accent"></div>
+      <div class="special-header">
+        <span class="special-icon">${s.icon}</span>
+        <span class="special-type-badge ${s.type}">${s.typeLabel}</span>
+      </div>
+      <div class="special-body">
+        <div class="special-name">${s.name}</div>
+        <div class="special-desc">${s.desc}</div>
+        <div class="special-price-row">
+          <span class="special-price">${s.price}</span>
+          ${s.origPrice ? `<span class="special-orig-price">${s.origPrice}</span>` : ''}
+          <span class="special-savings">${s.savings}</span>
+        </div>
+      </div>
+      <div class="special-footer">
+        <span class="special-available">${s.avail}</span>
+        <a href="waitlist-guest-form.html" class="special-order-btn">Join Waitlist</a>
       </div>
     </div>
-    <div class="special-footer">
-      <span class="special-available">${s.avail}</span>
-      <a href="waitlist-guest-form.html" class="special-order-btn">Join Waitlist</a>
-    </div>
-  </div>
-`).join('');
+  `).join('');
+}
+
+// Try fetching specials from Google Sheets first, fall back to hardcoded
+const APPS = localStorage.getItem('appsScriptUrl');
+if (APPS) {
+  const cb = 'specials_' + Math.random().toString(36).slice(2);
+  const s = document.createElement('script');
+  s.src = APPS + '?action=getSpecials&callback=' + cb;
+  window[cb] = function(resp) {
+    delete window[cb]; s.remove();
+    if (resp && resp.success && resp.data && resp.data.length > 0) {
+      // Map sheet columns (lowercase) to display properties
+      const mapped = resp.data.map(function(r) {
+        return {
+          icon: r.icon || '',
+          name: r.name || '',
+          desc: r.description || '',
+          price: r.price || '',
+          origPrice: r.origprice || '',
+          savings: r.savings || '',
+          type: r.type || 'badge-daily',
+          typeLabel: r.type || 'Special',
+          avail: r.availability || ''
+        };
+      });
+      renderSpecials(mapped);
+    } else {
+      // Sheet returned empty — use hardcoded fallback
+      renderSpecials(daySpecials[now.getDay()] || daySpecials[5]);
+    }
+  };
+  s.onerror = function() {
+    delete window[cb]; s.remove();
+    renderSpecials(daySpecials[now.getDay()] || daySpecials[5]);
+  };
+  // Timeout fallback in case JSONP hangs
+  setTimeout(function() {
+    if (window[cb]) { delete window[cb]; s.remove(); renderSpecials(daySpecials[now.getDay()] || daySpecials[5]); }
+  }, 5000);
+  document.body.appendChild(s);
+} else {
+  // No Apps Script URL configured — use hardcoded data
+  renderSpecials(daySpecials[now.getDay()] || daySpecials[5]);
+}
 
 // Chef's picks
 const chefPicks = [

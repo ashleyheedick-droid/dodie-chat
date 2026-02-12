@@ -243,7 +243,7 @@ document.getElementById('submitBtn').addEventListener('click', () => {
   existing.push(feedback);
   localStorage.setItem('dodie_feedback', JSON.stringify(existing));
 
-  // Try to save to Google Sheets
+  // Save to Google Sheets
   const APPS = localStorage.getItem('appsScriptUrl');
   if (APPS) {
     const cb = 'fb_' + Math.random().toString(36).slice(2);
@@ -260,8 +260,10 @@ document.getElementById('submitBtn').addEventListener('click', () => {
     const s = document.createElement('script');
     s.src = APPS + '?' + params.toString();
     window[cb] = () => { delete window[cb]; s.remove(); };
-    s.onerror = () => { delete window[cb]; s.remove(); };
+    s.onerror = () => { delete window[cb]; s.remove(); console.warn('Feedback failed to save to Google Sheets — check your Apps Script URL'); };
     document.body.appendChild(s);
+  } else {
+    console.warn('Google Sheets not connected — open the Control Center (dodies-complete-demo.html) and paste your Apps Script URL to enable sheet sync');
   }
 
   // Show success

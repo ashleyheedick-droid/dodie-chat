@@ -256,15 +256,31 @@ function pickAnswer(rawText, parsed) {
   return parsed.answer || parsed.reply || parsed.text || parsed.output || rawText || 'No response received.';
 }
 
-// Log chat to localStorage for manager dashboard analytics
+// Log chat to localStorage AND Google Sheets
 function logChat(question, sentiment) {
   try {
     const logs = JSON.parse(localStorage.getItem('dodie_chat_logs') || '[]');
     logs.push({ q: question, time: new Date().toISOString(), sentiment: sentiment || 'happy' });
-    // Keep last 500 entries
     if (logs.length > 500) logs.splice(0, logs.length - 500);
     localStorage.setItem('dodie_chat_logs', JSON.stringify(logs));
   } catch (e) { /* ignore storage errors */ }
+
+  // Also log to Google Sheets
+  const APPS = localStorage.getItem('appsScriptUrl');
+  if (APPS) {
+    const cb = 'chat_' + Math.random().toString(36).slice(2);
+    const params = new URLSearchParams({
+      action: 'logChat',
+      question: question,
+      sentiment: sentiment || 'happy',
+      callback: cb
+    });
+    const s = document.createElement('script');
+    s.src = APPS + '?' + params.toString();
+    window[cb] = () => { delete window[cb]; s.remove(); };
+    s.onerror = () => { delete window[cb]; s.remove(); };
+    document.body.appendChild(s);
+  }
 }
 
 async function sendMessage() {
