@@ -249,7 +249,7 @@ document.getElementById('submitBtn').addEventListener('click', () => {
   localStorage.setItem('dodie_shoutouts', JSON.stringify(existing));
 
   // Save to Google Sheets
-  const APPS = localStorage.getItem('appsScriptUrl');
+  const APPS = localStorage.getItem('appsScriptUrl') || "https://script.google.com/macros/s/AKfycbyQcO1XkUwXUtMYvIpyXUInYkDXbGgWTOyDlGHWpoKkUQ3uukXiMmH1CI_9XiepNXdfVg/exec";
   if (APPS) {
     const cb = 'shout_' + Math.random().toString(36).slice(2);
     const params = new URLSearchParams({
